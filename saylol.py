@@ -4,7 +4,7 @@ from time import time
 from helpers import *
 from random import randrange
 
-lol_filename = "plugins/RedstonerUtils.py.dir/files/lol.json"
+lol_filename = "plugins/redstoner-utils.py.dir/files/lol.json"
 lols         = []
 timeout      = 15
 last_msg     = 0
@@ -27,11 +27,11 @@ def save_lols():
 def add_lol(txt):
   lols.append(txt)
   save_lols()
-  
+
 def del_lol(id):
   lols.pop(id)
   save_lols()
-  
+
 def print_lol(sender, id):
   global last_msg
   if time() - last_msg > timeout:

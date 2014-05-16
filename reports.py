@@ -8,7 +8,7 @@ import thread
 # pythonloader changes this for some reason..
 #sys.path += ['', '/usr/lib/python2.7', '/usr/lib/python2.7/plat-linux2', '/usr/lib/python2.7/lib-tk', '/usr/lib/python2.7/lib-old', '/usr/lib/python2.7/lib-dynload', '/usr/local/lib/python2.7/dist-packages', '/usr/lib/python2.7/dist-packages', '/usr/lib/pymodules/python2.7']
 
-reports_filename = "plugins/RedstonerUtils.py.dir/files/reports.json"
+reports_filename = "plugins/redstoner-utils.py.dir/files/reports.json"
 time_format      = "%Y.%m.%d %H:%M"
 reports          = []
 check_reports    = True
