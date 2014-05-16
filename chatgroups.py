@@ -2,7 +2,7 @@ from helpers import *
 import simplejson as json
 import org.bukkit as bukkit
 
-chatgroups_filename = "plugins/RedstonerUtils.py.dir/files/chatgroups.json"
+chatgroups_filename = "plugins/redstoner-utils.py.dir/files/chatgroups.json"
 groups              = {}
 cg_key              = "."
 cg_toggle_list      = []
