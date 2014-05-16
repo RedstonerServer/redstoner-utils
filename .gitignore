@@ -1,2 +1,7 @@
 *.pyc
 *.class
+
+# these are player/ingame specific
+files/chatgroups.json
+files/lol.json
+files/reports.json
