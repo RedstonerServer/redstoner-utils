@@ -13,6 +13,8 @@ Redstoner's custom plugins, written in python.
 0. Download [mysql-connector](https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.30.zip), extract 'mysql-connector-java-X.X.XX-bin.jar
 ' and save it as 'mysql-connector.jar' inside lib
 0. Download [PyPluginLoader](http://gserv.me/static/PyPluginLoader-0.3.5.jar) into the plugins directory
+0. inside plugins, clone this directory into 'redstoner-utils**.py.dir**':  
+`git clone git@bitbucket.org:redstonesheep/redstoner-utils.git redstoner-utils.py.dir`
 0. Download [PEX](http://dev.bukkit.org/media/files/789/291/PermissionsEx.jar) into plugins
 0. **if you want** to develop mysql things, set up a local MySQL server
 
