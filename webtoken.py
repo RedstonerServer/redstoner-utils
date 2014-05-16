@@ -4,8 +4,11 @@ from re import match
 from com.ziclix.python.sql import zxJDBC
 from helpers import *
 from secrets import *
-from secrets import *
 from random import randrange
+
+
+
+
 
 # table schema:
 # string "uuid",  limit: 32, null: false

@@ -7,7 +7,7 @@ from java.lang import Class
 
 
 # hacky code to add mysql-connector to java's classpath ('classPathHack')
-jarfile = "lib/mysql-connector-java-5.1.14-bin.jar"
+jarfile = "lib/mysql-connector.jar"
 driver  = "com.mysql.jdbc.Driver"
 
 url       = java.io.File(jarfile).toURL()
