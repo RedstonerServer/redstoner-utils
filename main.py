@@ -36,7 +36,11 @@ except Exception, e:
 try:
   import skullclick
 except Exception, e:
-  print("[RedstonerUtils] ERROR: Failed to import saylol: %s]" % e)
+  print("[RedstonerUtils] ERROR: Failed to import skullclick: %s]" % e)
+try:
+  import tilehelper
+except Exception, e:
+  print("[RedstonerUtils] ERROR: Failed to import tilehelper: %s]" % e)
 try:
   from helpers import *
 except Exception, e:
