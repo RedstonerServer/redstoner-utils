@@ -1,3 +1,4 @@
+#pylint: disable=F0401
 import java.lang.reflect.Method
 import java.io.File
 import java.net.URL
@@ -7,6 +8,8 @@ from java.lang import Class
 
 
 # hacky code to add mysql-connector to java's classpath ('classPathHack')
+# DO NOT TOUCH, it works, mkay?
+
 jarfile = "lib/mysql-connector.jar"
 driver  = "com.mysql.jdbc.Driver"
 

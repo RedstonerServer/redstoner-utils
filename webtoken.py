@@ -1,3 +1,4 @@
+#pylint: disable=F0401
 import mysqlhack
 import thread
 from re import match
@@ -41,18 +42,13 @@ def generate_token(length):
       token += vows[randrange(5)]
   return token
 
-def set_token(uuid):
-  token = generate_token(6)
-  # REPLACE INTO website.register_token uuid={uuid}, token={token};
-  return token
-
 def get_token(uuid):
   # ae795aa86327408e92ab25c8a59f3ba1
   results = mysql_query("SELECT DISTINCT `token`, `email` FROM register_tokens WHERE `uuid` = ? LIMIT 1", (uuid,))
   return results[0] if len(results) == 1 else None
-  
-  
-def token_command(sender, args, foo):
+
+
+def token_command(sender):
   plugHeader(sender, "Website Token")
   if isPlayer(sender):
     try:
@@ -68,13 +64,13 @@ def token_command(sender, args, foo):
   else:
     msg(sender, "&cThis is only for players..")
 
-def tokengen_command(sender, args, foo):
+def tokengen_command(sender, args):
   plugHeader(sender, "Website Token")
   if isPlayer(sender):
     if checkargs(sender, args, 1, -1):
       # email regex, needs something followed by an @ followed by something
       mail = " ".join(args) # email may contain spaces
-      if match("^.+@(.+\..{2,}|\[[0-9a-fA-F:.]+\])$", mail) != None:
+      if match("^.+@(.+\\..{2,}|\\[[0-9a-fA-F:.]+\\])$", mail) != None:
         token = generate_token(6)
         uuid  = sender.getUniqueId().toString().replace("-", "")
         try:
@@ -94,17 +90,17 @@ def tokengen_command(sender, args, foo):
 
 
 @hook.command("token")
-def onCommand(sender, args):
-  thread.start_new_thread(token_command, (sender, args, "foo"))
+def onTokenCommand(sender, args):
+  thread.start_new_thread(token_command, (sender,))
   return True
-  
+
 @hook.command("tokengen")
-def onCommand(sender, args):
-  thread.start_new_thread(tokengen_command, (sender, args, "foo"))
+def onTokengenCommand(sender, args):
+  thread.start_new_thread(tokengen_command, (sender, args))
   return True
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+

@@ -1,5 +1,5 @@
+#pylint: disable=F0401
 from helpers import *
-import org.bukkit as bukkit
 
 ac_permission  = "utils.ac"
 ac_key         = ","
@@ -17,7 +17,7 @@ def adminchat(sender, msg):
 
 # ac toggle
 @hook.command("act")
-def onCommand(sender,args):
+def onActCommand(sender, args):
   if sender.hasPermission(ac_permission):
     p = sender.getName()
     if p in ac_toggle_list:
@@ -32,7 +32,7 @@ def onCommand(sender,args):
 
 
 @hook.command("ac")
-def onCommand(sender, args):
+def onAcCommand(sender, args):
   if sender.hasPermission(ac_permission):
     if not checkargs(sender, args, 1, -1):
       return True

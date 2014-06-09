@@ -1,6 +1,6 @@
+#pylint: disable=F0401
 from helpers import *
 import simplejson as json
-import org.bukkit as bukkit
 
 chatgroups_filename = "plugins/redstoner-utils.py.dir/files/chatgroups.json"
 groups              = {}
@@ -13,7 +13,7 @@ except Exception, e:
   error("Failed to load chatgroups: %s" % e)
 
 @hook.command("chatgroup")
-def onCommand(sender, args):
+def onChatgroupCommand(sender, args):
   try:
     plugHeader(sender, "ChatGroups")
     if len(args) == 1 and args[0] == "leave":
@@ -30,7 +30,8 @@ def onCommand(sender, args):
         msg(sender, "&aCurrent chatgroup: %s" % group)
         users = []
         for user, ugroup in groups.iteritems():
-          if ugroup == group: users += [user]
+          if ugroup == group:
+            users += [user]
         msg(sender, "&aUsers in this group:")
         msg(sender,  "&a%s" % ", ".join(users))
       else:
@@ -49,7 +50,7 @@ def onCommand(sender, args):
     error(e)
 
 @hook.command("cgt")
-def onCommand(sender,args):
+def onCgtCommand(sender, args):
   p = sender.getName()
   if p in cg_toggle_list:
     cg_toggle_list.remove(p)
@@ -86,11 +87,11 @@ def saveGroups():
 @hook.event("player.PlayerChatEvent", "normal")
 def onChat(event):
   sender = event.getPlayer()
-  msg = event.getMessage()
+  msge = event.getMessage()
   if not event.isCancelled():
-    if msg[:len(cg_key)] == cg_key and sender.getName() in groups.keys():
-      groupchat(sender, msg[1:])
+    if msge[:len(cg_key)] == cg_key and sender.getName() in groups.keys():
+      groupchat(sender, msge[1:])
       event.setCancelled(True)
     elif sender.getName() in cg_toggle_list:
-      groupchat(sender, msg)
+      groupchat(sender, msge)
       event.setCancelled(True)
