@@ -15,6 +15,9 @@ dirmap = {
   "d": [0, -1, 0]
 }
 
+# FIXME: disallow multiple regions by single person.
+# FIXME: could lead to two regions updating each other forever -> server freezes
+
 @hook.event("block.BlockPlaceEvent", "high")
 def onPlaceBlock(event):
   if not event.isCancelled():
@@ -29,7 +32,7 @@ def onPlaceBlock(event):
 
         for direction in th.get("directions"):
           directions = dirmap[direction]
-          size       = [area[0][1] - area[0][0], area[1][1] - area[1][0], area[2][1] - area[2][0]]
+          size       = [1 + area[0][1] - area[0][0], 1 + area[1][1] - area[1][0], 1 + area[2][1] - area[2][0]]
           oldplaced  = event.getBlockAgainst()
 
           newblock   = block.getWorld().getBlockAt(block.getX() + size[0] * directions[0], block.getY() + size[1] * directions[1], block.getZ() + size[2] * directions[2])
