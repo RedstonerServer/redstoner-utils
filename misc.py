@@ -1,5 +1,4 @@
 from helpers import *
-import thread
 
 
 #
@@ -32,33 +31,6 @@ def onJoin(event):
     msg(player, "  &6/ranks")
     msg(player, "  &6thank you and happy playing ;)")
     msg(player, " \n ")
-
-
-
-#
-# /pyeval - run python ingame
-#
-
-def evalThread(sender, code):
-  try:
-    msg(sender, "%s" % unicode(eval(code)), False, "a")
-  except Exception, e:
-    msg(sender, "%s: %s" % (e.__class__.__name__, e), False, "c")
-  thread.exit()
-
-@hook.command("pyeval")
-def onPyevalCommand(sender, args):
-  if sender.hasPermission("utils.pyeval"):
-    if not checkargs(sender, args, 1, -1):
-      return True
-    msg(sender, "%s" % " ".join(args), False, "e")
-    try:
-      thread.start_new_thread(evalThread, (sender, " ".join(args)))
-    except Exception, e:
-      msg(sender, "&cInternal error: %s" % e)
-  else:
-    noperm(sender)
-  return True
 
 
 #
