@@ -2,49 +2,26 @@ __plugin_name__ = "RedstonerUtils"
 __plugin_version__ = "3.0"
 __plugin_mainclass__ = "foobar"
 
+# damn pythonloader changed the PATH
 import sys
-
-print("Loading RedstonerUtils...")
-
-# damn pythonloader changed this...
 sys.path += ['', '/usr/lib/python2.7', '/usr/lib/python2.7/plat-linux2', '/usr/lib/python2.7/lib-tk', '/usr/lib/python2.7/lib-old', '/usr/lib/python2.7/lib-dynload', '/usr/local/lib/python2.7/dist-packages', '/usr/lib/python2.7/dist-packages', '/usr/lib/pymodules/python2.7', '/usr/lib/pyshared/python2.7']
 
-try:
-  import adminchat
-except Exception, e:
-  print("[RedstonerUtils] ERROR: Failed to import adminchat: %s" % e)
-try:
-  import lagchunks
-except Exception, e:
-  print("[RedstonerUtils] ERROR: Failed to import lagchunks: %s" % e)
-try:
-  import reports
-except Exception, e:
-  print("[RedstonerUtils] ERROR: Failed to import reports: %s" % e)
-try:
-  import chatgroups
-except Exception, e:
-  print("[RedstonerUtils] ERROR: Failed to import chatgroups: %s" % e)
-try:
-  import webtoken
-except Exception, e:
-  print("[RedstonerUtils] ERROR: Failed to import webtoken: %s" % e)
-try:
-  import saylol
-except Exception, e:
-  print("[RedstonerUtils] ERROR: Failed to import saylol: %s" % e)
-try:
-  import skullclick
-except Exception, e:
-  print("[RedstonerUtils] ERROR: Failed to import skullclick: %s]" % e)
-try:
-  import tilehelper
-except Exception, e:
-  print("[RedstonerUtils] ERROR: Failed to import tilehelper: %s]" % e)
 try:
   from helpers import *
 except Exception, e:
   print("[RedstonerUtils] ERROR: Failed to import helpers: %s" % e)
+
+log("Loading RedstonerUtils...")
+
+# Import all modules
+modules = ["adminchat", "lagchunks", "reports", "chatgroups", "webtoken", "saylol", "skullclick", "tilehelper"]
+for module in modules:
+  try:
+    __import__(module)
+    log("Module %s loaded." % module)
+  except Exception, e:
+    error("Failed to import module %s: '%s'" % (module, e))
+
 
 import thread
 import org.bukkit.entity.Player as Player
