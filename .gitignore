@@ -1,5 +1,6 @@
 *.pyc
 *.class
+*sublime*
 
 # these are player/ingame specific
 files/chatgroups.json
