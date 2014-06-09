@@ -1,5 +1,5 @@
 import org.bukkit as bukkit
-import bukkit.event.block.BlockPlaceEvent as BlockPlaceEvent
+import org.bukkit.event.block.BlockPlaceEvent as BlockPlaceEvent
 from helpers import *
 
 tilehelpers = [                                                                                                                                           # Front Right Back  Left  Down   Up
