@@ -3,7 +3,7 @@ import org.bukkit.event.block.BlockPlaceEvent as BlockPlaceEvent
 from helpers import *
 
 tilehelpers = [
-  {"owner": "ae795aa8-6327-408e-92ab-25c8a59f3ba1", "area": [[90, 95], [60, 90], [90, 95]], "world": "b0385345-4803-4522-a06a-75fbd692928d", "directions": "neswud"}
+  {"owner": "ae795aa8-6327-408e-92ab-25c8a59f3ba1", "area": [[90, 90], [70, 70], [90, 90]], "world": "b0385345-4803-4522-a06a-75fbd692928d", "directions": "neswud"}
 ]
 dirmap = {
   #    [x, y, z]
