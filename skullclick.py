@@ -1,5 +1,6 @@
+#pylint: disable=F0401
 import org.bukkit as bukkit
-from helpers import *
+from helpers import msg
 
 @hook.event("player.PlayerInteractEvent", "monitor")
 def onInteract(event):

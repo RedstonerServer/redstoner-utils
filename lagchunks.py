@@ -1,3 +1,4 @@
+#pylint: disable=F0401
 import org.bukkit as bukkit
 from helpers import *
 
@@ -35,7 +36,7 @@ def tpChunk(sender, id):
   msg(sender, "&aTeleported to &b%s&a, &b%s&a in &7%s&a with &b%s&a entities nearby." % (chunk[1], chunk[3], chunk[0].getName(), chunk[4]))
 
 @hook.command("lagchunks")
-def onCommand(sender, args):
+def onLagchunksCommand(sender, args):
   try:
     if sender.hasPermission("utils.lagchunks"):
       plugHeader(sender, "Lagchunks")

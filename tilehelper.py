@@ -1,4 +1,4 @@
-import org.bukkit as bukkit
+#pylint: disable=F0401
 import org.bukkit.event.block.BlockPlaceEvent as BlockPlaceEvent
 from helpers import *
 

@@ -1,12 +1,7 @@
 from helpers import *
 import simplejson as json
 import time
-import sys
-import os
 import thread
-
-# pythonloader changes this for some reason..
-#sys.path += ['', '/usr/lib/python2.7', '/usr/lib/python2.7/plat-linux2', '/usr/lib/python2.7/lib-tk', '/usr/lib/python2.7/lib-old', '/usr/lib/python2.7/lib-dynload', '/usr/local/lib/python2.7/dist-packages', '/usr/lib/python2.7/dist-packages', '/usr/lib/pymodules/python2.7']
 
 reports_filename = "plugins/redstoner-utils.py.dir/files/reports.json"
 time_format      = "%Y.%m.%d %H:%M"
@@ -57,7 +52,7 @@ def saveReports():
     error("Failed to write reports: " + str(e))
 
 @hook.command("rp")
-def onCommand(sender, args):
+def onRpCommand(sender, args):
   if sender.hasPermission("utils.rp"):
     plugHeader(sender, "Reports")
     if len(args) > 0:
@@ -68,7 +63,7 @@ def onCommand(sender, args):
           return True
         try:
           repid = int(args[1])
-        except:
+        except ValueError:
           msg(sender, "&cDoesn't look like &3" + args[1] + "&c is a valid number!")
           printHelp(sender)
           return True
@@ -88,7 +83,7 @@ def onCommand(sender, args):
   return True
 
 @hook.command("report")
-def onCommand(sender, args):
+def onReportCommand(sender, args):
   plugHeader(sender, "Report")
   if not isPlayer(sender):
     msg(sender, "&conly players can do this")
@@ -115,7 +110,7 @@ def onCommand(sender, args):
   msg(sender, "&aReported \"&e" + text + "&a\"")
   return True
 
-def checkForReports(foo, sender): # needs 2 args for unknown reason
+def checkForReports(): # needs 2 args for unknown reason
   while True:
     for i in range(0, check_delay*2):
       time.sleep(0.5) # check every 0.5 seconds if we should kill the thread
@@ -127,7 +122,8 @@ def checkForReports(foo, sender): # needs 2 args for unknown reason
       broadcast("utils.rp", "&aThere are %s pending reports!" % len(reports))
 
 def stopChecking():
+  global check_reports
   log("Ending reports reminder thread")
   check_reports = False
 
-thread.start_new_thread(checkForReports, ("foo", "bar"))
+thread.start_new_thread(checkForReports, ())
