@@ -7,12 +7,12 @@ tilehelpers = [
 ]
 dirmap = {
   #    [x, y, z]
-  "n": [0, 0, -1],
+  "n": [0, 0, -2],
   "e": [1, 0, 0],
   "s": [0, 0, 1],
-  "w": [-1, 0, 0],
+  "w": [-2, 0, 0],
   "u": [0, 1, 0],
-  "d": [0, -1, 0]
+  "d": [0, -2, 0]
 }
 
 # FIXME: disallow multiple regions by single person.
