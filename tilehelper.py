@@ -93,5 +93,31 @@ def onBreakBlockInRegion(event):
 
 @hook.event("player.PlayerInteractEvent", "low")
 def onClickBlockInRegion(event):
-  if not event.isCancelled():
-    log("Interact: %s; %s" % (event.getClickedBlock(), event.getAction()))
+  action = event.getAction()
+  if not event.isCancelled() and str(action) == "RIGHT_CLICK_BLOCK":
+    player = event.getPlayer()
+    block  = event.getClickedBlock()
+    for th in tilehelpers:
+      area = th.get("area")
+      if th.get("owner") == str(player.getUniqueId()) and str(block.getWorld().getUID()) == th.get("world") and block.getX() in range(area[0][0], area[0][1]+1) and block.getY() in range(area[1][0], area[1][1]+1) and block.getZ() in range(area[2][0], area[2][1]+1):
+
+        # stack block in directions
+        for direction in th.get("directions"):
+          directions = dirmap[direction]
+          size       = [
+            1 + abs(area[0][1] - area[0][0]),
+            1 + abs(area[1][1] - area[1][0]),
+            1 + abs(area[2][1] - area[2][0])
+          ]
+
+          newblock = block.getWorld().getBlockAt(
+            block.getX() + size[0] * directions[0],
+            block.getY() + size[1] * directions[1],
+            block.getZ() + size[2] * directions[2]
+          )
+
+          event = PlayerInteractEvent(event.getPlayer(), action, event.getItem(), newblock, event.getBlockFace())
+          server.getPluginManager().callEvent(event)
+          if not event.isCancelled():
+            newblock.setType(block.getType())
+            newblock.setData(block.getData())
