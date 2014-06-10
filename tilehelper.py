@@ -94,4 +94,4 @@ def onBreakBlockInRegion(event):
 @hook.event("player.PlayerInteractEvent", "low")
 def onClickBlockInRegion(event):
   if not event.isCancelled():
-    log("Interact: %s; %s" % (event.getBlock(), event.getAction()))
+    log("Interact: %s; %s" % (event.getClickedBlock(), event.getAction()))
