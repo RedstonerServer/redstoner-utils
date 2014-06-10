@@ -2,6 +2,8 @@
 import org.bukkit.event.block.BlockPlaceEvent as BlockPlaceEvent
 import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
 import org.bukkit.event.player.PlayerInteractEvent as PlayerInteractEvent
+import thread
+from time import sleep
 from helpers import *
 
 tilehelpers = [
@@ -119,5 +121,9 @@ def onClickBlockInRegion(event):
           event = PlayerInteractEvent(event.getPlayer(), action, event.getItem(), newblock, event.getBlockFace())
           server.getPluginManager().callEvent(event)
           if not event.isCancelled():
-            newblock.setType(block.getType())
-            newblock.setData(block.getData())
+            thread.start_new_thread(updateBlock, (block, newblock))
+
+def updateBlock(block, newblock):
+  sleep(0.2)
+  newblock.setType(block.getType())
+  newblock.setData(block.getData())
