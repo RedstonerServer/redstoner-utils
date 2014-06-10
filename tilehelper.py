@@ -40,3 +40,5 @@ def onPlaceBlock(event):
 
           event      = BlockPlaceEvent(newblock, block.getState(), newplaced, event.getItemInHand(), player, event.canBuild())
           server.getPluginManager().callEvent(event)
+          if not event.isCancelled():
+            newplaced.setType(block.getType())
