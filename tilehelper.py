@@ -40,8 +40,8 @@ def onPlaceBlockInRegion(event):
           newstate   = newblock.getState()
           newstate.setType(block.getType())
 
-          event      = BlockPlaceEvent(newblock, block.getState(), newplaced, event.getItemInHand(), player, event.canBuild())
+          event      = BlockPlaceEvent(newstate.getBlock(), block.getState(), newplaced, event.getItemInHand(), player, event.canBuild())
           server.getPluginManager().callEvent(event)
-          msg(player, "Direction %s: %s" % (direction, event.isCancelled()))
+          msg(player, "Direction %s: %s" % (direction, not event.isCancelled()))
           if not event.isCancelled():
             newplaced.setType(block.getType())
