@@ -18,12 +18,12 @@ dirmap = {
 # FIXME: disallow multiple regions by single person.
 # FIXME: could lead to two regions updating each other forever -> server freezes
 
+lastevent = None
+
 @hook.event("block.BlockPlaceEvent", "monitor")
 def onBlockPlaceDebug(event):
-  msg(event.getPlayer(), ("typ: %s" % event.getBlock().getType()))
-  msg(event.getPlayer(), ("before: %s" % event.getBlockReplacedState()))
-  msg(event.getPlayer(), ("after: %s" % event.getBlockPlaced().getState()))
-  msg(event.getPlayer(), ("playerName: %s" % event.getPlayer().getName()))
+  global lastevent
+  lastevent = event
 
 @hook.event("block.BlockPlaceEvent", "high")
 def onPlaceBlockInRegion(event):
