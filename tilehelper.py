@@ -62,7 +62,7 @@ def onPlaceBlockInRegion(event):
           newstate = newblock.getState()
           newstate.setType(block.getType())
 
-          event = BlockPlaceEvent(newstate.getBlock(), block.getState(), newagainst, event.getItemInHand(), player, event.canBuild())
+          event = BlockPlaceEvent(newstate.getBlock(), newstate.getState(), newagainst, event.getItemInHand(), player, event.canBuild())
           server.getPluginManager().callEvent(event)
           msg(player, "Direction %s: %s" % (direction, not event.isCancelled()))
           msg(player, "Position before: %s -- after: %s" % ([block.getX(), block.getY(), block.getZ()], [newstate.getX(), newstate.getY(), newstate.getZ()]))
