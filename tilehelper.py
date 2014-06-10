@@ -1,7 +1,7 @@
 #pylint: disable=F0401
 import org.bukkit.event.block.BlockPlaceEvent as BlockPlaceEvent
 import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
-import org.bukkit.event.block.BlockDamageEvent as BlockDamageEvent
+import org.bukkit.event.player.PlayerInteractEvent as PlayerInteractEvent
 from helpers import *
 
 tilehelpers = [
@@ -58,10 +58,11 @@ def onPlaceBlockInRegion(event):
           server.getPluginManager().callEvent(event)
           if not event.isCancelled():
             newblock.setType(block.getType())
+            newblock.setData(block.getData())
 
 
 @hook.event("block.BlockBreakEvent", "low")
-def onPlaceBlockInRegion(event):
+def onBreakBlockInRegion(event):
   if not event.isCancelled():
     player = event.getPlayer()
     block  = event.getBlock()
@@ -89,7 +90,8 @@ def onPlaceBlockInRegion(event):
           if not event.isCancelled():
             newblock.setTypeId(0)
 
-@hook.event("block.BlockDamageEvent", "low")
-def onPlaceBlockInRegion(event):
+
+@hook.event("player.PlayerInteractEvent", "low")
+def onClickBlockInRegion(event):
   if not event.isCancelled():
-    log("Damage: %s" % event.getBlock())
+    log("Interact: %s; %s" % (event.getBlock(), event.getAction()))
