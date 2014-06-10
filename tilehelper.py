@@ -51,7 +51,7 @@ def onPlaceBlockInRegion(event):
           )
           newstate = newblock.getState()
           newstate.setType(block.getType())
-          newstate.setData(block.getData())
+          newstate.setData(block.getState().getData())
 
           event = BlockPlaceEvent(newstate.getBlock(), newblock.getState(), newagainst, event.getItemInHand(), player, event.canBuild())
           server.getPluginManager().callEvent(event)
