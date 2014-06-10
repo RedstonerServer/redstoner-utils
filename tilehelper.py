@@ -24,7 +24,8 @@ lastevent = None
 def onBlockPlaceDebug(event):
   global lastevent
   lastevent = event
-  msg(event.getPlayer(), "BlockPlaceEvent")
+  msg(event.getPlayer(), event.getBlockPlaced(), basecolor = "a")
+  msg(event.getPlayer(), event.getBlockReplacedState().getBlock(), basecolor = "a")
 
 @hook.event("block.BlockPlaceEvent", "high")
 def onPlaceBlockInRegion(event):
