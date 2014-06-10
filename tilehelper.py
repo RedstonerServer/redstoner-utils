@@ -29,8 +29,6 @@ def onPlaceBlockInRegion(event):
       if th.get("owner") == str(player.getUniqueId()) and str(block.getWorld().getUID()) == th.get("world") and block.getX() in range(area[0][0], area[0][1]+1) and block.getY() in range(area[1][0], area[1][1]+1) and block.getZ() in range(area[2][0], area[2][1]+1) and event.canBuild():
 
         # stack block in directions
-        msg(player, "&aplaced block in region")
-
         for direction in th.get("directions"):
           directions = dirmap[direction]
           size       = [
@@ -70,8 +68,6 @@ def onPlaceBlockInRegion(event):
       if th.get("owner") == str(player.getUniqueId()) and str(block.getWorld().getUID()) == th.get("world") and block.getX() in range(area[0][0], area[0][1]+1) and block.getY() in range(area[1][0], area[1][1]+1) and block.getZ() in range(area[2][0], area[2][1]+1):
 
         # stack block in directions
-        msg(player, "&abroke block in region")
-
         for direction in th.get("directions"):
           directions = dirmap[direction]
           size       = [
