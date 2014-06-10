@@ -64,10 +64,10 @@ def onPlaceBlockInRegion(event):
 def onPlaceBlockInRegion(event):
   if not event.isCancelled():
     player = event.getPlayer()
-    block  = event.getBlockPlaced()
+    block  = event.getBlock()
     for th in tilehelpers:
       area = th.get("area")
-      if th.get("owner") == str(player.getUniqueId()) and str(block.getWorld().getUID()) == th.get("world") and block.getX() in range(area[0][0], area[0][1]+1) and block.getY() in range(area[1][0], area[1][1]+1) and block.getZ() in range(area[2][0], area[2][1]+1) and event.canBuild():
+      if th.get("owner") == str(player.getUniqueId()) and str(block.getWorld().getUID()) == th.get("world") and block.getX() in range(area[0][0], area[0][1]+1) and block.getY() in range(area[1][0], area[1][1]+1) and block.getZ() in range(area[2][0], area[2][1]+1):
 
         # stack block in directions
         msg(player, "&abroke block in region")
