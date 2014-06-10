@@ -3,12 +3,17 @@ import org.bukkit.event.block.BlockPlaceEvent as BlockPlaceEvent
 import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
 import org.bukkit.event.player.PlayerInteractEvent as PlayerInteractEvent
 import thread
+import json
 from time import sleep
 from helpers import *
 
-tilehelpers = [
-  {"owner": "ae795aa8-6327-408e-92ab-25c8a59f3ba1", "area": [[90, 95], [70, 72], [90, 95]], "world": "b0385345-4803-4522-a06a-75fbd692928d", "directions": "neswud"}
-]
+tilehelpers_filename = "plugins/redstoner-utils.py.dir/files/tilehelpers.json"
+tilehelpers          = []
+try:
+  tilehelpers = json.loads(open(tilehelpers_filename).read())
+except Exception, e:
+  error("Failed to load tile helpers: %s" % e)
+
 dirmap = {
   #    [x, y, z]
   "n": [0, 0, -1],
