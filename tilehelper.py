@@ -57,4 +57,4 @@ def onPlaceBlockInRegion(event):
           msg(player, "Direction %s: %s" % (direction, not event.isCancelled()))
           msg(player, "Position before: %s -- after: %s" % ([block.getX(), block.getY(), block.getZ()], [newstate.getX(), newstate.getY(), newstate.getZ()]))
           if not event.isCancelled():
-            newagainst.setType(block.getType())
+            newblock.setType(block.getType())
