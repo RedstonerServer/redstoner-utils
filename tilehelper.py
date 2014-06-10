@@ -24,6 +24,7 @@ lastevent = None
 def onBlockPlaceDebug(event):
   global lastevent
   lastevent = event
+  msg(event.getPlayer(), "BlockPlaceEvent")
 
 @hook.event("block.BlockPlaceEvent", "high")
 def onPlaceBlockInRegion(event):
@@ -44,22 +45,23 @@ def onPlaceBlockInRegion(event):
             1 + abs(area[1][1] - area[1][0]),
             1 + abs(area[2][1] - area[2][0])
           ]
-          oldagainst = event.getBlockAgainst()
+          against = event.getBlockAgainst()
 
-          newblock   = block.getWorld().getBlockAt(
+          newblock = block.getWorld().getBlockAt(
             block.getX() + size[0] * directions[0],
             block.getY() + size[1] * directions[1],
             block.getZ() + size[2] * directions[2]
           )
-          newagainst = oldagainst.getWorld().getBlockAt(
-            oldagainst.getX() + size[0] * directions[0],
-            oldagainst.getY() + size[1] * directions[1],
-            oldagainst.getZ() + size[2] * directions[2]
+
+          newagainst = against.getWorld().getBlockAt(
+            against.getX() + size[0] * directions[0],
+            against.getY() + size[1] * directions[1],
+            against.getZ() + size[2] * directions[2]
           )
-          newstate   = newblock.getState()
+          newstate = newblock.getState()
           newstate.setType(block.getType())
 
-          event      = BlockPlaceEvent(newstate.getBlock(), block.getState(), newagainst, event.getItemInHand(), player, event.canBuild())
+          event = BlockPlaceEvent(newstate.getBlock(), block.getState(), newagainst, event.getItemInHand(), player, event.canBuild())
           server.getPluginManager().callEvent(event)
           msg(player, "Direction %s: %s" % (direction, not event.isCancelled()))
           msg(player, "Position before: %s -- after: %s" % ([block.getX(), block.getY(), block.getZ()], [newstate.getX(), newstate.getY(), newstate.getZ()]))
