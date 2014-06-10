@@ -3,7 +3,7 @@ import org.bukkit.event.block.BlockPlaceEvent as BlockPlaceEvent
 from helpers import *
 
 tilehelpers = [
-  {"owner": "ae795aa8-6327-408e-92ab-25c8a59f3ba1", "area": [[90, 90], [70, 70], [90, 90]], "world": "b0385345-4803-4522-a06a-75fbd692928d", "directions": "neswud"}
+  {"owner": "ae795aa8-6327-408e-92ab-25c8a59f3ba1", "area": [[90, 90], [70, 70], [90, 90]], "world": "b0385345-4803-4522-a06a-75fbd692928d", "directions": "n"}
 ]
 dirmap = {
   #    [x, y, z]
@@ -32,16 +32,29 @@ def onPlaceBlockInRegion(event):
 
         for direction in th.get("directions"):
           directions = dirmap[direction]
-          size       = [1 + abs(area[0][1] - area[0][0]), 1 + abs(area[1][1] - area[1][0]), 1 + abs(area[2][1] - area[2][0])]
-          oldplaced  = event.getBlockAgainst()
+          size       = [
+            1 + abs(area[0][1] - area[0][0]),
+            1 + abs(area[1][1] - area[1][0]),
+            1 + abs(area[2][1] - area[2][0])
+          ]
+          oldagainst = event.getBlockAgainst()
 
-          newblock   = block.getWorld().getBlockAt(block.getX() + size[0] * directions[0], block.getY() + size[1] * directions[1], block.getZ() + size[2] * directions[2])
-          newplaced  = oldplaced.getWorld().getBlockAt(oldplaced.getX() + size[0] * directions[0], oldplaced.getY() + size[1] * directions[1], oldplaced.getZ() + size[2] * directions[2])
+          newblock   = block.getWorld().getBlockAt(
+            block.getX() + size[0] * directions[0],
+            block.getY() + size[1] * directions[1],
+            block.getZ() + size[2] * directions[2]
+          )
+          newagainst = oldagainst.getWorld().getBlockAt(
+            oldagainst.getX() + size[0] * directions[0],
+            oldagainst.getY() + size[1] * directions[1],
+            oldagainst.getZ() + size[2] * directions[2]
+          )
           newstate   = newblock.getState()
           newstate.setType(block.getType())
 
-          event      = BlockPlaceEvent(newstate.getBlock(), block.getState(), newplaced, event.getItemInHand(), player, event.canBuild())
+          event      = BlockPlaceEvent(newstate.getBlock(), block.getState(), newagainst, event.getItemInHand(), player, event.canBuild())
           server.getPluginManager().callEvent(event)
           msg(player, "Direction %s: %s" % (direction, not event.isCancelled()))
+          msg(player, "Position before: %s -- after: %s" % ([block.getX(), block.getY(), block.getZ()], [newstate.getX(), newstate.getY(), newstate.getZ()]))
           if not event.isCancelled():
-            newplaced.setType(block.getType())
+            newagainst.setType(block.getType())
