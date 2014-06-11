@@ -129,6 +129,9 @@ def onClickBlockInRegion(event):
             thread.start_new_thread(updateBlock, (block, newblock))
 
 def updateBlock(block, newblock):
-  sleep(0.2)
-  newblock.setType(block.getType())
-  newblock.setData(block.getData())
+  try: # we're in a thread, the universe may hace collapsed in another thread
+    sleep(0.2)
+    newblock.setType(block.getType())
+    newblock.setData(block.getData())
+  except Exception, e:
+    error("Failed to update %s block in %s at %s,%s,%s: '%s'" % (str(block.getType()), block.getWorld().getName(), block.getX(), block.getY(), block.getZ(), e))
