@@ -32,12 +32,11 @@ def onJoin(event):
     msg(player, "  &6thank you and happy playing ;)")
     msg(player, " \n ")
 
-  loginloc = player.getLocation()
-  # headloc = player.getEyeLocation()
-  blockmat = loginloc.getBlock().getType()
-  if str(blockmat) == "PORTAL":
+  loginloc = player.getLocation().getBlock().getType()
+  headloc = player.getEyeLocation().getBlock().getType()
+  if (str(loginloc) or str(headloc) == "PORTAL"):
     msg(player, "Looks like you spawned in a portal... Let me help you out")
-    server.dispatchCommand(player, "spawn")
+    player.teleport(player.getWorld().getSpawnLocation())
 
 
 #
