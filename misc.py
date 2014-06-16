@@ -35,7 +35,8 @@ def onJoin(event):
   loginloc = player.getLocation().getBlock().getType()
   headloc = player.getEyeLocation().getBlock().getType()
   if str(loginloc) == "PORTAL" or str(headloc) == "PORTAL":
-    msg(player, "Looks like you spawned in a portal... Let me help you out")
+    msg(player, "&4Looks like you spawned in a portal... Let me help you out")
+    msg(player, "&6You can use back if you &nreally&6 want to go back")
     player.teleport(player.getWorld().getSpawnLocation())
 
 
