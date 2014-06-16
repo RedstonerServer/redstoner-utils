@@ -32,6 +32,13 @@ def onJoin(event):
     msg(player, "  &6thank you and happy playing ;)")
     msg(player, " \n ")
 
+  loginloc = player.getLocation()
+  # headloc = player.getEyeLocation()
+  blockmat = loginloc.getBlock().getType()
+  if blockmat == Material.PORTAL:
+    msg(player, "Looks like you spawned in a portal... Let me help you out")
+    server.dispatchCommand(player, "spawn")
+
 
 #
 # /sudo - execute command/chat *as* a player/console
