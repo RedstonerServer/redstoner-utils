@@ -1,5 +1,4 @@
 from helpers import *
-import org.bukkit.Material as Material
 
 
 #
@@ -36,7 +35,7 @@ def onJoin(event):
   loginloc = player.getLocation()
   # headloc = player.getEyeLocation()
   blockmat = loginloc.getBlock().getType()
-  if blockmat == Material.PORTAL:
+  if str(blockmat) == "PORTAL":
     msg(player, "Looks like you spawned in a portal... Let me help you out")
     server.dispatchCommand(player, "spawn")
 
