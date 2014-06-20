@@ -32,6 +32,6 @@ def onChat(event):
           message = " ".join([sender.getDisplayName(), arrow] + rec_words)
           msg(recipient, message, usecolor = False)
           recipient.playSound(recipient.getLocation(), "mob.chicken.plop", 1, 0)
-  except Exception, e:
-    error("Failed to handle PlayerChatEvent: %s" % e)
+  except:
+    error("Failed to handle PlayerChatEvent:")
     error(print_traceback())
