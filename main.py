@@ -4,6 +4,7 @@ __plugin_mainclass__ = "foobar"
 
 import sys
 import thread
+from traceback import format_exc as print_traceback
 
 # damn pythonloader changed the PATH
 sys.path += ['', '/usr/lib/python2.7', '/usr/lib/python2.7/plat-linux2', '/usr/lib/python2.7/lib-tk', '/usr/lib/python2.7/lib-old', '/usr/lib/python2.7/lib-dynload', '/usr/local/lib/python2.7/dist-packages', '/usr/lib/python2.7/dist-packages', '/usr/lib/pymodules/python2.7', '/usr/lib/pyshared/python2.7']
@@ -37,6 +38,7 @@ for module in modules:
     log("Module %s loaded." % module)
   except Exception, e:
     error("Failed to import module %s: '%s'" % (module, e))
+    error(print_traceback())
 
 
 
