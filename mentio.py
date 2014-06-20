@@ -1,18 +1,32 @@
 #pylint: disable=F0401
 from helpers import *
+from re import compile as reg_compile
+
+arrow = colorify(u"&r&7\u2192&r")
+regex = reg_compile(u"\u00A7[\\da-fk-or]")
 
 
-mio_permission = "utils.mio"
-
-@hook.event("player.PlayerChatEvent", "normal")
+@hook.event("player.AsyncPlayerChatEvent", "normal")
 def onChat(event):
-  symbol = u"\u272a"
-  sender = event.getPlayer()
-  messages = event.getMessage()
-  messagesList = messages.split(" ")
-  for message in messagesList:
-    for recipient in server.getOnlinePlayers().tolist():
-      if message[:3].lower() in recipient.getName().lower() and len(message) > 2:
-        msg(recipient, "&6" + symbol + " &f%s &6mentioned you" % sender.getDisplayName())
-        # Couldn't figure out how to do this
-        # recipient.playSound(recipient.getLocation(), Sound.CHICKEN_EGG_POP, 1, 1)
+  if not event.isCancelled():
+    sender     = event.getPlayer()
+    words      = event.getMessage().split(" ")
+    recipients = event.getRecipients()
+
+    for recipient in recipients:
+      rec_words = words[:] # copy
+      for i in range(len(rec_words)):
+        word = rec_words[i]
+        if recipient.getName().lower() in word.lower():
+          colors = "".join(regex.findall("".join(words[:i+1]))) # join all color codes used upto this word
+          rec_words[i] = colorify("&r&a<&6") + stripcolors(word) + colorify("&r&a>&r") + colors # extra fancy highlight
+
+      # player was mentioned
+      if rec_words != words:
+        try: # list might not be mutable
+          recipients.remove(recipient) # don't send original message
+        except:
+          pass
+        message = " ".join([sender.getDisplayName(), arrow] + rec_words)
+        msg(recipient, message, usecolor = False)
+        recipient.playSound(recipient.getLocation(), "mob.chicken.plop", 1, 0)
