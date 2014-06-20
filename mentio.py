@@ -12,7 +12,7 @@ def onChat(event):
 	messagesList = messages.split(" ")
 	for message in messagesList:
 		for recipient in server.getOnlinePlayers().tolist():
-			if message[:3].lower() in recipient.getName().lower() and len(message) > 2 and len(message) <= len(recipient.getName()):
+			if message[:3].lower() in recipient.getName().lower() and len(message) > 2:
 				msg(recipient, "&6" + symbol + " &f%s &6mentioned you" % sender.getDisplayName())
 				# Couldn't figure out how to done this
 				# recipient.playSound(recipient.getLocation(), Sound.CHICKEN_EGG_POP, 1, 1)
