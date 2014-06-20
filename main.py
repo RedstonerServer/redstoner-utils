@@ -30,7 +30,7 @@ def onDisable():
 log("Loading RedstonerUtils...")
 
 # Import all modules
-modules = ["misc", "adminchat", "lagchunks", "reports", "chatgroups", "webtoken", "saylol", "skullclick"]
+modules = ["misc", "adminchat", "lagchunks", "reports", "chatgroups", "webtoken", "saylol", "skullclick", "mentio"]
 mod = {}
 for module in modules:
   try:

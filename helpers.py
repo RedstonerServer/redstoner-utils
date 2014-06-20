@@ -31,6 +31,9 @@ def broadcast(perm, text):
 def colorify(text):
   return sub("&(?=[?\\da-fk-or])", u"\u00A7", "%s" % text)
 
+def stripcolors(text):
+  return sub(u"\u00A7[\\da-fk-or]", "", "%s" % text)
+
 def safetp(player, world, x, y, z, yaw = 0, pitch = 0):
   tpblock = Location(world, x, y, z).getBlock()
   if (tpblock.isEmpty() and tpblock.getRelative(bblock.BlockFace.UP).isEmpty()) or y > 255:
