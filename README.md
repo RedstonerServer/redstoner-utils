@@ -11,7 +11,7 @@ Redstoner's custom plugins, written in python.
 Detailed description:
 
 0. Create a new directory called 'redstoner'
-0. Download [the latest spigot](ci.md-5.net/job/Spigot/lastStableBuild/artifact/Spigot-Server/target/spigot.jar)
+0. Download [the latest spigot](http://ci.md-5.net/job/Spigot/lastStableBuild/artifact/Spigot-Server/target/spigot.jar)
 0. Run it once inside redstoner, then shut it down again
 0. Create a new directory (inside redstoner) called 'lib'
 0. Download [jython](http://search.maven.org/remotecontent?filepath=org/python/jython-standalone/2.5.3/jython-standalone-2.5.3.jar) and save it as 'jython.jar' inside lib
