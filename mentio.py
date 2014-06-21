@@ -7,7 +7,7 @@ arrow = colorify(u"&r&7\u2192&r")
 regex = reg_compile(u"\u00A7[\\da-fk-or]")
 
 
-@hook.event("player.AsyncPlayerChatEvent", "higher")
+@hook.event("player.AsyncPlayerChatEvent", "high")
 def onChat(event):
   try:
     if not event.isCancelled():
