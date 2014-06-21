@@ -36,8 +36,8 @@ for module in modules:
   try:
     mod[module] = __import__(module)
     log("Module %s loaded." % module)
-  except Exception, e:
-    error("Failed to import module %s: '%s'" % (module, e))
+  except:
+    error("Failed to import module %s:" % module)
     error(print_traceback())
 
 
