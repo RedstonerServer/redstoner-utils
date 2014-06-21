@@ -13,7 +13,7 @@ def onChat(event):
     if not event.isCancelled():
       sender     = event.getPlayer()
       words      = event.getMessage().split(" ")
-      recipients = event.getRecipients()
+      recipients = list(event.getRecipients())
 
       for recipient in recipients[:]:
         rec_words = words[:] # copy
