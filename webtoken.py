@@ -56,6 +56,8 @@ def token_command(sender):
       if token:
         msg(sender, "&aEmail: &e%s" % token[1])
         msg(sender, "&aToken: &e%s" % token[0])
+        msg(sender, "&cIMPORTANT: never share the token with anyone!")
+        msg(sender, "&cIt could be used to claim your website account!")
       else:
         msg(sender, "&cYou don't have a token yet! Use &e/tokengen <email>&c.")
     except Exception, e:
@@ -94,7 +96,7 @@ def onTokenCommand(sender, args):
   thread.start_new_thread(token_command, (sender,))
   return True
 
-@hook.command("tokengen")
+@hook.command("gettoken")
 def onTokengenCommand(sender, args):
   thread.start_new_thread(tokengen_command, (sender, args))
   return True
