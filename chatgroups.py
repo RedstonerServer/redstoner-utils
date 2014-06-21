@@ -12,6 +12,7 @@ try:
 except Exception, e:
   error("Failed to load chatgroups: %s" % e)
 
+
 @hook.command("chatgroup")
 def onChatgroupCommand(sender, args):
   try:
@@ -49,6 +50,7 @@ def onChatgroupCommand(sender, args):
   except Exception, e:
     error(e)
 
+
 @hook.command("cgt")
 def onCgtCommand(sender, args):
   p = sender.getName()
@@ -76,6 +78,7 @@ def groupchat(sender, message, ann=False):
   #except Exception, e:
   #  error(e)
 
+
 def saveGroups():
   try:
     chatgroups_file = open(chatgroups_filename, "w")
@@ -84,7 +87,8 @@ def saveGroups():
   except Exception, e:
     error("Failed to write reports: " + str(e))
 
-@hook.event("player.PlayerChatEvent", "normal")
+
+@hook.event("player.AsyncPlayerChatEvent", "normal")
 def onChat(event):
   sender = event.getPlayer()
   msge = event.getMessage()
