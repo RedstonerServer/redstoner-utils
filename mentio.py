@@ -15,7 +15,7 @@ def onChat(event):
       words      = event.getMessage().split(" ")
       recipients = event.getRecipients()
 
-      for recipient in recipients.tolist():
+      for recipient in list(recipients):
         rec_words = words[:] # copy
         for i in range(len(rec_words)):
           word = rec_words[i]
