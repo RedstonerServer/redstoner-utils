@@ -13,9 +13,9 @@ def onChat(event):
     if not event.isCancelled():
       sender     = event.getPlayer()
       words      = event.getMessage().split(" ")
-      recipients = list(event.getRecipients())
+      recipients = event.getRecipients()
 
-      for recipient in recipients[:]:
+      for recipient in recipients.tolist():
         rec_words = words[:] # copy
         for i in range(len(rec_words)):
           word = rec_words[i]
@@ -25,9 +25,10 @@ def onChat(event):
 
         # player was mentioned
         if rec_words != words:
-          try: # list might not be mutable
+          try:
             recipients.remove(recipient) # don't send original message
           except:
+            # list might not be mutable, ignoring. Receiver will get the message twice
             pass
           message = " ".join([sender.getDisplayName(), arrow] + rec_words)
           msg(recipient, message, usecolor = False)
