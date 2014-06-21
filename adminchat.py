@@ -42,7 +42,7 @@ def onAcCommand(sender, args):
   return True
 
 
-@hook.event("player.PlayerChatEvent", "normal")
+@hook.event("player.AsyncPlayerChatEvent", "higher")
 def onChat(event):
   sender = event.getPlayer()
   msg = event.getMessage()
