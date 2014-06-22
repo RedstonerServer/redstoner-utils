@@ -59,7 +59,7 @@ def onCgtCommand(sender, args):
     msg(sender, "&8[&bCG&8] &e&oCG toggle: off")
   else:
     cg_toggle_list.append(p)
-    msg(sender, "&8[&bAC&8] &e&oCG toggle: on")
+    msg(sender, "&8[&bCG&8] &e&oCG toggle: on")
   return True
 
 def groupchat(sender, message, ann=False):
