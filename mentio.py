@@ -7,7 +7,7 @@ arrow = colorify(u"&r&7\u2192&r")
 regex = reg_compile(u"\u00A7[\\da-fk-or]")
 
 
-@hook.event("player.AsyncPlayerChatEvent", "normal")
+@hook.event("player.AsyncPlayerChatEvent", "high")
 def onChat(event):
   try:
     if not event.isCancelled():
@@ -15,7 +15,7 @@ def onChat(event):
       words      = event.getMessage().split(" ")
       recipients = event.getRecipients()
 
-      for recipient in recipients:
+      for recipient in list(recipients):
         rec_words = words[:] # copy
         for i in range(len(rec_words)):
           word = rec_words[i]
@@ -25,13 +25,14 @@ def onChat(event):
 
         # player was mentioned
         if rec_words != words:
-          try: # list might not be mutable
+          try:
             recipients.remove(recipient) # don't send original message
           except:
+            # list might not be mutable, ignoring. Receiver will get the message twice
             pass
           message = " ".join([sender.getDisplayName(), arrow] + rec_words)
           msg(recipient, message, usecolor = False)
           recipient.playSound(recipient.getLocation(), "mob.chicken.plop", 1, 0)
-  except Exception, e:
-    error("Failed to handle PlayerChatEvent: %s" % e)
+  except:
+    error("Failed to handle PlayerChatEvent:")
     error(print_traceback())

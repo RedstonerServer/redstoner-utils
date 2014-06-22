@@ -11,8 +11,9 @@ sys.path += ['', '/usr/lib/python2.7', '/usr/lib/python2.7/plat-linux2', '/usr/l
 
 try:
   from helpers import *
-except Exception, e:
-  print("[RedstonerUtils] ERROR: Failed to import helpers: %s" % e)
+except:
+  print("[RedstonerUtils] ERROR: Failed to import helpers:")
+  print(print_traceback())
 
 
 
@@ -36,8 +37,8 @@ for module in modules:
   try:
     mod[module] = __import__(module)
     log("Module %s loaded." % module)
-  except Exception, e:
-    error("Failed to import module %s: '%s'" % (module, e))
+  except:
+    error("Failed to import module %s:" % module)
     error(print_traceback())
 
 
