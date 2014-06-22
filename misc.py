@@ -104,16 +104,11 @@ def onRulesCommand(sender, args):
   plugHeader(sender, "Redstoner rules")
   msg(sender, "&31 &7 " + arrow + " &6Make use of common sense and respect.")
   msg(sender, "&32 &7 " + arrow + " &6Do NOT ask for promotion.")
-  msg(sender, "&33 &7 " + arrow + " &6Do NOT use cheats in Survival worlds.")
-  msg(sender, "&34 &7 " + arrow + " &6Do NOT spam entities or leave clocks running.")
-  msg(sender, "&35 &7 " + arrow + " &6Swearing is okay, offending is NOT.")
+  msg(sender, "&33 &7 " + arrow + " &6Do NOT cheat in Survival worlds.")
+  msg(sender, "&34 &7 " + arrow + " &6Do NOT spam entities or make big redstone clocks. (causes lag)")
+  msg(sender, "&35 &7 " + arrow + " &6Swearing is okay, swearing &oat&6 people is NOT.")
   msg(sender, "&36 &7 " + arrow + " &6Do NOT build huge walls around your plot.")
-  msg(sender, "&37 &7 " + arrow + " &6Listen to the admins and mods, even if it is not in the rules.")
-  msg(sender, "&38 &7 " + arrow + " &6Only english in public chat.")
-  msg(sender, "&39 &7 " + arrow + " &6Everyone can get punished, even admins.")
-  msg(sender, "&310 &7" + arrow + " &6Same rules for everyone.")
-  msg(sender, "&311 &7" + arrow + " &6NO OP items.")
-  msg(sender, "&312 &7" + arrow + " &6Do NOT trap other players.")
+  msg(sender, "&37 &7 " + arrow + " &6Only english in public chat. Use &e/msg&6 or &e/cg&6.")
   return True
 
 
