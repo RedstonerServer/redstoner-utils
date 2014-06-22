@@ -1,5 +1,6 @@
+#pylint: disable=F0401
 from helpers import *
-
+import org.bukkit.inventory.ItemStack as ItemStack
 
 #
 # Welcome new players
@@ -75,12 +76,20 @@ def onSudoCommand(sender, args):
   return True
 
 
+#
+# Clicking redstone_sheep with shears will drop redstone + wool and makes a moo sound
+#
 
-
-
-
-
-
+@hook.event("player.PlayerInteractEntityEvent")
+def onPlayerInteractEntity(event):
+  if not event.isCancelled():
+    sender = event.getPlayer()
+    entity = event.getRightClicked()
+    if isPlayer(entity) and str(entity.getUniqueId()) == "ae795aa8-6327-408e-92ab-25c8a59f3ba1" and str(sender.getItemInHand().getType()) == "SHEARS" and str(sender.getGameMode() == "CREATIVE"):
+      for i in range(5):
+        entity.getWorld().dropItemNaturally(entity.getLocation(), ItemStack(bukkit.Material.getMaterial("REDSTONE")))
+        entity.getWorld().dropItemNaturally(entity.getLocation(), ItemStack(bukkit.Material.getMaterial("WOOL")))
+      sender.playSound(entity.getLocation(), "mob.cow.say", 1, 1)
 
 
 #
