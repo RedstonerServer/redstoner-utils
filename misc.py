@@ -106,7 +106,7 @@ def onHeldEvent(event):
     doCycle(player, 9)
 
 def doCycle(player, e):
-  inv = player.getContents()
+  inv = player.getInventory()
   for x in range (0, 9):
     inv[x], inv[x+e] = inv[x+e], inv[x]
 
