@@ -1,5 +1,5 @@
 #pylint: disable=F0401
-import mysqlhack
+import mysqlhack #pylint: disable=unused-import
 import thread
 from re import match
 from com.ziclix.python.sql import zxJDBC
@@ -43,7 +43,6 @@ def generate_token(length):
   return token
 
 def get_token(uuid):
-  # ae795aa86327408e92ab25c8a59f3ba1
   results = mysql_query("SELECT DISTINCT `token`, `email` FROM register_tokens WHERE `uuid` = ? LIMIT 1", (uuid,))
   return results[0] if len(results) == 1 else None
 
@@ -70,8 +69,9 @@ def tokengen_command(sender, args):
   plugHeader(sender, "Website Token")
   if isPlayer(sender):
     if checkargs(sender, args, 1, -1):
-      # email regex, needs something followed by an @ followed by something
-      mail = " ".join(args) # email may contain spaces
+      # email may contain spaces
+      mail = " ".join(args)
+      # email regex, needs something followed by an @ followed by domain or IP
       if match("^.+@(.+\\..{2,}|\\[[0-9a-fA-F:.]+\\])$", mail) != None:
         token = generate_token(6)
         uuid  = sender.getUniqueId().toString().replace("-", "")
