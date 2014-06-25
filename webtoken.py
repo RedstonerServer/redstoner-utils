@@ -68,7 +68,9 @@ def token_command(sender):
 def tokengen_command(sender, args):
   plugHeader(sender, "Website Token")
   if isPlayer(sender):
-    if checkargs(sender, args, 1, -1):
+    if len(args) < 1:
+      msg(sender, "&cPlease use &e/gettoken <email adress>")
+    else:
       # email may contain spaces
       mail = " ".join(args)
       # email regex, needs something followed by an @ followed by domain or IP
@@ -81,6 +83,8 @@ def tokengen_command(sender, args):
           msg(sender, "&aToken generated!")
           msg(sender, "&aEmail: &e%s" % mail)
           msg(sender, "&aToken: &e%s" % token)
+          msg(sender, "&cIMPORTANT: never share the token with anyone!")
+          msg(sender, "&cIt could be used to claim your website account!")
         except Exception, e:
           error(e)
           msg(sender, "&cError getting your token, please contact an admin!")
