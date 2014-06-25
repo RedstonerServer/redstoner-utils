@@ -58,7 +58,7 @@ def token_command(sender):
         msg(sender, "&cIMPORTANT: never share the token with anyone!")
         msg(sender, "&cIt could be used to claim your website account!")
       else:
-        msg(sender, "&cYou don't have a token yet! Use &e/tokengen <email>&c.")
+        msg(sender, "&cYou don't have a token yet! Use &e/gettoken <email>&c.")
     except Exception, e:
       error(e)
       msg(sender, "&cError getting your token, please contact an admin!")
