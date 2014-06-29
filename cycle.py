@@ -44,7 +44,7 @@ def onCyclerCommand(sender, args):
 @hook.event("player.PlayerItemHeldEvent", "normal")
 def onSlotChange(event):
   player    = event.getPlayer()
-  if str(player.getUniqueId()) not in no_cyclers:
+  if str(player.getUniqueId()) not in no_cyclers and not player.isSneakng():
     prev_slot = event.getPreviousSlot()
     new_slot  = event.getNewSlot()
     if (prev_slot == 0 and new_slot == 8): # left -> right
