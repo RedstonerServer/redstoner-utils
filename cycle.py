@@ -20,7 +20,7 @@ def onCyclerCommand(sender, args):
     return True
 
   cmd = args[0].lower()
-  pid = sender.getUniqueId()
+  pid = str(sender.getUniqueId())
   nop = pid in no_cyclers
   if cmd == "on":
     if nop:
@@ -44,7 +44,7 @@ def onCyclerCommand(sender, args):
 @hook.event("player.PlayerItemHeldEvent", "normal")
 def onSlotChange(event):
   player    = event.getPlayer()
-  if player.getUniqueId() not in no_cyclers:
+  if str(player.getUniqueId()) not in no_cyclers:
     prev_slot = event.getPreviousSlot()
     new_slot  = event.getNewSlot()
     if (prev_slot == 0 and new_slot == 8): # left -> right
