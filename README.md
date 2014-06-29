@@ -121,6 +121,10 @@ If you want the server to load a file (*module*) on startup, add it to the `modu
 
   > Adds `/listen`, highlights chat and plays a sound when your name was mentioned
 
+* `cycler.py`
+
+  > Adds `/cycler`, swaps the hotbar with inventory when player changes slot from right->left or left->right
+
 
 # Code styleguide & tips
 

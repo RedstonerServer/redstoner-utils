@@ -93,27 +93,6 @@ def onPlayerInteractEntity(event):
 
 
 #
-# Cycling around the item bar will switch between rows of the inventory
-#
-@hook.event("player.PlayerItemHeldEvent", "normal")
-def onHeldEvent(event):
-  player = event.getPlayer()
-  prev_slot = event.getPreviousSlot()
-  new_slot = event.getNewSlot()
-  if (prev_slot == 0 and new_slot == 8):
-    doCycle(player, -9)
-  elif (prev_slot == 8 and new_slot == 0):
-    doCycle(player, 9)
-   
-def doCycle(player, e):
-  inv = player.getInventory()
-  inv2 = inv.getContents()
-  e = e % len(inv2)
-  inv2 = inv2[e:] + inv2[:e]
-  inv.setContents(inv2)
-
-
-#
 # Various text commands
 #
 
