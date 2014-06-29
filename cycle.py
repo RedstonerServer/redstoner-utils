@@ -56,10 +56,9 @@ def doCycle(player, up):
   shift = -9 if up else 9
   shift = shift % len(items)
   for _ in range(4):
-    uniq_items = sorted(set(list(items)[:shift])) # crazy code
     msg(player, items[:shift])
-    items = items[shift:] + items[:shift] # shift "around"
+    items      = items[shift:] + items[:shift] # shift "around"
+    uniq_items = sorted(set(list(items)[:9]))  # get unique inventory
     if uniq_items != [None]: # row not empty
       break
-
   inv.setContents(items)
