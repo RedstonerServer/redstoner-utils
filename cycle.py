@@ -2,7 +2,7 @@ import simplejson as json
 from helpers import *
 
 cyclers_file = "plugins/redstoner-utils.py.dir/files/cycle.json"
-no_cyclers   = []
+no_cyclers   = [] # opt-out
 try:
   no_cyclers = json.loads(open(cyclers_file).read())
 except Exception, e:
@@ -15,7 +15,8 @@ def onCyclerCommand(sender, args):
   if not isPlayer(sender):
     msg(sender, "&conly players can do this")
     return True
-  if not checkargs(sender, args, 1, 1):
+  if not len(args) == 1:
+    msg(sender, "&cUsage: /cycle <on|off>")
     return True
 
   cmd = args[0].lower()
@@ -49,6 +50,13 @@ def onSlotChange(event):
     elif (prev_slot == 8 and new_slot == 0): # right -> left
       doCycle(player, False)
 
+# ITEM SLOTS #
+#_____________________________
+# | 9|11|12|13|14|15|16|17|18|
+# |19|20|21|22|23|24|25|26|27|
+# |28|29|30|31|32|33|34|35|36|
+#_____________________________
+# | 0| 1| 2| 3| 4| 5| 6| 7| 8|
 
 def doCycle(player, up):
   inv   = player.getInventory()
@@ -64,3 +72,11 @@ def doCycle(player, up):
       break
     msg(player, "empty, skipping")
   inv.setContents(items)
+
+def saveCyclers():
+  try:
+    chatgroups_file = open(cyclers_file, "w")
+    chatgroups_file.write(json.dumps(no_cyclers))
+    chatgroups_file.close()
+  except Exception, e:
+    error("Failed to write reports: " + str(e))
