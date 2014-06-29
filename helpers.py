@@ -25,7 +25,7 @@ def msg(player, text, usecolor = True, basecolor = None):
 # bukkit only works with permissibles that are subscribed to perm
 def broadcast(perm, text):
   text = colorify(text)
-  for recipient in server.getOnlinePlayers().tolist() + [server.getConsoleSender()]:
+  for recipient in list(server.getOnlinePlayers()) + [server.getConsoleSender()]:
     (not perm or recipient.hasPermission(perm)) and msg(recipient, text)
 
 def colorify(text):
