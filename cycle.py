@@ -25,12 +25,14 @@ def onCyclerCommand(sender, args):
   if cmd == "on":
     if nop:
       no_cyclers.remove(pid)
+      saveCyclers()
       msg(sender, "&aTurned &2on&a inventory cycling!")
     else:
       msg(sender, "&aAlready turned on.")
   elif cmd == "off":
     if not nop:
       no_cyclers.append(pid)
+      saveCyclers()
       msg(sender, "&aTurned &coff&a inventory cycling!")
     else:
       msg(sender, "&aAlready turned off.")
@@ -58,19 +60,16 @@ def onSlotChange(event):
 #_____________________________
 # | 0| 1| 2| 3| 4| 5| 6| 7| 8|
 
-def doCycle(player, up):
+def doCycle(player, down):
   inv   = player.getInventory()
   items = inv.getContents()
-  shift = -9 if up else 9
+  shift = -9 if down else 9
   shift = shift % len(items)
   for _ in range(4):
     items      = items[shift:] + items[:shift] # shift "around"
     uniq_items = sorted(set(list(items)[:9]))  # get unique inventory
-    msg(player, uniq_items)
     if uniq_items != [None]: # row not empty
-      msg(player, "not empty, using")
       break
-    msg(player, "empty, skipping")
   inv.setContents(items)
 
 def saveCyclers():
