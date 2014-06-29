@@ -60,7 +60,7 @@ def doCycle(player, up):
     uniq_items = sorted(set(list(items)[:9]))  # get unique inventory
     msg(player, uniq_items)
     if uniq_items != [None]: # row not empty
-    msg(player, "not empty, using")
+      msg(player, "not empty, using")
       break
     msg(player, "empty, skipping")
   inv.setContents(items)
