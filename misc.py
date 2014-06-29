@@ -206,7 +206,7 @@ def onDonateCommand(sender, args):
 @hook.command("pluginversions")
 def onPluginversionsCommand(sender, args):
   plugHeader(sender, "Plugin versions")
-  plugins = server.getPluginManager().getPlugins().tolist()
+  plugins = list(server.getPluginManager().getPlugins())
   plugins.sort(key=lambda pl: pl.getName())
   msg(sender, "&3Listing all " + str(len(plugins)) + " plugins and their version:")
   for plugin in plugins:
