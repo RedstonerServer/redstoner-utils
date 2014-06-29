@@ -42,7 +42,7 @@ def safetp(player, world, x, y, z, yaw = 0, pitch = 0):
     safetp(player, world, x, y+1, z, yaw, pitch)
 
 def plugHeader(sender, name):
-  msg(sender, "&2--=[ %s ]=--" % name)
+  msg(sender, "\n&2--=[ %s ]=--" % name)
 
 def noperm(player):
   msg(player, "&cno permission")
