@@ -58,7 +58,8 @@ def doCycle(player, up):
   for _ in range(4):
     uniq_items = sorted(set(list(items)[:shift])) # crazy code
     msg(player, items[:shift])
+    items = items[shift:] + items[:shift] # shift "around"
     if uniq_items != [None]: # row not empty
       break
-    items = items[shift:] + items[:shift] # shift "around"
+
   inv.setContents(items)
