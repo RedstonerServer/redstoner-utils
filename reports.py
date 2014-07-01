@@ -35,13 +35,16 @@ def tp(sender, rep_id):
 
 
 def deleteReport(sender, rep_id):
-  report = reports[rep_id]
-  reports.pop(rep_id)
-  saveReports()
-  msg(sender, "&aReport #%s deleted." % rep_id)
-  reporter = server.getOfflinePlayer(report['player'])
-  plugHeader(reporter, "Report")
-  msg(reporter, "&aReport '&e%s&a' was resolved by %s." % (report['msg'], sender.getName()))
+  report = reports.get(rep_id)
+  if report:
+    reports.pop(rep_id)
+    saveReports()
+    msg(sender, "&aReport #%s deleted." % rep_id)
+    reporter = server.getOfflinePlayer(report['player'])
+    plugHeader(reporter, "Report")
+    msg(reporter, "&aReport '&e%s&a' was resolved by %s." % (report['msg'], sender.getName()))
+  else:
+    msg(sender, "&cThat report does not exist!")
 
 def saveReports():
   try:
