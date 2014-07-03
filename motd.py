@@ -5,14 +5,14 @@ motd = server.getMotd()
 
 @hook.command("getmotd")
 def onGetMotdCommand(sender, args):
-  plugHeader("MOTD")
+  plugHeader(sender "MOTD")
   msg(sender, motd, usecolor=False)
 
 
 @hook.command("setmotd")
 def onSetMotdCommand(sender, args):
   global motd
-  plugHeader("MOTD")
+  plugHeader(sender, "MOTD")
   if sender.hasPermission("utils.setmotd"):
     if not checkargs(sender, args, 1, -1):
       return True
