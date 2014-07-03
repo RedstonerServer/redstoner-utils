@@ -41,8 +41,10 @@ def safetp(player, world, x, y, z, yaw = 0, pitch = 0):
   else:
     safetp(player, world, x, y+1, z, yaw, pitch)
 
-def plugHeader(sender, name):
-  msg(sender, "\n&2--=[ %s ]=--" % name)
+def plugHeader(sender=None, name="Redstoner Utils"):
+  head = "\n&2--=[ %s ]=--" % name
+  msg(sender, head)
+  return head
 
 def noperm(player):
   msg(player, "&cno permission")
