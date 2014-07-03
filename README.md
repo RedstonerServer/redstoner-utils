@@ -125,6 +125,10 @@ If you want the server to load a file (*module*) on startup, add it to the `modu
 
   > Adds `/cycler`, swaps the hotbar with inventory when player changes slot from right->left or left->right
 
+* `motd.py`
+
+  > Adds `/getmotd` & `/setmotd` to update the motd on the fly (no reboot).
+
 
 # Code styleguide & tips
 
