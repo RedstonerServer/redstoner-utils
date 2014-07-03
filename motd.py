@@ -5,7 +5,7 @@ motd = server.getMotd()
 
 @hook.command("getmotd")
 def onGetMotdCommand(sender, args):
-  plugHeader(sender "MOTD")
+  plugHeader(sender, "MOTD")
   msg(sender, motd, usecolor=False)
 
 
