@@ -1,6 +1,5 @@
 #pylint: disable=F0401
 from helpers import *
-from traceback import format_exc as print_traceback
 
 motd = server.getMotd()
 
@@ -18,7 +17,7 @@ def onSetMotdCommand(sender, args):
     if not checkargs(sender, args, 1, -1):
       return True
 
-    motd = colorify(" ".join(args))
+    motd = colorify(" ".join(args).replace("\\n", "\n"))
     broadcast("", plugHeader(name="MOTD"))
     broadcast("", "&aNew MOTD:&r\n%s" % motd)
   else:
