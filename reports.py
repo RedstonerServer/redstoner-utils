@@ -35,8 +35,8 @@ def tp(sender, rep_id):
 
 
 def deleteReport(sender, rep_id):
-  report = reports.get(rep_id)
-  if report:
+  if len(reports) > rep_id:
+    report = reports[rep_id]
     reports.pop(rep_id)
     saveReports()
     msg(sender, "&aReport #%s deleted." % rep_id)
