@@ -9,14 +9,6 @@ import org.bukkit.inventory.ItemStack as ItemStack
 @hook.event("player.PlayerJoinEvent", "monitor")
 def onJoin(event):
   player = event.getPlayer()
-  for item in player.getInventory():
-    if (item != None and item.getTypeId() == 175 and item.getDurability() > 5):
-      item.setDurability(0)
-      log("&cPlayer '%s' had 175:6 or higher in his inventory! Replaced with 175:0" % player.getName())
-      msg(player, " &a----------------------------------------------------")
-      msg(player, " &4&lWARNING: &cYou had 175:7 (invalid flower) in your inventory.")
-      msg(player, " &cThis crashes your client. We have replaced it with 175:0.")
-      msg(player, " &a----------------------------------------------------")
 
   # send welcome broadcast
   if not server.getOfflinePlayer(player.getName()).hasPlayedBefore():
