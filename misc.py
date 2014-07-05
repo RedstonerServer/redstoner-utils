@@ -18,6 +18,7 @@ def onJoin(event):
       msg(player, " &cThis crashes your client. We have replaced it with 175:0.")
       msg(player, " &a----------------------------------------------------")
 
+  # send welcome broadcast
   if not server.getOfflinePlayer(player.getName()).hasPlayedBefore():
     broadcast("utils.greet_new", "")
     broadcast("utils.greet_new", "&a&lPlease welcome &f" + player.getDisplayName() + " &a&lto Redstoner!")
@@ -33,6 +34,7 @@ def onJoin(event):
     msg(player, "  &6thank you and happy playing ;)")
     msg(player, " \n ")
 
+  # teleport to spawn when spawning inside portal
   loginloc = player.getLocation().getBlock().getType()
   headloc = player.getEyeLocation().getBlock().getType()
   if str(loginloc) == "PORTAL" or str(headloc) == "PORTAL":
@@ -102,50 +104,14 @@ def onRulesCommand(sender, args):
     return True
   arrow = u"\u2192"
   plugHeader(sender, "Redstoner rules")
-  msg(sender, "&31 &7 " + arrow + " &6Make use of common sense and respect.")
-  msg(sender, "&32 &7 " + arrow + " &6Do NOT ask for promotion.")
-  msg(sender, "&33 &7 " + arrow + " &6Do NOT cheat in Survival worlds.")
-  msg(sender, "&34 &7 " + arrow + " &6Do NOT spam entities or make big redstone clocks. (causes lag)")
-  msg(sender, "&35 &7 " + arrow + " &6Swearing is okay, swearing &oat&6 people is NOT.")
-  msg(sender, "&36 &7 " + arrow + " &6Do NOT build huge walls around your plot.")
-  msg(sender, "&37 &7 " + arrow + " &6Only english in public chat. Use &e/msg&6 or &e/cg&6.")
-  return True
-
-
-@hook.command("history")
-def onHistoryCommand(sender, args):
-  if not checkargs(sender, args, 0, 0):
-    return True
-  plugHeader(sender, "Redstoner history")
-  msg(sender, "")
-  msg(sender, " &2First, oliverissocool1 owned redstoner.com plus the server which usually had 10-15 players on.\n")
-  msg(sender, " &2Oliver became lazy and thus moved ownership to oleerik, who was another admin there.\n")
-  msg(sender, " &2Dico joined the server and later he became a moderator.\n")
-  msg(sender, " &2But then oleerik also became lazy, lost interest and shut down the server.\n")
-  msg(sender, " &2Some time later he offered dico to use the server and he was - of course - interested in it.\n")
-  msg(sender, " &2The server did not have the old worlds and configuration anymore and it was down for a good while, so it was like a complete new server.\n")
-  msg(sender, " &2He invited some friends to help him set up the server before opening it to the public (as his 'fan server').\n")
-  msg(sender, " &2Redstone Sheep was one of these friends and made the website, he happened to become the guy who maintains the whole server.\n")
-  msg(sender, " &2The server somtimes crashed or lost it's connection and we were not too happy plus oleerik was always paying for it, without using it himself.\n")
-  msg(sender, " &2PanFritz first helped out by donating and then offered to host a physical server.\n")
-  msg(sender, " &2We discussed a lot and moved everything, it worked very well.\n")
-  msg(sender, " &2A month or two later, a new server was bought from donations and it took some time until the new machine was ready, but the move went quick and without much downtime.\n")
-  msg(sender, " &2Another couple months later, the server underwent many major changes, this update was known as Redstoner 2.0 and vastly improved almost every aspect of the server.\n")
-
-  msg(sender, " &2That's our story for now.")
+  msg(sender, "&aPlease look at our rules on redstoner.com/info")
   return True
 
 
 @hook.command("nick")
 def onNickCommand(sender, args):
   plugHeader(sender, "Nicknames")
-  msg(sender, "&31. &aYou need to be Donor or Trusted. &8&o(See /ranks)")
-  msg(sender, "&32. &aHas to begin with &nat least&3&o " + sender.getName()[:3] + "&a.")
-  msg(sender, "&33. &aMore characters are required when other players")
-  msg(sender, "&a   begin with the same 3 letters.")
-  msg(sender, "&34. &aIt must not be longer than your name.")
-  msg(sender, "&a   (e.g. No addons like '&3" + sender.getName() + "TheCoolOne&a'.)")
-  msg(sender, "&6Ask any staff to get your nickname. Requests are ignored when requirements are not covered. Be patient.")
+  msg(sender, "&aPlease look at our nickname guidelines on redstoner.com/info")
   return True
 
 
@@ -154,18 +120,7 @@ def onRanksCommand(sender, args):
   if not checkargs(sender, args, 0, 0):
     return True
   plugHeader(sender, "Rank colours")
-  msg(sender, " &7Guest")
-  msg(sender, " &fMember")
-  msg(sender, " &aBuilder")
-  msg(sender, " &3Trusted")
-  msg(sender, " &cModerator")
-  msg(sender, " &4Admin")
-  plugHeader(sender, "Rank info")
-  msg(sender, " &oitalic &rnames are nicks. use &a/realname <nick>&r to check")
-  msg(sender, " &eDonator&r rank has <name> &e$&r")
-  msg(sender, " &eDonator+&r rank has <name> &e&l$&r")
-  msg(sender, " To get the &e$&r, see &a/donate&r for more info")
-  msg(sender, "")
+  msg(sender, "&aPlease look at our rank info on redstoner.com/info")
   return True
 
 
