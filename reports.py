@@ -35,7 +35,7 @@ def tp(sender, rep_id):
 
 
 def deleteReport(sender, rep_id):
-  if len(reports) > rep_id:
+  if len(reports) > rep_id >= 0:
     report = reports[rep_id]
     reports.pop(rep_id)
     saveReports()
