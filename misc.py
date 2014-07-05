@@ -94,47 +94,6 @@ def onPlayerInteractEntity(event):
 
 
 #
-# Various text commands
-#
-
-@hook.command("rules")
-def onRulesCommand(sender, args):
-  if not checkargs(sender, args, 0, 0):
-    return True
-  arrow = u"\u2192"
-  plugHeader(sender, "Redstoner rules")
-  msg(sender, "&aPlease look at our rules on redstoner.com/info")
-  return True
-
-
-@hook.command("nick")
-def onNickCommand(sender, args):
-  plugHeader(sender, "Nicknames")
-  msg(sender, "&aPlease look at our nickname guidelines on redstoner.com/info")
-  return True
-
-
-@hook.command("ranks")
-def onRanksCommand(sender, args):
-  if not checkargs(sender, args, 0, 0):
-    return True
-  plugHeader(sender, "Rank colours")
-  msg(sender, "&aPlease look at our rank info on redstoner.com/info")
-  return True
-
-
-@hook.command("donate")
-def onDonateCommand(sender, args):
-  if not checkargs(sender, args, 0, 0):
-    return True
-  msg(sender, "")
-  plugHeader(sender, "Donations")
-  msg(sender, " &aWant to donate? Awesome!")
-  msg(sender, " &6all info is at &nredstoner.com/donate&r")
-  msg(sender, "")
-  return True
-
-#
 # /pluginversions - print all plugins + versions; useful when updating plugins
 #
 
@@ -146,29 +105,4 @@ def onPluginversionsCommand(sender, args):
   msg(sender, "&3Listing all " + str(len(plugins)) + " plugins and their version:")
   for plugin in plugins:
     msg(sender, "&6" + plugin.getName() + "&r: &e" + plugin.getDescription().getVersion())
-  return True
-
-
-#
-# Various command aliases
-#
-
-@hook.command("spawn")
-def onSpawnCommand(sender, args):
-  warp(sender, args, "spawn")
-  return True
-
-@hook.command("cr")
-def onCrCommand(sender, args):
-  warp(sender, args, "cr")
-  return True
-
-@hook.command("tr")
-def onTrCommand(sender, args):
-  warp(sender, args, "tr")
-  return True
-
-@hook.command("faq")
-def onFaqCommand(sender, args):
-  warp(sender, args, "faq")
   return True
