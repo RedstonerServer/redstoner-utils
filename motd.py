@@ -12,7 +12,6 @@ def onGetMotdCommand(sender, args):
 @hook.command("setmotd")
 def onSetMotdCommand(sender, args):
   global motd
-  plugHeader(sender, "MOTD")
   if sender.hasPermission("utils.setmotd"):
     if not checkargs(sender, args, 1, -1):
       return True
@@ -20,6 +19,7 @@ def onSetMotdCommand(sender, args):
     motd = colorify(" ".join(args).replace("\\n", "\n"))
     broadcast("", plugHeader(name="MOTD"))
     broadcast("", "&aNew MOTD:&r\n%s" % motd)
+    broadcast(" ")
   else:
     noperm(sender)
   return True
