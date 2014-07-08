@@ -4,7 +4,7 @@ from helpers import *
 ac_permission  = "utils.ac"
 ac_key         = ","
 ac_toggle_list = []
-
+ac_prefix      = "&8[&cAC&8]"
 
 def adminchat(sender, msg):
   name = "&7{unknown}"
@@ -12,7 +12,7 @@ def adminchat(sender, msg):
     name = sender.getDisplayName()
   except:
     name = sender.getName()
-  broadcast(ac_permission, "&8[&bAC&8] &9%s&8: &b%s" % (name, msg))
+  broadcast(ac_permission, "%s &9%s&8: &b%s" % (ac_prefix, name, msg))
 
 
 # ac toggle
@@ -22,10 +22,10 @@ def onActCommand(sender, args):
     p = sender.getName()
     if p in ac_toggle_list:
       ac_toggle_list.remove(p)
-      msg(sender, "&8[&bAC&8] &aAC toggle: off")
+      msg(sender, "%s &aAC toggle: off" % ac_prefix)
     else:
       ac_toggle_list.append(p)
-      msg(sender, "&8[&bAC&8] &aAC toggle: on")
+      msg(sender, "%s &aAC toggle: on" % ac_prefix)
   else:
     noperm(sender)
   return True
