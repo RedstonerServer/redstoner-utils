@@ -104,3 +104,11 @@ def onPluginversionsCommand(sender, args):
   for plugin in plugins:
     msg(sender, "&6" + plugin.getName() + "&r: &e" + plugin.getDescription().getVersion())
   return True
+
+#
+# /echo - essentials echo sucks and prints mail alerts sometimes
+#
+
+@hook.command("echo")
+def onEchoCommand(sender, args):
+  msg(sender, " ".join(args).replace("\\n", "\n"))
