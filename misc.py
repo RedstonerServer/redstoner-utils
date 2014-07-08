@@ -20,12 +20,10 @@ def onJoin(event):
     # clear out some eventual crap before
     msg(player, " \n \n \n \n \n \n \n \n \n \n \n \n ")
     msg(player, "  &4Welcome to the Redstoner Server!")
-    msg(player, "  &6please make sure to read the info here:")
-    msg(player, "  &6/The FAQ at /spawn")
-    msg(player, "  &6/rules")
-    msg(player, "  &6/ranks")
-    msg(player, "  &6thank you and happy playing ;)")
-    msg(player, " \n ")
+    msg(player, "  &6Before you ask us things, take a quick")
+    msg(player, "  &6look at the &a&l/FAQ &6command.")
+    msg(player, "  \n&6thank you and happy playing ;)")
+    msg(player, " \n \n")
 
   # teleport to spawn when spawning inside portal
   loginloc = player.getLocation().getBlock().getType()
