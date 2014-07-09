@@ -129,6 +129,10 @@ If you want the server to load a file (*module*) on startup, add it to the `modu
 
   > Adds `/getmotd` & `/setmotd` to update the motd on the fly (no reboot).
 
+* `abot.py`
+
+  > AnswerBot. Hides stupid questions from chat and tells the sender about `/faq` or the like
+
 
 # Code styleguide & tips
 
