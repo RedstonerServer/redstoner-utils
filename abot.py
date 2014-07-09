@@ -24,7 +24,7 @@ def onChat(event):
     if regex.search(message):
       plugHeader(sender, "AnswerBot")
       msg(sender, "&aLooks like you're asking something that's likely in our FAQ.")
-      msg(sender, "&aTake a look at &4&l/faq&a and read through the pages.\n")
+      msg(sender, "&aTake a look at &4&l/faq&a and read through the pages.\n ") # trailing space required
       event.setCancelled(True)
       log("(hidden) %s: '%s'" % (sender.getName(), message))
       break
