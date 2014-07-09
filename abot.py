@@ -5,7 +5,7 @@ rank_regex = "visitor|member|builder|trusted|helper|mod|admin|owner|rank"
 
 faq_regex = [
   # ranks
-  "(how-*? (get|be(come)?|)|who is)-*? (%s)" % rank_regex,
+  "(how.*? (get|be(come)?|)|who is|are you).*? (%s)" % rank_regex,
   # WE
   "(can|how|why).*? (have|haz|use|get|doesn|can'?t).*? (WorldEdit|WE|W.E.)",
   # clearing plot
@@ -23,8 +23,8 @@ def onChat(event):
   for regex in faq_regex:
     if regex.search(message):
       plugHeader(sender, "AnswerBot")
-      msg(sender, "&aIt looks like you aksed a question that is likely answered in our FAQ.")
-      msg(sender, "&aPlease take a look at the &4&l/faq&a command and read through the pages.")
+      msg(sender, "&aLooks like you're asking something that's likely in our FAQ.")
+      msg(sender, "&aTake a look at &4&l/faq&a and read through the pages.\n")
       event.setCancelled(True)
-      log("(Answerbot) hiding message from %s: '%s'" % (sender.getName(), message))
+      log("(hidden) %s: '%s'" % (sender.getName(), message))
       break
