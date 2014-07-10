@@ -5,7 +5,7 @@ rank_regex = "visitor|member|builder|trusted|helper|mod\\b|moderator|admin|owner
 
 faq_regex = [
   # ranks
-  "\\b(how.*? get\\b|be\\b|become|who is|are you).*? (%s)|who owns.* server" % rank_regex,
+  "\\b(how.*? (get\\b|be\\b|become)|who is|are you).*? (%s)|\\bwho owns.* server" % rank_regex,
   # WE
   "\\b(can|how|why).*? (have|haz|use|get|doesn|can'?t).*? (WorldEdit|WE\\b|W\\.E\\.\\b)",
   # clearing plot
