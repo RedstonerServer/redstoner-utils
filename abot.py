@@ -7,7 +7,7 @@ faq_regex = [
   # ranks
   "(how.*? (get|be(come)?|)|who is|are you).*? (%s)|who owns.* server" % rank_regex,
   # WE
-  "(can|how|why).*? (have|haz|use|get|doesn|can'?t).*? (WorldEdit|WE|W.E.)",
+  "(can|how|why).*? (have|haz|use|get|doesn|can'?t).*? (WorldEdit|WE\\b|W\\.E\\.\\b)",
   # clearing plot
   "((why|how).*? (do|can)|how to).*?( /?p clear| clear.*? plot)",
   # add someone to a plot, claim plot
