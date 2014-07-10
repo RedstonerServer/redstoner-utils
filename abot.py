@@ -1,7 +1,7 @@
 from helpers import *
 from re import compile as reg_compile
 
-rank_regex = "visitor|member|builder|trusted|helper|mod|admin|owner|rank"
+rank_regex = "visitor|member|builder|trusted|helper|mod\b|moderator|admin|owner|rank"
 
 faq_regex = [
   # ranks
