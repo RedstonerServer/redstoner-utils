@@ -9,7 +9,7 @@ faq_regex = [
   # WE
   "\\b(can|how|why).*? (have|haz|use|get|doesn|can'?t).*? (WorldEdit|WE\\b|W\\.E\\.\\b)",
   # clearing plot
-  "\\b((why|how).*? (do|can)|how to).*?( /?p clear| clear.*? plot)",
+  "\\b((why|how|who).*? (do|can)|how to).*?( /?p clear| clear.*? plot)",
   # add someone to a plot, claim plot
   "\\bhow.*? (get|claim|own|add).*? plot"
 ]
