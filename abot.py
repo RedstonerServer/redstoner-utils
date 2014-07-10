@@ -5,13 +5,13 @@ rank_regex = "visitor|member|builder|trusted|helper|mod\\b|moderator|admin|owner
 
 faq_regex = [
   # ranks
-  "(how.*? (get|be(come)?|)|who is|are you).*? (%s)|who owns.* server" % rank_regex,
+  "\\b(how.*? (get|be(come)?)|who is|are you).*? (%s)|who owns.* server" % rank_regex,
   # WE
-  "(can|how|why).*? (have|haz|use|get|doesn|can'?t).*? (WorldEdit|WE\\b|W\\.E\\.\\b)",
+  "\\b(can|how|why).*? (have|haz|use|get|doesn|can'?t).*? (WorldEdit|WE\\b|W\\.E\\.\\b)",
   # clearing plot
-  "((why|how).*? (do|can)|how to).*?( /?p clear| clear.*? plot)",
+  "\\b((why|how).*? (do|can)|how to).*?( /?p clear| clear.*? plot)",
   # add someone to a plot, claim plot
-  "how.*? (get|claim|own|add).*? plot"
+  "\\bhow.*? (get|claim|own|add).*? plot"
 ]
 
 faq_regex = [reg_compile(reg.lower()) for reg in faq_regex]
