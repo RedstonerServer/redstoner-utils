@@ -4,7 +4,7 @@ import simplejson as json
 
 chatgroups_filename = "plugins/redstoner-utils.py.dir/files/chatgroups.json"
 groups              = {}
-cg_key              = "."
+cg_key              = ":"
 cg_toggle_list      = []
 
 try:
@@ -18,7 +18,7 @@ def onChatgroupCommand(sender, args):
   try:
     plugHeader(sender, "ChatGroups")
     if len(args) == 1 and args[0] == "leave":
-      if sender.getName() in groups.keys():
+      if str(sender.getUniqueId()) in groups.keys():
         groupchat(sender, "left the group", True)
         group = groups[sender.getName()]
         del(groups[sender.getName()])
@@ -26,8 +26,8 @@ def onChatgroupCommand(sender, args):
       else:
         msg(sender, "&aYou can't leave no group, derp!")
     elif len(args) == 1 and args[0] == "info":
-      if sender.getName() in groups.keys():
-        group = groups[sender.getName()]
+      if str(sender.getUniqueId()) in groups.keys():
+        group = groups[str(sender.getUniqueId())]
         msg(sender, "&aCurrent chatgroup: %s" % group)
         users = []
         for user, ugroup in groups.iteritems():
@@ -38,7 +38,7 @@ def onChatgroupCommand(sender, args):
       else:
         msg(sender, "&aYou're in no chatgroup.")
     elif len(args) == 2 and args[0] == "join":
-      groups[sender.getName()] = args[1]
+      groups[str(sender.getUniqueId())] = args[1]
       groupchat(sender, "joined the group", True)
       saveGroups()
       msg(sender, "&aYour chatgroup is set to '%s'" % args[1])
@@ -53,7 +53,7 @@ def onChatgroupCommand(sender, args):
 
 @hook.command("cgt")
 def onCgtCommand(sender, args):
-  p = sender.getName()
+  p = str(sender.getUniqueId())
   if p in cg_toggle_list:
     cg_toggle_list.remove(p)
     msg(sender, "&8[&bCG&8] &e&oCG toggle: off")
@@ -64,7 +64,7 @@ def onCgtCommand(sender, args):
 
 def groupchat(sender, message, ann=False):
   #try:
-  group = groups.get(sender.getName())
+  group = groups.get(str(sender.getUniqueId()))
   if group == None:
     msg(sender, "&cYou are not in a group!")
     return
@@ -74,7 +74,7 @@ def groupchat(sender, message, ann=False):
   else:
     mesg = "&8[&bCG&8] &f%s&f: &6%s" % (name, message)
   for receiver in server.getOnlinePlayers():
-    groups.get(receiver.getName()) == group and msg(receiver, mesg)
+    groups.get(str(receiver.getUniqueId())) == group and msg(receiver, mesg)
   #except Exception, e:
   #  error(e)
 
@@ -93,9 +93,9 @@ def onChat(event):
   sender = event.getPlayer()
   msge = event.getMessage()
   if not event.isCancelled():
-    if msge[:len(cg_key)] == cg_key and sender.getName() in groups.keys():
+    if msge[:len(cg_key)] == cg_key and str(sender.getUniqueId()) in groups.keys():
       groupchat(sender, msge[1:])
       event.setCancelled(True)
-    elif sender.getName() in cg_toggle_list:
+    elif str(sender.getUniqueId()) in cg_toggle_list:
       groupchat(sender, msge)
       event.setCancelled(True)
