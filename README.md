@@ -133,6 +133,9 @@ If you want the server to load a file (*module*) on startup, add it to the `modu
 
   > AnswerBot. Hides stupid questions from chat and tells the sender about `/faq` or the like
 
+* `damnspam.py`
+
+  > Prevents spamming of contraptions by setting a custom timeout
 
 # Code styleguide & tips
 
