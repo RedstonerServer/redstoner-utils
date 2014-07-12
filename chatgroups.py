@@ -1,5 +1,6 @@
 #pylint: disable=F0401
 from helpers import *
+from java.utils.UUID import fromString as juuid
 import simplejson as json
 
 chatgroups_filename = "plugins/redstoner-utils.py.dir/files/chatgroups.json"
@@ -30,9 +31,11 @@ def onChatgroupCommand(sender, args):
         group = groups[str(sender.getUniqueId())]
         msg(sender, "&aCurrent chatgroup: %s" % group)
         users = []
-        for user, ugroup in groups.iteritems():
+        for uid, ugroup in groups.iteritems():
           if ugroup == group:
-            users += [user]
+            usr = server.getPlayer(juuid(uid))
+            if usr:
+              users.append(usr.getDisplayName())
         msg(sender, "&aUsers in this group:")
         msg(sender,  "&a%s" % ", ".join(users))
       else:
