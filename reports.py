@@ -97,15 +97,15 @@ def onReportCommand(sender, args):
   loc = sender.getLocation()
   reporter = sender.name
   report = {
-    'player': reporter,
-    'msg': text,
-    'x': int(loc.x),
-    'y': int(loc.y),
-    'z': int(loc.z),
-    'yaw': int(loc.yaw),
-    'pitch': int(loc.pitch),
-    'world': loc.getWorld().name,
-    'time': time.strftime(time_format)
+    "player": reporter,
+    "msg": text,
+    "x": int(loc.x),
+    "y": int(loc.y),
+    "z": int(loc.z),
+    "yaw": int(loc.yaw),
+    "pitch": int(loc.pitch),
+    "world": loc.getWorld().name,
+    "time": time.strftime(time_format)
   }
   reports.append(report)
   saveReports()
