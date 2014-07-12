@@ -22,7 +22,7 @@ def printHelp(sender):
 def printList(sender):
   msg(sender, "&a" + str(len(reports)) + " reports:")
   for i, report in enumerate(reports):
-    msg(sender, "&8[&e" + str(i) + " &c" + report['time'] + "&8] &3" + report['player'] + "&f: &a" + report['msg'])
+    msg(sender, "&8[&e" + str(i) + " &c" + report["time"] + "&8] &3" + report["player"] + "&f: &a" + report["msg"])
 
 def tp(sender, rep_id):
   if rep_id >= len(reports) or rep_id < 0:
@@ -30,7 +30,7 @@ def tp(sender, rep_id):
     return True
   else:
     report = reports[rep_id]
-    safetp(sender, server.getWorld(report['world']), report['x'], report['y'], report['z'], report['yaw'], report['pitch'])
+    safetp(sender, server.getWorld(report["world"]), report["x"], report["y"], report["z"], report["yaw"], report["pitch"])
     msg(sender, "&aTeleported to report #%s" % rep_id )
 
 
@@ -40,9 +40,9 @@ def deleteReport(sender, rep_id):
     reports.pop(rep_id)
     saveReports()
     msg(sender, "&aReport #%s deleted." % rep_id)
-    reporter = server.getOfflinePlayer(report['player'])
+    reporter = server.getOfflinePlayer(report["player"])
     plugHeader(reporter, "Report")
-    msg(reporter, "&aReport '&e%s&a' was resolved by %s." % (report['msg'], sender.getName()))
+    msg(reporter, "&aReport '&e%s&a" was resolved by %s." % (report["msg"], sender.getName()))
   else:
     msg(sender, "&cThat report does not exist!")
 
