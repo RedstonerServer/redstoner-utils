@@ -143,6 +143,10 @@ If you want the server to load a file (*module*) on startup, add it to the `modu
 Never use tabs!
 Use 2 spaces to indent.
 
+## Quotes
+Always use double-quotes!
+Only use single-quotes when the string contains double-quotes that would need to be escaped.
+
 ## Comments
 Comments are good!
 Please comment everything that's non-obious or makes it easier to understand
