@@ -3,7 +3,7 @@ import org.bukkit.event.block.BlockPlaceEvent as BlockPlaceEvent
 import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
 import org.bukkit.event.player.PlayerInteractEvent as PlayerInteractEvent
 import thread
-import simplejson as json
+import json
 from time import sleep
 from helpers import *
 

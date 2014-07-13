@@ -1,6 +1,6 @@
 #pylint: disable=F0401
 from helpers import *
-import simplejson as json
+import json
 
 spam_filename = "plugins/redstoner-utils.py.dir/files/damnspam.json"
 inputs = []
