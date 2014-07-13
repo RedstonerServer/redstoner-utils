@@ -99,7 +99,7 @@ def onPlayerInteractEntity(event):
 def onPluginversionsCommand(sender, args):
   plugHeader(sender, "Plugin versions")
   plugins = list(server.getPluginManager().getPlugins())
-  plugins.sort(key=lambda pl: pl.getName())
+  plugins.sort(key=lambda pl: pl.getDescription().getName())
   msg(sender, "&3Listing all " + str(len(plugins)) + " plugins and their version:")
   for plugin in plugins:
     msg(sender, "&6" + plugin.getDescription().getName() + "&r: &e" + plugin.getDescription().getVersion())
