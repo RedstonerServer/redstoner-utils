@@ -18,17 +18,18 @@ except Exception, e:
 def onChatgroupCommand(sender, args):
   try:
     plugHeader(sender, "ChatGroups")
+    sender_id = str(sender.getUniqueId())
     if len(args) == 1 and args[0] == "leave":
-      if str(sender.getUniqueId()) in groups.keys():
+      if sender_id in groups.keys():
         groupchat(sender, "left the group", True)
-        group = groups[sender.getName()]
-        del(groups[sender.getName()])
+        group = groups[sender_id]
+        del(groups[sender_id])
         saveGroups()
       else:
         msg(sender, "&aYou can't leave no group, derp!")
     elif len(args) == 1 and args[0] == "info":
-      if str(sender.getUniqueId()) in groups.keys():
-        group = groups[str(sender.getUniqueId())]
+      if sender_id in groups.keys():
+        group = groups[sender_id]
         msg(sender, "&aCurrent chatgroup: %s" % group)
         users = []
         for uid, ugroup in groups.iteritems():
@@ -41,7 +42,7 @@ def onChatgroupCommand(sender, args):
       else:
         msg(sender, "&aYou're in no chatgroup.")
     elif len(args) == 2 and args[0] == "join":
-      groups[str(sender.getUniqueId())] = args[1]
+      groups[sender_id] = args[1]
       groupchat(sender, "joined the group", True)
       saveGroups()
       msg(sender, "&aYour chatgroup is set to '%s'" % args[1])
@@ -96,9 +97,10 @@ def onChat(event):
   sender = event.getPlayer()
   msge = event.getMessage()
   if not event.isCancelled():
-    if msge[:len(cg_key)] == cg_key and str(sender.getUniqueId()) in groups.keys():
+    sender_id = str(sender.getUniqueId())
+    if msge[:len(cg_key)] == cg_key and sender_id in groups.keys():
       groupchat(sender, msge[1:])
       event.setCancelled(True)
-    elif str(sender.getUniqueId()) in cg_toggle_list:
+    elif sender_id in cg_toggle_list:
       groupchat(sender, msge)
       event.setCancelled(True)
