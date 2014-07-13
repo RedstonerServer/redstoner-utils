@@ -42,7 +42,7 @@ def deleteReport(sender, rep_id):
     msg(sender, "&aReport #%s deleted." % rep_id)
     reporter = server.getOfflinePlayer(report["player"])
     plugHeader(reporter, "Report")
-    msg(reporter, "&aReport '&e%s&a" was resolved by %s." % (report["msg"], sender.getName()))
+    msg(reporter, "&aReport '&e%s&a' was resolved by %s." % (report["msg"], sender.getName()))
   else:
     msg(sender, "&cThat report does not exist!")
 
