@@ -46,7 +46,7 @@ def onChatgroupCommand(sender, args):
       groupchat(sender, "joined the group", True)
       saveGroups()
       msg(sender, "&aYour chatgroup is set to '%s'" % args[1])
-      msg(sender, "&aAnyone in the group sees chat that begins with &e%s" % cg_key)
+      msg(sender, "&aUse chat like '&e%s<message>' to send messages to this group." % cg_key)
     else:
       msg(sender, "&e/chatgroup join <name>")
       msg(sender, "&e/chatgroup leave")
