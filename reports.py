@@ -1,5 +1,5 @@
 from helpers import *
-import simplejson as json
+import json
 import time
 import thread
 

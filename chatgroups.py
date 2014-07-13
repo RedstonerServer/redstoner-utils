@@ -1,7 +1,7 @@
 #pylint: disable=F0401
 from helpers import *
 from java.util.UUID import fromString as juuid
-import simplejson as json
+import json
 
 chatgroups_filename = "plugins/redstoner-utils.py.dir/files/chatgroups.json"
 groups              = {}
