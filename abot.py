@@ -5,8 +5,6 @@ from re import compile as reg_compile
 answers_filename = "plugins/redstoner-utils.py.dir/files/abot.json"
 answers = []
 
-load_answers()
-
 
 def load_answers():
   global answers
@@ -62,3 +60,6 @@ def onChat(event):
           event.setCancelled(True)
           log("(hidden) %s: '%s'" % (sender.getName(), message))
           break
+
+
+load_answers()
