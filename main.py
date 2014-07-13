@@ -3,7 +3,6 @@ __plugin_version__   = "3.0"
 __plugin_mainclass__ = "foobar"
 
 import sys
-import thread
 from traceback import format_exc as print_traceback
 
 # damn pythonloader changed the PATH
@@ -24,14 +23,14 @@ def onEnable():
 
 @hook.disable
 def onDisable():
-  mod["reports"].stopChecking()
+  shared["modules"]["reports"].stopChecking()
   log("RedstonerUtils disabled!")
 
 
 log("Loading RedstonerUtils...")
 
 # Import all modules, in this order
-modules = [
+load_modules = [
   "misc",
   "adminchat",
   "lagchunks",
@@ -45,39 +44,11 @@ modules = [
   "motd",
   "abot"
 ]
-mod = {}
-for module in modules:
+shared["modules"] = {}
+for module in load_modules:
   try:
-    mod[module] = __import__(module)
+    shared["modules"][module] = __import__(module)
     log("Module %s loaded." % module)
   except:
     error("Failed to import module %s:" % module)
     error(print_traceback())
-
-
-
-#
-# /pyeval - run python ingame
-#
-# has to be in main.py so we can access the modules
-
-def evalThread(sender, code):
-  try:
-    msg(sender, "%s" % unicode(eval(code)), False, "a")
-  except Exception, e:
-    msg(sender, "%s: %s" % (e.__class__.__name__, e), False, "c")
-  thread.exit()
-
-@hook.command("pyeval")
-def onPyevalCommand(sender, args):
-  if sender.hasPermission("utils.pyeval"):
-    if not checkargs(sender, args, 1, -1):
-      return True
-    msg(sender, "%s" % " ".join(args), False, "e")
-    try:
-      thread.start_new_thread(evalThread, (sender, " ".join(args)))
-    except Exception, e:
-      msg(sender, "&cInternal error: %s" % e)
-  else:
-    noperm(sender)
-  return True
