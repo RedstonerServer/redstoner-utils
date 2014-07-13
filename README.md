@@ -137,7 +137,6 @@ If you want the server to load a file (*module*) on startup, add it to the `modu
 
   > Adds `/damnspam`, creates timeout for buttons/levers to mitigate button spam.
 
-
 # Code styleguide & tips
 
 ## Indentation
