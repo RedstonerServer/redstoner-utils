@@ -45,6 +45,9 @@ def onAbotCommand(sender, args):
       msg(sender, "&2Reloaded!")
     else:
       msg(sender)
+  else:
+    noperm(sender)
+  return True
 
 
 @hook.event("player.AsyncPlayerChatEvent", "low")
