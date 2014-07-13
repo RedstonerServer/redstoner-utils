@@ -23,9 +23,9 @@ def list_answers(sender):
     msg(sender, "&e{")
     msg(sender, "  &eregex:")
     for regex in answer["regex"]:
-      msg(sender, "    " + regex.pattern, basecolor="&a", usecolor=False)
+      msg(sender, "    " + regex.pattern, basecolor="a", usecolor=False)
     msg(sender, "  &epermission:")
-    msg(sender, "    " + str(answer["hide-perm"]), basecolor="&a", usecolor=False)
+    msg(sender, "    " + str(answer["hide-perm"]), basecolor="a", usecolor=False)
     msg(sender, "  &emessage:")
     msg(sender, "    " + "\n    ".join(answer["message"].split("\n")))
     msg(sender, "&e}")
