@@ -43,7 +43,8 @@ modules = [
   "mentio",
   "cycle",
   "motd",
-  "abot"
+  "abot",
+  "forcefield"
 ]
 mod = {}
 for module in modules:
