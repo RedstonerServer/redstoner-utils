@@ -118,7 +118,7 @@ def onBreak(event):
 def onInteract(event):
   if (str(event.getAction()) == "RIGHT_CLICK_BLOCK") and not event.isCancelled():
     sender  = event.getPlayer()
-    block   = event.getClickedBlock().getState()
+    block   = event.getClickedBlock()
     btype   = str(block.getType()).lower()
     powered = (block.getData() & 0x8) == 0x8 if btype == "lever" else False # data > 7, but this is how bukkit does it
     pos_str = location_str(block)
