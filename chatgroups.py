@@ -1,7 +1,7 @@
 #pylint: disable=F0401
 from helpers import *
-from java.utils.UUID import fromString as juuid
-import simplejson as json
+from java.util.UUID import fromString as juuid
+import json
 
 chatgroups_filename = "plugins/redstoner-utils.py.dir/files/chatgroups.json"
 groups              = {}
@@ -46,7 +46,7 @@ def onChatgroupCommand(sender, args):
       groupchat(sender, "joined the group", True)
       saveGroups()
       msg(sender, "&aYour chatgroup is set to '%s'" % args[1])
-      msg(sender, "&aAnyone in the group sees chat that begins with &e%s" % cg_key)
+      msg(sender, "&aUse chat like '&e%s<message>' to send messages to this group." % cg_key)
     else:
       msg(sender, "&e/chatgroup join <name>")
       msg(sender, "&e/chatgroup leave")
@@ -66,6 +66,7 @@ def onCgtCommand(sender, args):
     msg(sender, "&8[&bCG&8] &e&oCG toggle: on")
   return True
 
+
 def groupchat(sender, message, ann=False):
   #try:
   group = groups.get(str(sender.getUniqueId()))
@@ -77,6 +78,7 @@ def groupchat(sender, message, ann=False):
     mesg = "&8[&bCG&8] &e&o%s&e&o %s" % (name, message)
   else:
     mesg = "&8[&bCG&8] &f%s&f: &6%s" % (name, message)
+  log("[ChatGroups] %s (%s): %s" % (sender, group, message))
   for receiver in server.getOnlinePlayers():
     groups.get(str(receiver.getUniqueId())) == group and msg(receiver, mesg)
   #except Exception, e:
