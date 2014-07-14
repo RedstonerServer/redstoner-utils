@@ -41,7 +41,7 @@ def onDammnspamCommand(sender, args):
   global inputs
 
   plugHeader(sender, "DamnSpam")
-  if len(args) in range(2):
+  if len(args) in [1,2]:
 
     if not str(sender.getGameMode()) == "CREATIVE":
       msg(sender, "&cYou can only do this in Creative mode.")
