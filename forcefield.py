@@ -1,4 +1,3 @@
-
 from helpers import *
 from java.util.UUID import fromString as juuid
 
@@ -27,42 +26,45 @@ def onForceFieldCommand(sender, args):
     return True
   sender_id = str(sender.getUniqueId())
   args = args.lower()
-  if not args or args[0] == "toggle": #Toggle
-    if sender_id in forcefield_toggle:
-      forcefield_toggle.remove(sender_id)
-      msg(sender, "%s &aForceField toggle: &cOFF" % forcefield_prefix)
+  try:
+    if not args or args[0] == "toggle": #Toggle
+      if sender_id in forcefield_toggle:
+        forcefield_toggle.remove(sender_id)
+        msg(sender, "%s &aForceField toggle: &cOFF" % forcefield_prefix)
+      else:
+        forcefield_toggle.append(sender_id)
+        msg(sender, "%s &aForceField toggle: &2ON" % forcefield_prefix)
+    elif args[0] in ["whitelist", "wl", "wlist"]: #Whitelist commands
+      if not args[1] or args[1] == "list":
+        msg(sender, "%s &aForceField Whitelist:") % forcefield_prefix
+        c=0
+        for uid in forcefield_whitelist[sender_id]:
+          c+=1
+          msg(sender, "&a%s. &f%s") % (c, juuid(uid))
+      elif args[1] == "clear":
+        forcefield_whitelist[sender_id] = []
+        msg(sender, "%s &aForceField Whitelist cleared.")
+      elif args[1] in ["add", "+"]:
+        if not args[2:]:
+          msg(sender, "%s &cGive playernames to add to your whitelist." % forcefield_prefix)
+        else:
+          for name in args[2:]:
+            uid = str(server.getPlayer(name).getUniqueId())
+            forcefield_whitelist[sender_id].append(uid)
+      elif args[1] in ["remove", "delete", "rem", "del", "-"]:
+        if not args[2:]:
+          msg(sender, "%s &cGive playernames to remove from your whitelist." % forcefield_prefix)
+        else:
+          for name in args[2:]:
+            uid = str(server.getPlayer(name).getUniqueId())
+            forcefield_whitelist[sender_id].remove(uid)
+    elif args[0] in ["help", "?"]: #/forcefield help
+      forcefield_help(sender)
     else:
-      forcefield_toggle.append(sender_id)
-      msg(sender, "%s &aForceField toggle: &2ON" % forcefield_prefix)
-  elif args[0] in ["whitelist", "wl", "wlist"]: #Whitelist commands
-    if not args[1] or args[1] == "list":
-      msg(sender, "%s &aForceField Whitelist:") % forcefield_prefix
-      c=0
-      for uid in forcefield_whitelist[sender_id]:
-        c+=1
-        msg(sender, "&a%s. &f%s") % (c, juuid(uid))
-    elif args[1] == "clear":
-      forcefield_whitelist[sender_id] = []
-      msg(sender, "%s &aForceField Whitelist cleared.")
-    elif args[1] in ["add", "+"]
-      if not args[2:]:
-        msg(sender, "%s &cGive playernames to add to your whitelist." % forcefield_prefix)
-      else:
-        for name in args[2:]:
-          uid = str(server.getPlayer(name).getUniqueId())
-          forcefield_whitelist[sender_id].append(uid)
-    elif args[1] in ["remove", "delete", "rem", "del", "-"]:
-      if not args[2:]:
-        msg(sender, "%s &cGive playernames to remove from your whitelist." % forcefield_prefix)
-      else:
-        for name in args[2:]:
-          uid = str(server.getPlayer(name).getUniqueId())
-          forcefield_whitelist[sender_id].remove(uid)
-  elif args[0] in ["help", "?"]: #/forcefield help
-    forcefield_help(sender)
-  else:
-  	msg(sender, "%s &cInvalid syntax. Use &o/ff ? &cfor more info.")
-  return True
+    	msg(sender, "%s &cInvalid syntax. Use &o/ff ? &cfor more info.")
+    return True
+  except Exception, exception:
+  	error("Error in Forcefield module: \n %s" % exception)
 
 def setVelocityAway(player, entity):
   player_loc = player.getLocation()
@@ -90,6 +92,3 @@ def onMove(event):
           msg(player, "&cYou may not get closer than %sm to %s due to their forcefield." % (fd, entity.getDisplayName()))
         else:
           setVelocityAway(entity, player)
-
-
-
