@@ -1,10 +1,18 @@
-#pylint: disable=F0401
+import simplejson as json
 from helpers import *
 from re import compile as reg_compile
 from traceback import format_exc as print_traceback
 
+mentio_filename = "plugins/redstoner-utils.py.dir/files/mentio.json"
+mentions = {}
+max_amount = 3
 arrow = colorify(u"&r&7\u2192&r")
 regex = reg_compile(u"\u00A7[\\da-fk-or]")
+
+try:
+  mentions = json.loads(open(mentio_filename).read())
+except Exception, e:
+  error("Failed to load mentions: %s" % e)
 
 
 @hook.event("player.AsyncPlayerChatEvent", "high")
@@ -36,3 +44,64 @@ def onChat(event):
   except:
     error("Failed to handle PlayerChatEvent:")
     error(print_traceback())
+
+@hook.command("listen")
+def onListenCommand(sender, args):
+  try:
+    currWords = []
+    if str(sender.getUniqueId()) in mentions.keys():
+      currWords = mentions[str(sender.getUniqueId())]
+    
+    # /listen add <word>
+    if len(args) == 2 and args[0].lower() == "add":
+
+      if len(currWords) >= max_amount:
+        msg(sender, "&cYou are already listening for %s words! Try &6/listen del <word>" % max_amount)
+        return True
+      if args[1].lower() in currWords:
+        msg(sender, "&cYou are already listening for this word! Try &6/listen list")
+        return True
+      if args[1].lower() is sender.getName():
+        msg(sender, "&cYou are always listening for your full ingame name by default")
+      currWords.append(args[1].lower())
+      mentions[str(sender.getUniqueId())] = currWords
+      msg(sender, "&aYou are now listening for '&2"+args[1].lower()+"'!")
+      saveMentions()
+      return True
+    # /listen del <word>
+    elif len(args) == 2 and args[0].lower() == "del":
+      if len(currWords) <= 0:
+        msg(sender, "&cYou are currently listening for no words! Try &6/listen add <word>")
+        return True
+      success = False
+      for word in currWords[:]:
+        if word.lower() == args[1].lower():
+          currWords.remove(word.lower())
+          mentions[str(sender.getUniqueId())] = currWords
+          success = True
+      if success == True:
+        saveMentions()
+        msg(sender, "&eYou are no longer listening for '&2"+args[1].lower()+"&e'!")
+      else:
+        msg(sender, "&cWe can't remove something that doesn't exist! Try &6/listen list")
+      return True
+
+    # /listen list
+    elif len(args) == 1 and args[0].lower() == "list":
+      msg(sender, "&6Words you're listening for:")
+      for word in currWords:
+        msg(sender, "&c- &3"+word)
+    else:
+      msg(sender, "&6/listen add <word>")
+      msg(sender, "&6/listen del <word>")
+      msg(sender, "&6/listen list")
+  except Exception, e:
+    error(e)
+
+def saveMentions():
+  try:
+    mentio_file = open(mentio_filename, "w")
+    mentio_file.write(json.dumps(mentions))
+    mentio_file.close()
+  except Exception, e:
+    error("Failed to write mentions: " + str(e))
