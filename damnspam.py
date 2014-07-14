@@ -23,7 +23,7 @@ def saveInputs():
 
 
 def location_str(block):
-  return ";".join([block.getWorld().getName(),block.getX(),block.getY(),block.getZ()])
+  return ";".join([block.getWorld().getName(), str(block.getX()), str(block.getY()), str(block.getZ())])
 
 
 def add_input(creator, block, timeout_off, timeout_on):
