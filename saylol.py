@@ -1,4 +1,4 @@
-import simplejson as json
+import json
 from time import time
 from helpers import *
 from random import randrange

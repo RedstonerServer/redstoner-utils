@@ -1,7 +1,7 @@
 #pylint: disable=F0401
 from helpers import *
-from java.utils.UUID import fromString as juuid
-import simplejson as json
+from java.util.UUID import fromString as juuid
+import json
 
 chatgroups_filename = "plugins/redstoner-utils.py.dir/files/chatgroups.json"
 groups              = {}
@@ -18,17 +18,18 @@ except Exception, e:
 def onChatgroupCommand(sender, args):
   try:
     plugHeader(sender, "ChatGroups")
+    sender_id = str(sender.getUniqueId())
     if len(args) == 1 and args[0] == "leave":
-      if str(sender.getUniqueId()) in groups.keys():
+      if sender_id in groups.keys():
         groupchat(sender, "left the group", True)
-        group = groups[sender.getName()]
-        del(groups[sender.getName()])
+        group = groups[sender_id]
+        del(groups[sender_id])
         saveGroups()
       else:
         msg(sender, "&aYou can't leave no group, derp!")
     elif len(args) == 1 and args[0] == "info":
-      if str(sender.getUniqueId()) in groups.keys():
-        group = groups[str(sender.getUniqueId())]
+      if sender_id in groups.keys():
+        group = groups[sender_id]
         msg(sender, "&aCurrent chatgroup: %s" % group)
         users = []
         for uid, ugroup in groups.iteritems():
@@ -41,11 +42,11 @@ def onChatgroupCommand(sender, args):
       else:
         msg(sender, "&aYou're in no chatgroup.")
     elif len(args) == 2 and args[0] == "join":
-      groups[str(sender.getUniqueId())] = args[1]
+      groups[sender_id] = args[1]
       groupchat(sender, "joined the group", True)
       saveGroups()
       msg(sender, "&aYour chatgroup is set to '%s'" % args[1])
-      msg(sender, "&aAnyone in the group sees chat that begins with &e%s" % cg_key)
+      msg(sender, "&aUse chat like '&e%s<message>' to send messages to this group." % cg_key)
     else:
       msg(sender, "&e/chatgroup join <name>")
       msg(sender, "&e/chatgroup leave")
@@ -65,6 +66,7 @@ def onCgtCommand(sender, args):
     msg(sender, "&8[&bCG&8] &e&oCG toggle: on")
   return True
 
+
 def groupchat(sender, message, ann=False):
   #try:
   group = groups.get(str(sender.getUniqueId()))
@@ -76,6 +78,7 @@ def groupchat(sender, message, ann=False):
     mesg = "&8[&bCG&8] &e&o%s&e&o %s" % (name, message)
   else:
     mesg = "&8[&bCG&8] &f%s&f: &6%s" % (name, message)
+  log("[ChatGroups] %s (%s): %s" % (sender, group, message))
   for receiver in server.getOnlinePlayers():
     groups.get(str(receiver.getUniqueId())) == group and msg(receiver, mesg)
   #except Exception, e:
@@ -96,9 +99,10 @@ def onChat(event):
   sender = event.getPlayer()
   msge = event.getMessage()
   if not event.isCancelled():
-    if msge[:len(cg_key)] == cg_key and str(sender.getUniqueId()) in groups.keys():
+    sender_id = str(sender.getUniqueId())
+    if msge[:len(cg_key)] == cg_key and sender_id in groups.keys():
       groupchat(sender, msge[1:])
       event.setCancelled(True)
-    elif str(sender.getUniqueId()) in cg_toggle_list:
+    elif sender_id in cg_toggle_list:
       groupchat(sender, msge)
       event.setCancelled(True)
