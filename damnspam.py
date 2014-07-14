@@ -105,7 +105,7 @@ def onBreak(event):
 
   sender = event.getPlayer()
   block = event.getBlock()
-  if str(block.getType()) in accepted_inputs:
+  if str(block.getType()) in accepted_inputs and not event.isCancelled():
     pos_str = location_str(block)
     if inputs.get(pos_str):
       plugHeader(sender, "DamnSpam")
