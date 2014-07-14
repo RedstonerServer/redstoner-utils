@@ -40,59 +40,56 @@ def add_input(creator, block, timeout_off, timeout_on):
 def onDammnspamCommand(sender, args):
   global inputs
 
-  try:
-    plugHeader(sender, "DamnSpam")
-    if len(args) <= 2:
+  plugHeader(sender, "DamnSpam")
+  if len(args) in range(2):
 
-      if not str(sender.getGameMode()) == "CREATIVE":
-        msg(sender, "&cYou can only do this in Creative mode.")
-        return True
-
-      # /damnspam <secs>
-      if len(args) == 1:
-        timeout_on = args[0]
-        if not timeout_on.isdigit():
-          msg(sender, "&cThe timeout must be a digit.")
-          return True
-        else:
-          timeout_on  = int(timeout_on)
-          timeout_off = timeout_on
-          if not 0 <= timeout_on <= 60:
-            msg(sender, "&cThe timeout must be within 0-60.")
-            return True
-
-      # /damnspam <off> <on>
-      elif len(args) == 2:
-        timeout_on  = args[0]
-        timeout_off = args[1]
-        if not timeout_on.isdigit() or not timeout_off.isdigit():
-          msg(sender, "&cThe timeout must be a digit.")
-          return True
-        else:
-          timeout_on  = int(timeout_on)
-          timeout_off = int(timeout_off)
-          if not 0 <= timeout_on <= 60 or not 0 <= timeout_off <= 60:
-            msg(sender, "&cThe timeout must be within 0-60.")
-            return True
-
-      # get the block we're looking at
-      target = sender.getTargetBlock(None, 10)
-      ttype  = str(target.getType())
-      if ttype not in accepted_inputs:
-        msg(sender, "&cPlease look at a button or lever while executing this command!")
-        return True
-
-      # add block to inputs
-      add_input(sender, target, timeout_off, timeout_on)
-      saveInputs()
-      msg(sender, "&aSuccessfully set a timeout for this %s." % ttype.lower())
+    if not str(sender.getGameMode()) == "CREATIVE":
+      msg(sender, "&cYou can only do this in Creative mode.")
       return True
 
-    else:
-      msg(sender, "&c/damnspam <seconds> &e(Buttons/Levers)")
-      msg(sender, "&c/damnspam <seconds after off> <seconds after on> &e(Levers only)")
-  except Exception, e:
-    error(e)
+    # /damnspam <secs>
+    if len(args) == 1:
+      timeout_on = args[0]
+      if not timeout_on.isdigit():
+        msg(sender, "&cThe timeout must be a digit.")
+        return True
+      else:
+        timeout_on  = int(timeout_on)
+        timeout_off = timeout_on
+        if not 0 <= timeout_on <= 60:
+          msg(sender, "&cThe timeout must be within 0-60.")
+          return True
+
+    # /damnspam <off> <on>
+    elif len(args) == 2:
+      timeout_on  = args[0]
+      timeout_off = args[1]
+      if not timeout_on.isdigit() or not timeout_off.isdigit():
+        msg(sender, "&cThe timeout must be a digit.")
+        return True
+      else:
+        timeout_on  = int(timeout_on)
+        timeout_off = int(timeout_off)
+        if not 0 <= timeout_on <= 60 or not 0 <= timeout_off <= 60:
+          msg(sender, "&cThe timeout must be within 0-60.")
+          return True
+
+    # get the block we're looking at
+    target = sender.getTargetBlock(None, 10)
+    ttype  = str(target.getType())
+    if ttype not in accepted_inputs:
+      msg(sender, "&cPlease look at a button or lever while executing this command!")
+      return True
+
+    # add block to inputs
+    add_input(sender, target, timeout_off, timeout_on)
+    saveInputs()
+    msg(sender, "&aSuccessfully set a timeout for this %s." % ttype.lower())
+    return True
+
+  else:
+    msg(sender, "&c/damnspam <seconds> &e(Buttons/Levers)")
+    msg(sender, "&c/damnspam <seconds after off> <seconds after on> &e(Levers only)")
 
 
 @hook.event("block.BlockBreakEvent", "normal")
