@@ -137,6 +137,10 @@ If you want the server to load a file (*module*) on startup, add it to the `modu
 
   > Adds `/damnspam`, creates timeout for buttons/levers to mitigate button spam.
 
+* `forcefield.py`
+
+  > Adds '/forcefield', creates forcefield for players who want it.
+
 # Code styleguide & tips
 
 ## Indentation
