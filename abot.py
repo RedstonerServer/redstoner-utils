@@ -1,31 +1,68 @@
+import json
 from helpers import *
 from re import compile as reg_compile
 
-rank_regex = "visitor|member|builder|trusted|helper|mod\\b|moderator|admin|owner|rank"
+answers_filename = "plugins/redstoner-utils.py.dir/files/abot.json"
+answers = []
 
-faq_regex = [
-  # ranks
-  "\\b(how.*? (get\\b|be\\b|become)|who is|are you).*? (%s)|\\bwho owns.* server" % rank_regex,
-  # WE
-  "\\b(can|how|why).*? (have|haz|use|get|doesn|can'?t).*? (WorldEdit|WE\\b|W\\.E\\.\\b)",
-  # clearing plot
-  "\\b((why|how|who).*? (do|can)|how to).*?( /?p clear| clear.*? plot)",
-  # add someone to a plot, claim plot
-  "\\bhow.*? (get|claim|own|add).*? plot"
-]
 
-faq_regex = [reg_compile(reg.lower()) for reg in faq_regex]
+def load_answers():
+  global answers
+  try:
+    answers = json.loads(open(answers_filename).read())
+  except Exception, e:
+    error("Failed to load answers: %s" % e)
+
+  # compile answers
+  for answer in answers:
+    answer["regex"] = [reg_compile(reg.lower()) for reg in answer["regex"]]
+
+
+def list_answers(sender):
+  for answer in answers:
+    msg(sender, "&e{")
+    msg(sender, "  &eregex:")
+    for regex in answer["regex"]:
+      msg(sender, "    " + regex.pattern, basecolor="a", usecolor=False)
+    msg(sender, "  &epermission:")
+    msg(sender, "    " + str(answer["hide-perm"]), basecolor="a", usecolor=False)
+    msg(sender, "  &emessage:")
+    msg(sender, "    " + "\n    ".join(answer["message"].split("\n")))
+    msg(sender, "&e}")
+
+
+@hook.command("abot")
+def onAbotCommand(sender, args):
+  plugHeader(sender, "AnswerBot")
+  if sender.hasPermission("utils.abot.admin"):
+    if not args:
+      msg(sender, "&2/abot list    &eList all answers and their regex")
+      msg(sender, "&2/abot reload  &eReload the config file")
+    elif args[0] == "list":
+      list_answers(sender)
+    elif args[0] == "reload":
+      load_answers()
+      msg(sender, "&2Reloaded!")
+    else:
+      msg(sender)
+  else:
+    noperm(sender)
+  return True
+
 
 @hook.event("player.AsyncPlayerChatEvent", "low")
 def onChat(event):
   sender  = event.getPlayer()
-  if not sender.hasPermission("utils.ignore_abot"):
-    message = event.getMessage().lower()
-    for regex in faq_regex:
+  message = event.getMessage().lower()
+  for answer in answers:
+    for regex in answer["regex"]:
       if regex.search(message):
-        plugHeader(sender, "AnswerBot")
-        msg(sender, "&aLooks like you're asking something that's likely in our FAQ.")
-        msg(sender, "&aTake a look at &4&l/faq&a and read through the pages.\n ") # trailing space required
-        event.setCancelled(True)
-        log("(hidden) %s: '%s'" % (sender.getName(), message))
-        break
+        if answer["hide-perm"] and not sender.hasPermission(answer["hide-perm"]):
+          plugHeader(sender, "AnswerBot")
+          msg(sender, answer["message"] + "\n ")
+          event.setCancelled(True)
+          log("(hidden) %s: '%s'" % (sender.getName(), message))
+          break
+
+
+load_answers()

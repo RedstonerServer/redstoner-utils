@@ -1,4 +1,4 @@
-import simplejson as json
+import json
 from helpers import *
 
 cyclers_file = "plugins/redstoner-utils.py.dir/files/cycle.json"
