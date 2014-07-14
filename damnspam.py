@@ -110,7 +110,7 @@ def onBreak(event):
       else:
         event.setCancelled(True)
         msg(sender, "&cYou cannot destroy this input!")
-        msg(sender, "&7&lSneak&7 and break if you want to remove it.")
+        msg(sender, "&c&nSneak&c and break if you want to remove it.")
         return True
 
 
