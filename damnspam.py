@@ -1,6 +1,7 @@
 #pylint: disable=F0401
 from helpers import *
 from time import time as now
+import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
 import json
 
 spam_filename   = "plugins/redstoner-utils.py.dir/files/damnspam.json"
@@ -79,6 +80,12 @@ def onDammnspamCommand(sender, args):
     ttype  = str(target.getType())
     if ttype not in accepted_inputs:
       msg(sender, "&cPlease look at a button or lever while executing this command!")
+      return True
+
+    test_event = BlockBreakEvent(target, sender)
+    server.getPluginManager().callEvent(test_event)
+    if test_event.isCancelled():
+      msg(sender, "&cYou are not allowed to modify this button")
       return True
 
     # add block to inputs
