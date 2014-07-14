@@ -125,7 +125,7 @@ def onInteract(event):
     data    = inputs.get(pos_str)
     if data:
       checktime = data["timeout_on"] if powered else data["timeout_off"]
-      if data["last_time"] + checktime < now():
+      if data["last_time"] + checktime > now():
         event.setCancelled(True)
         plugHeader(sender, "DamnSpam")
         msg(sender, "&cThis %s has a timeout of %ss." % (btype, checktime))
