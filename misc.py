@@ -1,6 +1,7 @@
 #pylint: disable=F0401
 from helpers import *
 from time import time as now
+import thread
 import org.bukkit.inventory.ItemStack as ItemStack
 
 #
@@ -99,11 +100,12 @@ def onPlayerInteractEntity(event):
 def onPluginversionsCommand(sender, args):
   plugHeader(sender, "Plugin versions")
   plugins = list(server.getPluginManager().getPlugins())
-  plugins.sort(key=lambda pl: pl.getName())
+  plugins.sort(key=lambda pl: pl.getDescription().getName())
   msg(sender, "&3Listing all " + str(len(plugins)) + " plugins and their version:")
   for plugin in plugins:
-    msg(sender, "&6" + plugin.getName() + "&r: &e" + plugin.getDescription().getVersion())
+    msg(sender, "&6" + plugin.getDescription().getName() + "&r: &e" + plugin.getDescription().getVersion())
   return True
+
 
 #
 # /echo - essentials echo sucks and prints mail alerts sometimes
@@ -112,3 +114,30 @@ def onPluginversionsCommand(sender, args):
 @hook.command("echo")
 def onEchoCommand(sender, args):
   msg(sender, " ".join(args).replace("\\n", "\n"))
+
+
+#
+# /pyeval - run python ingame
+#
+# has to be in main.py so we can access the modules
+
+def evalThread(sender, code):
+  try:
+    msg(sender, "%s" % unicode(eval(code)), False, "a")
+  except Exception, e:
+    msg(sender, "%s: %s" % (e.__class__.__name__, e), False, "c")
+  thread.exit()
+
+@hook.command("pyeval")
+def onPyevalCommand(sender, args):
+  if sender.hasPermission("utils.pyeval"):
+    if not checkargs(sender, args, 1, -1):
+      return True
+    msg(sender, "%s" % " ".join(args), False, "e")
+    try:
+      thread.start_new_thread(evalThread, (sender, " ".join(args)))
+    except Exception, e:
+      msg(sender, "&cInternal error: %s" % e)
+  else:
+    noperm(sender)
+  return True
