@@ -42,7 +42,8 @@ load_modules = [
   "mentio",
   "cycle",
   "motd",
-  "abot"
+  "abot",
+  "forcefield"
 ]
 shared["modules"] = {}
 for module in load_modules:
