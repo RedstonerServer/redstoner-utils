@@ -130,4 +130,4 @@ def onInteract(event):
         plugHeader(sender, "DamnSpam")
         msg(sender, "&cThis %s has a timeout of %ss." % (btype, checktime))
       else:
-        inputs["last_time"] = int(now())
+        inputs[pos_str]["last_time"] = int(now())
