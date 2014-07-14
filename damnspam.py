@@ -50,29 +50,29 @@ def onDammnspamCommand(sender, args):
     # /damnspam <secs>
     if len(args) == 1:
       timeout_on = args[0]
-      if not timeout_on.isdigit():
-        msg(sender, "&cThe timeout must be a digit.")
-        return True
-      else:
-        timeout_on  = int(timeout_on)
+      try:
+        timeout_on  = round(float(timeout_on), 2)
         timeout_off = timeout_on
         if not 0 <= timeout_on <= 60:
           msg(sender, "&cThe timeout must be within 0-60.")
           return True
+      except ValueError:
+        msg(sender, "&cThe timeout must be a number")
+        return True
 
     # /damnspam <off> <on>
     elif len(args) == 2:
       timeout_on  = args[0]
       timeout_off = args[1]
-      if not timeout_on.isdigit() or not timeout_off.isdigit():
-        msg(sender, "&cThe timeout must be a digit.")
-        return True
-      else:
-        timeout_on  = int(timeout_on)
-        timeout_off = int(timeout_off)
+      try:
+        timeout_on  = round(float(timeout_on), 2)
+        timeout_off = round(float(timeout_off), 2)
         if not 0 <= timeout_on <= 60 or not 0 <= timeout_off <= 60:
           msg(sender, "&cThe timeout must be within 0-60.")
           return True
+      except ValueError:
+        msg(sender, "&cThe timeout must be a number")
+        return True
 
     # get the block we're looking at
     target = sender.getTargetBlock(None, 10)
@@ -130,4 +130,4 @@ def onInteract(event):
         plugHeader(sender, "DamnSpam")
         msg(sender, "&cThis %s has a timeout of %ss." % (btype, checktime))
       else:
-        inputs[pos_str]["last_time"] = int(now())
+        inputs[pos_str]["last_time"] = round(now(), 2)
