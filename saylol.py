@@ -23,31 +23,34 @@ def save_lols():
   except Exception, e:
     error("Failed to write lols: " + str(e))
 
+
 def add_lol(txt):
   lols.append(txt)
   save_lols()
+
 
 def del_lol(lid):
   lols.pop(lid)
   save_lols()
 
+
 def print_lol(sender, lid):
   global last_msg
   if time() - last_msg > timeout:
     if len(lols) > lid:
-      dispname = sender.getDisplayName() if isPlayer(sender) else sender.getName()
+      dispname = sender.getDisplayName() if is_player(sender) else sender.getName()
       broadcast("", "&8[&blol&8] &7%s&8: &e%s" % (dispname, lols[lid]))
       last_msg = time()
     else:
-      plugHeader(sender, "SayLol")
+      plugin_header(sender, "SayLol")
       msg(sender, "&cInvalid id")
   else:
-    plugHeader(sender, "SayLol")
+    plugin_header(sender, "SayLol")
     msg(sender, "&cYou can use SayLol again in &a%s seconds!" % int(timeout + 1 - (time() - last_msg)))
 
 
 @hook.command("lol")
-def onLolCommand(sender, args):
+def on_lol_command(sender, args):
   cmd = args[0] if len(args) > 0 else None
   if len(args) == 0:
     if sender.hasPermission("utils.lol"):
@@ -61,19 +64,19 @@ def onLolCommand(sender, args):
         i = int(args[1])
         print_lol(sender, i)
       except ValueError:
-        plugHeader(sender, "SayLol")
+        plugin_header(sender, "SayLol")
         msg(sender, "&cInvalid number '&e%s&c'" % args[1])
     else:
       noperm(sender)
 
   elif cmd == "list":
-    plugHeader(sender, "SayLol")
+    plugin_header(sender, "SayLol")
     for i in range(len(lols)):
       msg(sender, "&a%s: &e%s" % (str(i).rjust(3), lols[i]))
 
   elif cmd == "add":
     if sender.hasPermission("utils.lol.modify"):
-      plugHeader(sender, "SayLol")
+      plugin_header(sender, "SayLol")
       add_lol(" ".join(args[1:]))
       msg(sender, "&aNew lol message added!")
     else:
@@ -81,7 +84,7 @@ def onLolCommand(sender, args):
 
   elif cmd == "del":
     if sender.hasPermission("utils.lol.modify"):
-      plugHeader(sender, "SayLol")
+      plugin_header(sender, "SayLol")
       try:
         i = int(args[1])
         del_lol(i)
@@ -90,7 +93,7 @@ def onLolCommand(sender, args):
         msg(sender, "&cInvalid number '&e%s&c'" % args[1])
 
   else:
-    plugHeader(sender, "SayLol")
+    plugin_header(sender, "SayLol")
     msg(sender, "&a/lol            &eSay random message")
     msg(sender, "&a/lol list       &eList all messages")
     msg(sender, "&a/lol id <id>    &eSay specific message")

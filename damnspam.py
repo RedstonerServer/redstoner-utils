@@ -14,7 +14,7 @@ except Exception, e:
   error("Failed to load buttons and levers: %s" % e)
 
 
-def saveInputs():
+def save_inputs():
   try:
     spam_file = open(spam_filename, "w")
     spam_file.write(json.dumps(inputs))
@@ -38,10 +38,10 @@ def add_input(creator, block, timeout_off, timeout_on):
 
 
 @hook.command("damnspam")
-def onDammnspamCommand(sender, args):
+def on_dammnspam_command(sender, args):
   global inputs
 
-  plugHeader(sender, "DamnSpam")
+  plugin_header(sender, "DamnSpam")
   if len(args) in [1,2]:
 
     if not str(sender.getGameMode()) == "CREATIVE":
@@ -90,7 +90,7 @@ def onDammnspamCommand(sender, args):
 
     # add block to inputs
     add_input(sender, target, timeout_off, timeout_on)
-    saveInputs()
+    save_inputs()
     msg(sender, "&aSuccessfully set a timeout for this %s." % ttype.lower())
     return True
 
@@ -100,7 +100,7 @@ def onDammnspamCommand(sender, args):
 
 
 @hook.event("block.BlockBreakEvent", "normal")
-def onBreak(event):
+def on_block_break(event):
   global inputs
 
   sender = event.getPlayer()
@@ -108,10 +108,10 @@ def onBreak(event):
   if str(block.getType()) in accepted_inputs and not event.isCancelled():
     pos_str = location_str(block)
     if inputs.get(pos_str):
-      plugHeader(sender, "DamnSpam")
+      plugin_header(sender, "DamnSpam")
       if sender.isSneaking():
         inputs.pop(pos_str) # remove
-        saveInputs()
+        save_inputs()
         msg(sender, "&eSuccessfully removed the input!")
         return True
       else:
@@ -122,7 +122,7 @@ def onBreak(event):
 
 
 @hook.event("player.PlayerInteractEvent", "normal")
-def onInteract(event):
+def on_interact(event):
   if (str(event.getAction()) == "RIGHT_CLICK_BLOCK") and not event.isCancelled():
     sender  = event.getPlayer()
     block   = event.getClickedBlock()
@@ -134,7 +134,7 @@ def onInteract(event):
       checktime = data["timeout_on"] if powered else data["timeout_off"]
       if data["last_time"] + checktime > now():
         event.setCancelled(True)
-        plugHeader(sender, "DamnSpam")
+        plugin_header(sender, "DamnSpam")
         msg(sender, "&cThis %s has a timeout of %ss." % (btype, checktime))
       else:
         inputs[pos_str]["last_time"] = round(now(), 2)

@@ -151,6 +151,33 @@ Use 2 spaces to indent.
 Always use double-quotes!
 Only use single-quotes when the string contains double-quotes that would need to be escaped.
 
+## Capitalization
+Do not use camelCase for variable or function names! Use under_score naming.
+
+## Aligning variable assignments
+In case you have multiple variable assignments, align the equals sign:
+
+```Python
+# bad
+foo = 1
+foobar = 2
+a = 3
+
+# good
+foo    = 1
+foobar = 2
+a      = 3
+```
+
+## Vertical spacing
+Use at least one space left and one space right to equals signs, and one space right to colons.
+
+## Horizontal spacing
+Leave two empty lines before function definitions. In case you need to use `@hook.something`, add the two lines before that, directly followed by the definition.
+
+## Meaningful names
+Give function and variable names meaningful names. If you want to shorten long names, that's fine, but leave a comment on assigment with the actual meaning.
+
 ## Comments
 Comments are good!
 Please comment everything that's non-obious or makes it easier to understand

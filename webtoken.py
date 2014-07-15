@@ -29,6 +29,7 @@ def mysql_query(query, args, fetch=True):
   conn.close()
   return results
 
+
 def generate_token(length):
   cons = 'bcdfghjklmnpqrstvwxyz'
   vows = 'aeiou'
@@ -42,14 +43,15 @@ def generate_token(length):
       token += vows[randrange(5)]
   return token
 
+
 def get_token(uuid):
   results = mysql_query("SELECT DISTINCT `token`, `email` FROM register_tokens WHERE `uuid` = ? LIMIT 1", (uuid,))
   return results[0] if len(results) == 1 else None
 
 
 def token_command(sender):
-  plugHeader(sender, "Website Token")
-  if isPlayer(sender):
+  plugin_header(sender, "Website Token")
+  if is_player(sender):
     try:
       token = get_token(sender.getUniqueId().toString().replace("-", ""))
       if token:
@@ -65,9 +67,10 @@ def token_command(sender):
   else:
     msg(sender, "&cThis is only for players..")
 
+
 def tokengen_command(sender, args):
-  plugHeader(sender, "Website Token")
-  if isPlayer(sender):
+  plugin_header(sender, "Website Token")
+  if is_player(sender):
     if len(args) < 1:
       msg(sender, "&cPlease use &e/gettoken <email adress>")
     else:
@@ -96,12 +99,13 @@ def tokengen_command(sender, args):
 
 
 @hook.command("token")
-def onTokenCommand(sender, args):
+def on_token_command(sender, args):
   thread.start_new_thread(token_command, (sender,))
   return True
 
+
 @hook.command("gettoken")
-def onTokengenCommand(sender, args):
+def on_gettoken_command(sender, args):
   thread.start_new_thread(tokengen_command, (sender, args))
   return True
 

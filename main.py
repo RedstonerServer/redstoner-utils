@@ -17,13 +17,13 @@ except:
 
 
 @hook.enable
-def onEnable():
+def on_enable():
   log("RedstonerUtils enabled!")
 
 
 @hook.disable
-def onDisable():
-  shared["modules"]["reports"].stopChecking()
+def on_disable():
+  shared["modules"]["reports"].stop_reporting()
   log("RedstonerUtils disabled!")
 
 

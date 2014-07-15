@@ -10,9 +10,9 @@ except Exception, e:
 
 
 @hook.command("cycle")
-def onCyclerCommand(sender, args):
-  plugHeader(sender, "Cycle")
-  if not isPlayer(sender):
+def on_cycler_command(sender, args):
+  plugin_header(sender, "Cycle")
+  if not is_player(sender):
     msg(sender, "&conly players can do this")
     return True
   if not len(args) == 1:
@@ -25,14 +25,14 @@ def onCyclerCommand(sender, args):
   if cmd == "on":
     if nop:
       no_cyclers.remove(pid)
-      saveCyclers()
+      save_cyclers()
       msg(sender, "&aTurned &2on&a inventory cycling!")
     else:
       msg(sender, "&aAlready turned on.")
   elif cmd == "off":
     if not nop:
       no_cyclers.append(pid)
-      saveCyclers()
+      save_cyclers()
       msg(sender, "&aTurned &coff&a inventory cycling!")
     else:
       msg(sender, "&aAlready turned off.")
@@ -42,15 +42,15 @@ def onCyclerCommand(sender, args):
 
 
 @hook.event("player.PlayerItemHeldEvent", "normal")
-def onSlotChange(event):
+def on_slot_change(event):
   player    = event.getPlayer()
   if str(player.getGameMode()) == "CREATIVE" and str(player.getUniqueId()) not in no_cyclers and not player.isSneaking():
     prev_slot = event.getPreviousSlot()
     new_slot  = event.getNewSlot()
     if (prev_slot == 0 and new_slot == 8): # left -> right
-      doCycle(player, True)
+      do_cycle(player, True)
     elif (prev_slot == 8 and new_slot == 0): # right -> left
-      doCycle(player, False)
+      do_cycle(player, False)
 
 # ITEM SLOTS #
 #_____________________________
@@ -60,7 +60,7 @@ def onSlotChange(event):
 #_____________________________
 # | 0| 1| 2| 3| 4| 5| 6| 7| 8|
 
-def doCycle(player, down):
+def do_cycle(player, down):
   inv   = player.getInventory()
   items = inv.getContents()
   shift = -9 if down else 9
@@ -72,7 +72,7 @@ def doCycle(player, down):
       break
   inv.setContents(items)
 
-def saveCyclers():
+def save_cyclers():
   try:
     chatgroups_file = open(cyclers_file, "w")
     chatgroups_file.write(json.dumps(no_cyclers))

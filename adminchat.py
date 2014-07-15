@@ -17,7 +17,7 @@ def adminchat(sender, msg):
 
 # ac toggle
 @hook.command("act")
-def onActCommand(sender, args):
+def on_act_command(sender, args):
   if sender.hasPermission(ac_permission):
     p = sender.getName()
     if p in ac_toggle_list:
@@ -32,7 +32,7 @@ def onActCommand(sender, args):
 
 
 @hook.command("ac")
-def onAcCommand(sender, args):
+def on_ac_command(sender, args):
   if sender.hasPermission(ac_permission):
     if not checkargs(sender, args, 1, -1):
       return True
@@ -43,7 +43,7 @@ def onAcCommand(sender, args):
 
 
 @hook.event("player.AsyncPlayerChatEvent", "low")
-def onChat(event):
+def on_chat(event):
   sender = event.getPlayer()
   msg = event.getMessage()
   if sender.hasPermission(ac_permission) and not event.isCancelled():

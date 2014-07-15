@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack as ItemStack
 #
 
 @hook.event("player.PlayerJoinEvent", "monitor")
-def onJoin(event):
+def on_join(event):
   player = event.getPlayer()
 
   # send welcome broadcast
@@ -41,9 +41,9 @@ def onJoin(event):
 
 
 @hook.command("sudo")
-def onSudoCommand(sender, args):
+def on_sudo_command(sender, args):
   if sender.hasPermission("utils.sudo"):
-    plugHeader(sender, "Sudo")
+    plugin_header(sender, "Sudo")
     if not checkargs(sender, args, 2, -1):
       return True
     target = args[0]
@@ -77,7 +77,7 @@ def onSudoCommand(sender, args):
 last_shear = 0.0
 
 @hook.event("player.PlayerInteractEntityEvent")
-def onPlayerInteractEntity(event):
+def on_player_entity_interact(event):
   global last_shear
   if not event.isCancelled():
     shear_time = now()
@@ -85,7 +85,7 @@ def onPlayerInteractEntity(event):
       last_shear = shear_time
       sender = event.getPlayer()
       entity = event.getRightClicked()
-      if isPlayer(entity) and str(entity.getUniqueId()) == "ae795aa8-6327-408e-92ab-25c8a59f3ba1" and str(sender.getItemInHand().getType()) == "SHEARS" and str(sender.getGameMode()) == "CREATIVE":
+      if is_player(entity) and str(entity.getUniqueId()) == "ae795aa8-6327-408e-92ab-25c8a59f3ba1" and str(sender.getItemInHand().getType()) == "SHEARS" and str(sender.getGameMode()) == "CREATIVE":
         for i in range(5):
           entity.getWorld().dropItemNaturally(entity.getLocation(), ItemStack(bukkit.Material.getMaterial("REDSTONE")))
           entity.getWorld().dropItemNaturally(entity.getLocation(), ItemStack(bukkit.Material.getMaterial("WOOL")))
@@ -97,8 +97,8 @@ def onPlayerInteractEntity(event):
 #
 
 @hook.command("pluginversions")
-def onPluginversionsCommand(sender, args):
-  plugHeader(sender, "Plugin versions")
+def on_pluginversions_command(sender, args):
+  plugin_header(sender, "Plugin versions")
   plugins = list(server.getPluginManager().getPlugins())
   plugins.sort(key=lambda pl: pl.getDescription().getName())
   msg(sender, "&3Listing all " + str(len(plugins)) + " plugins and their version:")
@@ -112,7 +112,7 @@ def onPluginversionsCommand(sender, args):
 #
 
 @hook.command("echo")
-def onEchoCommand(sender, args):
+def on_echo_command(sender, args):
   msg(sender, " ".join(args).replace("\\n", "\n"))
 
 
@@ -121,21 +121,22 @@ def onEchoCommand(sender, args):
 #
 # has to be in main.py so we can access the modules
 
-def evalThread(sender, code):
+def eval_thread(sender, code):
   try:
     msg(sender, "%s" % unicode(eval(code)), False, "a")
   except Exception, e:
     msg(sender, "%s: %s" % (e.__class__.__name__, e), False, "c")
   thread.exit()
 
+
 @hook.command("pyeval")
-def onPyevalCommand(sender, args):
+def on_pyeval_command(sender, args):
   if sender.hasPermission("utils.pyeval"):
     if not checkargs(sender, args, 1, -1):
       return True
     msg(sender, "%s" % " ".join(args), False, "e")
     try:
-      thread.start_new_thread(evalThread, (sender, " ".join(args)))
+      thread.start_new_thread(eval_thread, (sender, " ".join(args)))
     except Exception, e:
       msg(sender, "&cInternal error: %s" % e)
   else:

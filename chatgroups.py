@@ -15,16 +15,16 @@ except Exception, e:
 
 
 @hook.command("chatgroup")
-def onChatgroupCommand(sender, args):
+def on_chatgroup_command(sender, args):
   try:
-    plugHeader(sender, "ChatGroups")
+    plugin_header(sender, "ChatGroups")
     sender_id = str(sender.getUniqueId())
     if len(args) == 1 and args[0] == "leave":
       if sender_id in groups.keys():
         groupchat(sender, "left the group", True)
         group = groups[sender_id]
         del(groups[sender_id])
-        saveGroups()
+        save_groups()
       else:
         msg(sender, "&aYou can't leave no group, derp!")
     elif len(args) == 1 and args[0] == "info":
@@ -44,7 +44,7 @@ def onChatgroupCommand(sender, args):
     elif len(args) == 2 and args[0] == "join":
       groups[sender_id] = args[1]
       groupchat(sender, "joined the group", True)
-      saveGroups()
+      save_groups()
       msg(sender, "&aYour chatgroup is set to '%s'" % args[1])
       msg(sender, "&aUse chat like '&e%s<message>' to send messages to this group." % cg_key)
     else:
@@ -56,7 +56,7 @@ def onChatgroupCommand(sender, args):
 
 
 @hook.command("cgt")
-def onCgtCommand(sender, args):
+def on_cgt_command(sender, args):
   p = str(sender.getUniqueId())
   if p in cg_toggle_list:
     cg_toggle_list.remove(p)
@@ -85,7 +85,7 @@ def groupchat(sender, message, ann=False):
   #  error(e)
 
 
-def saveGroups():
+def save_groups():
   try:
     chatgroups_file = open(chatgroups_filename, "w")
     chatgroups_file.write(json.dumps(groups))
@@ -95,7 +95,7 @@ def saveGroups():
 
 
 @hook.event("player.AsyncPlayerChatEvent", "normal")
-def onChat(event):
+def on_chat(event):
   sender = event.getPlayer()
   msge = event.getMessage()
   if not event.isCancelled():
