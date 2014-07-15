@@ -153,6 +153,7 @@ Only use single-quotes when the string contains double-quotes that would need to
 
 ## Capitalization
 Do not use camelCase for variable or function names! Use under_score naming.
+camelCase is okay when used like `import foo.bar.camelCase as camelCase`.
 
 ## Aligning variable assignments
 In case you have multiple variable assignments, align the equals sign:
