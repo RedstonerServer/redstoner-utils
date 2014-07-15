@@ -14,8 +14,10 @@ def on_forcefield_command(sender, args):
     noperm(sender)
     return True
   sender_id = str(sender.getUniqueId())
+
   if not args or args[0].lower() == "toggle": #Toggle
     toggle_forcefield(sender, sender_id)
+
   elif args[0].lower() in ["whitelist", "wl", "wlist"]: #Whitelist commands
     if not args[1:] or args[1].lower() == "list":
       whitelist_list(sender, sender_id)
@@ -27,6 +29,7 @@ def on_forcefield_command(sender, args):
       whitelist_add(sender, sender_id, False, args[2:])
     else:
       invalid_syntax(sender)
+
   elif args[0].lower() in ["help", "?"]: #/forcefield help
     forcefield_help(sender)
   else:
