@@ -1,4 +1,4 @@
-#pylint: disable=F0401
+#pylint: disable = F0401
 from helpers import *
 
 ac_permission  = "utils.ac"

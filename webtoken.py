@@ -1,5 +1,5 @@
-#pylint: disable=F0401
-import mysqlhack #pylint: disable=unused-import
+#pylint: disable = F0401
+import mysqlhack #pylint: disable = unused-import
 import thread
 from re import match
 from com.ziclix.python.sql import zxJDBC
@@ -17,7 +17,7 @@ from random import randrange
 # string "email",            null: false
 
 
-def mysql_query(query, args, fetch=True):
+def mysql_query(query, args, fetch = True):
   conn    = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
   curs    = conn.cursor()
   curs.execute(query, args)

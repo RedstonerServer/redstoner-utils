@@ -2,11 +2,10 @@ from helpers import *
 from java.util.UUID import fromString as java_uuid
 
 forcefield_permissions = ["utils.forcefield", "utils.forcefield.ignore"]
-forcefield_prefix = "&8[&aFF&8]"
-fd = 4 # forcefield distance
-
-forcefield_toggle = []
-forcefield_whitelist = {}
+forcefield_prefix      = "&8[&aFF&8]"
+forcefield_toggle      = []
+forcefield_whitelist   = {}
+fd                     = 4 # forcefield distance
 
 
 @hook.command("forcefield")
@@ -77,7 +76,7 @@ def whitelist_list(sender, sender_id):
   if not sender_id in forcefield_whitelist or len(forcefield_whitelist[sender_id]) == 0:
     msg(sender, "&c      Your whitelist has no entries.")
   else:
-    c=0
+    c = 0
     for uid in forcefield_whitelist[sender_id]:
       c+=1
       msg(sender, "&a      %s. &f%s" % (c, server.getPlayer(java_uuid(uid)).getDisplayName()))
@@ -145,10 +144,10 @@ def on_move(event):
 def set_velocity_away(player, entity): #Moves entity away from player
   player_loc = player.getLocation()
   entity_loc = entity.getLocation()
-  dx = entity_loc.getX() - player_loc.getX()
-  dy = entity_loc.getY() - player_loc.getY()
-  dz = entity_loc.getZ() - player_loc.getZ()
-  negator = fd/2
+  dx         = entity_loc.getX() - player_loc.getX()
+  dy         = entity_loc.getY() - player_loc.getY()
+  dz         = entity_loc.getZ() - player_loc.getZ()
+  negator    = fd/2
   entity.setVelocity(negator/dx, negator/dy, negator/dz)
 
 
@@ -157,7 +156,7 @@ def set_velocity_away(player, entity): #Moves entity away from player
 
 @hook.event("player.PlayerQuitEvent")
 def on_quit(event):
-  try:
-    forcefield_toggle.remove(str(event.getPlayer().getUniqueId()))
-  except:
-    pass
+  player = event.getPlayer()
+  uid    = str(player.getUniqueId())
+  if uid in forcefield_toggle:
+    forcefield_toggle.remove(uid)

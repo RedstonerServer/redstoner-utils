@@ -6,7 +6,7 @@ Redstoner's custom plugins, written in python.
 # Installation / Set-up
 
 1-line-install-script for bash:
-`wget -O install.sh "http://pastie.org/pastes/9310905/download?key=6byp4mrqmiui8yqeo3s6yw"; md5sum --check <<<"3499671c0832e561bc9c7d476d2167cb  install.sh" && sh install.sh`
+`wget -O install.sh "http://pastie.org/pastes/9310905/download?key = 6byp4mrqmiui8yqeo3s6yw"; md5sum --check <<<"3499671c0832e561bc9c7d476d2167cb  install.sh" && sh install.sh`
 
 Detailed description:
 
@@ -14,7 +14,7 @@ Detailed description:
 0. Download [the latest spigot](http://ci.md-5.net/job/Spigot/lastStableBuild/artifact/Spigot-Server/target/spigot.jar)
 0. Run it once inside redstoner, then shut it down again
 0. Create a new directory (inside redstoner) called 'lib'
-0. Download [jython](http://search.maven.org/remotecontent?filepath=org/python/jython-standalone/2.7-b2/jython-standalone-2.7-b2.jar) and save it as 'jython.jar' inside lib
+0. Download [jython](http://search.maven.org/remotecontent?filepath = org/python/jython-standalone/2.7-b2/jython-standalone-2.7-b2.jar) and save it as 'jython.jar' inside lib
 0. Download [mysql-connector](https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.30.zip), extract 'mysql-connector-java-X.X.XX-bin.jar
 ' and save it as 'mysql-connector.jar' inside lib
 0. Download [PyPluginLoader](http://gserv.me/static/PyPluginLoader-0.3.5.jar) (we're using [this fork](https://github.com/gdude2002/Python-Plugin-Loader)) into the plugins directory

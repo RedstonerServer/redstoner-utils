@@ -1,4 +1,4 @@
-#pylint: disable=F0401
+#pylint: disable = F0401
 import org.bukkit as bukkit
 from helpers import msg
 

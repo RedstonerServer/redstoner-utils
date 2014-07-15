@@ -1,4 +1,4 @@
-#pylint: disable=F0401
+#pylint: disable = F0401
 from helpers import *
 from time import time as now
 import thread
@@ -100,7 +100,7 @@ def on_player_entity_interact(event):
 def on_pluginversions_command(sender, args):
   plugin_header(sender, "Plugin versions")
   plugins = list(server.getPluginManager().getPlugins())
-  plugins.sort(key=lambda pl: pl.getDescription().getName())
+  plugins.sort(key = lambda pl: pl.getDescription().getName())
   msg(sender, "&3Listing all " + str(len(plugins)) + " plugins and their version:")
   for plugin in plugins:
     msg(sender, "&6" + plugin.getDescription().getName() + "&r: &e" + plugin.getDescription().getVersion())

@@ -1,4 +1,4 @@
-#pylint: disable=F0401
+#pylint: disable = F0401
 from helpers import *
 from java.util.UUID import fromString as juuid
 import json
@@ -67,7 +67,7 @@ def on_cgt_command(sender, args):
   return True
 
 
-def groupchat(sender, message, ann=False):
+def groupchat(sender, message, ann = False):
   #try:
   group = groups.get(str(sender.getUniqueId()))
   if group == None:
