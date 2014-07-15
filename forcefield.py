@@ -43,10 +43,10 @@ def whitelist_add(sender, sender_id, add, players):
     online_players.append(str(name).lower())
   for name in players:
     online = False
-    player = server.getPlayer(name) if name.lower() in online_players else server.getOfflinePlayer(name)
+    player = server.getPlayer(name) if name.lower() in online_players else server.getOfflinePlayer(name).getPlayer()
     if name.lower() in online_players:
       online = True
-    if not player == "null":
+    if not player == None:
       uid = str(player.getUniqueId())
       pname = player.getDisplayName()
       if add == True and uid not in forcefield_whitelist[sender_id]:
