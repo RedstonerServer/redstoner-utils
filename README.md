@@ -181,6 +181,20 @@ Leave two empty lines before function definitions. In case you need to use `@hoo
 ## Meaningful names
 Give function and variable names meaningful names. If you want to shorten long names, that's fine, but leave a comment on assigment with the actual meaning.
 
+## Readability
+Don't create long lines with lots of function calls. Split into multiple lines instead.
+
+```Python
+# bad
+foo = int(player_data[str(server.getPlayer(args[4]).getUniqueId())]["details"].["last_login"].strftime("%s"))
+
+# good
+player     = server.getPlayer(args[4])
+player_id  = str(player.getUniqueId())
+logintime  = player_data[played_id]["last_login"]
+epoch_time = int(logintime.strftime("%s"))
+```
+
 ## Comments
 Comments are good!
 Please comment everything that's non-obious or makes it easier to understand
