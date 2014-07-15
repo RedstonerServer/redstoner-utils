@@ -114,6 +114,8 @@ def onMove(event):
   player = event.getPlayer()
   player_id = str(player.getUniqueId())
   if player_id in forcefield_toggle: #player has forcefield, entity should be launched
+    if not forcefield_whitelist[player_id]:
+      forcefield_whitelist[player_id] = []
     for entity in player.getNearbyEntities(fd, fd, fd):
       log("%s" % entity.getName())
       if isPlayer(entity) and not entity.hasPermission(forcefield_permissions[1]) and not str(entity.getUniqueId()) in forcefield_whitelist[player_id] and not entity == player:
@@ -121,6 +123,8 @@ def onMove(event):
   if not player.hasPermission(forcefield_permissions[1]): #player should be launched, entity has forcefield
     for entity in player.getNearbyEntities(fd, fd, fd):
       entity_id = str(entity.getUniqueId())
+      if not forcefield_whitelist[entity_id]:
+        forcefield_whitelist[entity_id] = []
       if isPlayer(entity) and entity_id in forcefield_toggle and not player_id in forcefield_whitelist[entity_id] and not entity == player:
         if event.getFrom().distance(entity.getLocation()) > 4: 
           event.setCancelled(True)
