@@ -1,4 +1,4 @@
-#pylint: disable=F0401
+#pylint: disable = F0401
 import org.bukkit as bukkit
 from helpers import *
 
@@ -21,7 +21,7 @@ def scan_chunks(amount):
           ents = chunk.getEntities()
           #                [0]world           [1]X                                [2]Y                               [3]Z                               [4]amount
           chunks.append([chunk.getWorld(), int(ents[-1].getLocation().getX()), int(ents[0].getLocation().getY()), int(ents[0].getLocation().getZ()), len(ents)])
-    chunks.sort(key=lambda entry: entry[4], reverse=True)
+    chunks.sort(key = lambda entry: entry[4], reverse = True)
     lagchunks = chunks
   except Exception, e:
     error(e)

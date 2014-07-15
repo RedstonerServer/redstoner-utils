@@ -1,4 +1,4 @@
-#pylint: disable=F0401
+#pylint: disable = F0401
 from re import sub
 import org.bukkit as bukkit
 import org.bukkit.Location as Location
@@ -54,7 +54,7 @@ def safetp(player, world, x, y, z, yaw = 0, pitch = 0):
     safetp(player, world, x, y+1, z, yaw, pitch)
 
 
-def plugin_header(sender=None, name="Redstoner Utils"):
+def plugin_header(sender = None, name="Redstoner Utils"):
   """
   sends the recipient a "Plugin Header", in the format of:
 

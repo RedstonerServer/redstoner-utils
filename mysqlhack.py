@@ -1,4 +1,4 @@
-#pylint: disable=F0401
+#pylint: disable = F0401
 import java.lang.reflect.Method
 import java.io.File
 import java.net.URL

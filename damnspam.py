@@ -1,4 +1,4 @@
-#pylint: disable=F0401
+#pylint: disable = F0401
 from helpers import *
 from time import time as now
 import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
