@@ -18,12 +18,12 @@ def forcefield_help(sender):
   msg(sender, "&a5. &6/ff wl &oadd <players> &a: aliases: &o+")
   msg(sender, "&a6. &6/ff wl &oremove <players> &a: aliases: &odelete, rem, del, -")
 
-@hook.command("player.PlayerQuitEvent")
+@hook.event("player.PlayerQuitEvent")
 def onQuit(event):
   try:
     forcefield_toggle.remove(str(event.getPlayer().getUniqueId()))
   except:
-  	pass
+    pass
 
 #forcefield toggle
 @hook.command("forcefield")
@@ -67,10 +67,10 @@ def onForceFieldCommand(sender, args):
   elif args[0] in ["help", "?"]: #/forcefield help
     forcefield_help(sender)
   else:
-  	msg(sender, "%s &cInvalid syntax. Use &o/ff ? &cfor more info." % forcefield_prefix)
+    msg(sender, "%s &cInvalid syntax. Use &o/ff ? &cfor more info." % forcefield_prefix)
   return True
 
-def setVelocityAway(player, entity):
+def setVelocityAway(player, entity): #Moves entity away from player
   player_loc = player.getLocation()
   entity_loc = entity.getLocation()
   dx = entity_loc.getX() - player_loc.getX()
@@ -87,12 +87,12 @@ def onMove(event):
     for entity in player.getNearbyEntities(fd, fd, fd):
       if isPlayer(entity) and not entity.hasPermission(forcefield_permissions[1]) and not str(entity.getUniqueId()) in forcefield_whitelist[player_id]:
         setVelocityAway(player, entity)
-  elif not player.hasPermission(forcefield_permissions[1]): #player should be launched, entity has forcefield
+  if not player.hasPermission(forcefield_permissions[1]): #player should be launched, entity has forcefield
     for entity in player.getNearbyEntities(fd, fd, fd):
       entity_id = str(entity.getUniqueId())
       if isPlayer(entity) and entity_id in forcefield_toggle and not player_id in forcefield_whitelist[entity_id]:
         if event.getFrom().distance(entity.getLocation()) > 4: 
           event.setCancelled(True)
-          msg(player, "&cYou may not get closer than %sm to %s due to their forcefield." % (fd, entity.getDisplayName()))
+          msg(player, "&cYou may not get closer than %sm to %s &cdue to their forcefield." % (fd, entity.getDisplayName()))
         else:
-          setVelocityAway(entity, player)
+          setVelocityAway(entity, player) #Other way around
