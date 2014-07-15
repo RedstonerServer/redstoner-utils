@@ -15,6 +15,7 @@ row    = 1     # distance to first row of players
 goup   = 6     # after how many rows should we go up by one?
 upmul  = 0.95  # multiplicate with goup each row
 
+
 def spawn(dispname, sender, x, y, z):
   """
   Sends the actual player to sender
@@ -30,7 +31,7 @@ def spawn(dispname, sender, x, y, z):
 
 
 @hook.command("spawnplayer")
-def onSpawnplayerCommand(sender, args):
+def on_spawnplayer_command(sender, args):
   global amount, row, ground, goup
 
   # X and Z position

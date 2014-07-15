@@ -8,9 +8,10 @@ fd = 4 # forcefield distance
 forcefield_toggle = []
 forcefield_whitelist = {}
 
+
 @hook.command("forcefield")
-def onForceFieldCommand(sender, args):
-  if not isPlayer(sender) or not sender.hasPermission(forcefield_permissions[0]):
+def on_forcefield_command(sender, args):
+  if not is_player(sender) or not sender.hasPermission(forcefield_permissions[0]):
     noperm(sender)
     return True
   sender_id = str(sender.getUniqueId())
@@ -32,6 +33,7 @@ def onForceFieldCommand(sender, args):
   else:
     invalid_syntax(sender)
   return True
+
 
 def whitelist_add(sender, sender_id, add, players):
   if not players:
@@ -61,13 +63,14 @@ def whitelist_add(sender, sender_id, add, players):
         forcefield_whitelist[sender_id].remove(uid)
         msg(sender, "%s &cRemoved %s from your forcefield whitelist." % (forcefield_prefix, pname))
         if online == True:
-          msg(player, "%s %s &cRemoved you from his forcefield whitelist." % (forcefield_prefix, sender.getDisplayName())) 
+          msg(player, "%s %s &cRemoved you from his forcefield whitelist." % (forcefield_prefix, sender.getDisplayName()))
       elif add == True:
         msg(sender, "%s &c%s &cWas already in your forcefield whitelist." % (forcefield_prefix, pname))
       else:
         msg(sender, "%s &c%s &cWas not in your forcefield whitelist." % (forcefield_prefix, pname))
     else:
       msg(sender, "%s &cplayer %s &cwas not found." % (forcefield_prefix, name))
+
 
 def whitelist_list(sender, sender_id):
   msg(sender, "%s &aForceField Whitelist:" % forcefield_prefix)
@@ -79,12 +82,14 @@ def whitelist_list(sender, sender_id):
       c+=1
       msg(sender, "&a      %s. &f%s" % (c, server.getPlayer(idToPlayer(uid)).getDisplayName()))
 
+
 def whitelist_clear(sender, sender_id):
   if len(forcefield_whitelist[sender_id]) == 0:
     msg(sender, "%s &cYou had no players whitelisted." % forcefield_prefix)
   else:
     forcefield_whitelist[sender_id] = []
     msg(sender, "%s &aForceField Whitelist cleared." % forcefield_prefix)
+
 
 def forcefield_help(sender):
   msg(sender, "%s &a&l/ForceField Help: \n&aYou can use the forcefield to keep players on distance." % forcefield_prefix)
@@ -96,6 +101,7 @@ def forcefield_help(sender):
   msg(sender, "&a5. &6/ff wl &oadd <players> &a: aliases: &o+")
   msg(sender, "&a6. &6/ff wl &oremove <players> &a: aliases: &odelete, rem, del, -")
 
+
 def toggle_forcefield(sender, sender_id):
   if sender_id in forcefield_toggle:
     forcefield_toggle.remove(sender_id)
@@ -104,13 +110,16 @@ def toggle_forcefield(sender, sender_id):
     forcefield_toggle.append(sender_id)
     msg(sender, "%s &aForceField toggle: &2ON" % forcefield_prefix)
 
+
 def invalid_syntax(sender):
-  msg(sender, "%s &cInvalid syntax. Use &o/ff ? &cfor more info." % forcefield_prefix) 
+  msg(sender, "%s &cInvalid syntax. Use &o/ff ? &cfor more info." % forcefield_prefix)
+
 
 #--------------------------------------------------------------------------------------------------------#
 
+
 @hook.event("player.PlayerMoveEvent")
-def onMove(event):
+def on_move(event):
   player = event.getPlayer()
   player_id = str(player.getUniqueId())
   if player_id in forcefield_toggle: #player has forcefield, entity should be launched
@@ -118,21 +127,22 @@ def onMove(event):
       forcefield_whitelist[player_id] = []
     for entity in player.getNearbyEntities(fd, fd, fd):
       log("%s" % entity.getName())
-      if isPlayer(entity) and not entity.hasPermission(forcefield_permissions[1]) and not str(entity.getUniqueId()) in forcefield_whitelist[player_id] and not entity == player:
-        setVelocityAway(player, entity)
+      if is_player(entity) and not entity.hasPermission(forcefield_permissions[1]) and not str(entity.getUniqueId()) in forcefield_whitelist[player_id] and not entity == player:
+        set_velocity_away(player, entity)
   if not player.hasPermission(forcefield_permissions[1]): #player should be launched, entity has forcefield
     for entity in player.getNearbyEntities(fd, fd, fd):
       entity_id = str(entity.getUniqueId())
       if not forcefield_whitelist[entity_id]:
         forcefield_whitelist[entity_id] = []
-      if isPlayer(entity) and entity_id in forcefield_toggle and not player_id in forcefield_whitelist[entity_id] and not entity == player:
-        if event.getFrom().distance(entity.getLocation()) > 4: 
+      if is_player(entity) and entity_id in forcefield_toggle and not player_id in forcefield_whitelist[entity_id] and not entity == player:
+        if event.getFrom().distance(entity.getLocation()) > 4:
           event.setCancelled(True)
           msg(player, "&cYou may not get closer than %sm to %s &cdue to their forcefield." % (fd, entity.getDisplayName()))
         else:
-          setVelocityAway(entity, player) #Other way around
+          set_velocity_away(entity, player) #Other way around
 
-def setVelocityAway(player, entity): #Moves entity away from player
+
+def set_velocity_away(player, entity): #Moves entity away from player
   player_loc = player.getLocation()
   entity_loc = entity.getLocation()
   dx = entity_loc.getX() - player_loc.getX()
@@ -141,11 +151,13 @@ def setVelocityAway(player, entity): #Moves entity away from player
   negator = fd/2
   entity.setVelocity(negator/dx, negator/dy, negator/dz)
 
+
 #--------------------------------------------------------------------------------------------------------#
 
+
 @hook.event("player.PlayerQuitEvent")
-def onQuit(event):
+def on_quit(event):
   try:
     forcefield_toggle.remove(str(event.getPlayer().getUniqueId()))
   except:
-    pass 
+    pass

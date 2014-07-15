@@ -7,15 +7,18 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause as TeleportCaus
 import org.bukkit.block as bblock
 
 
-shared = {}
+shared = {} # this dict can be used to share stuff across modules
 
 server = bukkit.Bukkit.getServer()
+
 
 def log(text):
   server.getLogger().info("[RedstonerUtils] %s" % colorify(text))
 
+
 def error(text):
   server.getLogger().severe("[RedstonerUtils] %s" % text)
+
 
 def msg(player, text, usecolor = True, basecolor = None):
   if player and (player == server.getConsoleSender() or player.getPlayer()): #getPlayer() returns None when offline
@@ -24,18 +27,24 @@ def msg(player, text, usecolor = True, basecolor = None):
     else:
       player.sendMessage(colorify(text) if usecolor else text)
 
-# better than bukkit's broadcast.
-# bukkit only works with permissibles that are subscribed to perm
+
 def broadcast(perm, text):
+  """
+  better than bukkit's broadcast.
+  bukkit only works with permissibles that are subscribed to perm
+  """
   text = colorify(text)
   for recipient in list(server.getOnlinePlayers()) + [server.getConsoleSender()]:
     (not perm or recipient.hasPermission(perm)) and msg(recipient, text)
 
+
 def colorify(text):
   return sub("&(?=[?\\da-fk-or])", u"\u00A7", "%s" % text)
 
+
 def stripcolors(text):
   return sub(u"\u00A7[\\da-fk-or]", "", "%s" % text)
+
 
 def safetp(player, world, x, y, z, yaw = 0, pitch = 0):
   tpblock = Location(world, x, y, z).getBlock()
@@ -44,19 +53,30 @@ def safetp(player, world, x, y, z, yaw = 0, pitch = 0):
   else:
     safetp(player, world, x, y+1, z, yaw, pitch)
 
-def plugHeader(sender=None, name="Redstoner Utils"):
+
+def plugin_header(sender=None, name="Redstoner Utils"):
+  """
+  sends the recipient a "Plugin Header", in the format of:
+
+  --=[ PluginName ]=--
+  """
+
   head = "\n&2--=[ %s ]=--" % name
   msg(sender, head)
   return head
 
+
 def noperm(player):
   msg(player, "&cno permission")
+
 
 def runas(player, cmd):
   server.dispatchCommand(player, cmd)
 
-def isPlayer(sender):
+
+def is_player(sender):
   return (isinstance(sender, Player))
+
 
 def checkargs(sender, args, amin, amax):
   if not (len(args) >= amin and (amax < 0 or len(args) <= amax)):

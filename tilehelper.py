@@ -27,8 +27,9 @@ dirmap = {
 # FIXME: disallow multiple regions by single person.
 # FIXME: could lead to two regions updating each other forever -> server freezes
 
+
 @hook.event("block.BlockPlaceEvent", "low")
-def onPlaceBlockInRegion(event):
+def on_place_block(event):
   if not event.isCancelled():
     player = event.getPlayer()
     block  = event.getBlockPlaced()
@@ -69,7 +70,7 @@ def onPlaceBlockInRegion(event):
 
 
 @hook.event("block.BlockBreakEvent", "low")
-def onBreakBlockInRegion(event):
+def on_break_block(event):
   if not event.isCancelled():
     player = event.getPlayer()
     block  = event.getBlock()
@@ -99,7 +100,7 @@ def onBreakBlockInRegion(event):
 
 
 @hook.event("player.PlayerInteractEvent", "low")
-def onClickBlockInRegion(event):
+def on_block_interact(event):
   action = event.getAction()
   if not event.isCancelled() and str(action) == "RIGHT_CLICK_BLOCK":
     player = event.getPlayer()
@@ -126,9 +127,11 @@ def onClickBlockInRegion(event):
           event = PlayerInteractEvent(event.getPlayer(), action, event.getItem(), newblock, event.getBlockFace())
           server.getPluginManager().callEvent(event)
           if not event.isCancelled():
-            thread.start_new_thread(updateBlock, (block, newblock))
+            # FIXME: do not use bukkit API calls outside main thread
+            thread.start_new_thread(update_block, (block, newblock))
 
-def updateBlock(block, newblock):
+
+def update_block(block, newblock):
   try: # we're in a thread, the universe may hace collapsed in another thread
     sleep(0.2)
     newblock.setType(block.getType())

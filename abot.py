@@ -32,8 +32,8 @@ def list_answers(sender):
 
 
 @hook.command("abot")
-def onAbotCommand(sender, args):
-  plugHeader(sender, "AnswerBot")
+def on_abot_command(sender, args):
+  plugin_header(sender, "AnswerBot")
   if sender.hasPermission("utils.abot.admin"):
     if not args:
       msg(sender, "&2/abot list    &eList all answers and their regex")
@@ -51,14 +51,14 @@ def onAbotCommand(sender, args):
 
 
 @hook.event("player.AsyncPlayerChatEvent", "low")
-def onChat(event):
+def on_chat(event):
   sender  = event.getPlayer()
   message = event.getMessage().lower()
   for answer in answers:
     for regex in answer["regex"]:
       if regex.search(message):
         if answer["hide-perm"] and not sender.hasPermission(answer["hide-perm"]):
-          plugHeader(sender, "AnswerBot")
+          plugin_header(sender, "AnswerBot")
           msg(sender, answer["message"] + "\n ")
           event.setCancelled(True)
           log("(hidden) %s: '%s'" % (sender.getName(), message))

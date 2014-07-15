@@ -16,7 +16,7 @@ except Exception, e:
 
 
 @hook.event("player.AsyncPlayerChatEvent", "high")
-def onChat(event):
+def on_chat(event):
   try:
     if not event.isCancelled():
       sender     = event.getPlayer()
@@ -45,13 +45,14 @@ def onChat(event):
     error("Failed to handle PlayerChatEvent:")
     error(print_traceback())
 
+
 @hook.command("listen")
-def onListenCommand(sender, args):
+def on_listen_command(sender, args):
   try:
     currWords = []
     if str(sender.getUniqueId()) in mentions.keys():
       currWords = mentions[str(sender.getUniqueId())]
-    
+
     # /listen add <word>
     if len(args) == 2 and args[0].lower() == "add":
 
@@ -66,7 +67,7 @@ def onListenCommand(sender, args):
       currWords.append(args[1].lower())
       mentions[str(sender.getUniqueId())] = currWords
       msg(sender, "&aYou are now listening for '&2"+args[1].lower()+"'!")
-      saveMentions()
+      save_mentions()
       return True
     # /listen del <word>
     elif len(args) == 2 and args[0].lower() == "del":
@@ -80,7 +81,7 @@ def onListenCommand(sender, args):
           mentions[str(sender.getUniqueId())] = currWords
           success = True
       if success == True:
-        saveMentions()
+        save_mentions()
         msg(sender, "&eYou are no longer listening for '&2"+args[1].lower()+"&e'!")
       else:
         msg(sender, "&cWe can't remove something that doesn't exist! Try &6/listen list")
@@ -98,7 +99,8 @@ def onListenCommand(sender, args):
   except Exception, e:
     error(e)
 
-def saveMentions():
+
+def save_mentions():
   try:
     mentio_file = open(mentio_filename, "w")
     mentio_file.write(json.dumps(mentions))

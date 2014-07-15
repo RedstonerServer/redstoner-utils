@@ -3,7 +3,7 @@ import org.bukkit as bukkit
 from helpers import msg
 
 @hook.event("player.PlayerInteractEvent", "monitor")
-def onInteract(event):
+def on_block_interact(event):
   if (str(event.getAction()) == "RIGHT_CLICK_BLOCK"):
     sender = event.getPlayer()
     block  = event.getClickedBlock().getState()
