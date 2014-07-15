@@ -4,10 +4,10 @@ from re import compile as reg_compile
 from traceback import format_exc as print_traceback
 
 mentio_filename = "plugins/redstoner-utils.py.dir/files/mentio.json"
-mentions = {}
-max_amount = 3
-arrow = colorify(u"&r&7\u2192&r")
-regex = reg_compile(u"\u00A7[\\da-fk-or]")
+mentions        = {}
+max_amount      = 3
+arrow           = colorify(u"&r&7\u2192&r")
+regex           = reg_compile(u"\u00A7[\\da-fk-or]")
 
 try:
   mentions = json.loads(open(mentio_filename).read())
