@@ -1,5 +1,5 @@
 from helpers import *
-from java.util.UUID import fromString as idToPlayer
+from java.util.UUID import fromString as java_uuid
 
 forcefield_permissions = ["utils.forcefield", "utils.forcefield.ignore"]
 forcefield_prefix = "&8[&aFF&8]"
@@ -80,7 +80,7 @@ def whitelist_list(sender, sender_id):
     c=0
     for uid in forcefield_whitelist[sender_id]:
       c+=1
-      msg(sender, "&a      %s. &f%s" % (c, server.getPlayer(idToPlayer(uid)).getDisplayName()))
+      msg(sender, "&a      %s. &f%s" % (c, server.getPlayer(java_uuid(uid)).getDisplayName()))
 
 
 def whitelist_clear(sender, sender_id):
