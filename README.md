@@ -170,6 +170,8 @@ foobar = 2
 a      = 3
 ```
 
+Pro Tip: Use the AlignTab plugin for Sublime Text!
+
 ## Vertical spacing
 Use at least one space left and one space right to equals signs, and one space right to colons.
 
