@@ -17,7 +17,14 @@ def forcefield_help(sender):
   msg(sender, "&a4. &6/ff wl &oclear")
   msg(sender, "&a5. &6/ff wl &oadd <players> &a: aliases: &o+")
   msg(sender, "&a6. &6/ff wl &oremove <players> &a: aliases: &odelete, rem, del, -")
-  
+
+@hook.command("player.PlayerQuitEvent")
+def onQuit(event):
+  try:
+    forcefield_toggle.remove(str(event.getPlayer().getUniqueId()))
+  except:
+  	pass
+
 #forcefield toggle
 @hook.command("forcefield")
 def onForceFieldCommand(sender, args):
@@ -35,24 +42,24 @@ def onForceFieldCommand(sender, args):
       msg(sender, "%s &aForceField toggle: &2ON" % forcefield_prefix)
   elif args[0] in ["whitelist", "wl", "wlist"]: #Whitelist commands
     if not args[1] or args[1] == "list":
-      msg(sender, "%s &aForceField Whitelist:") % forcefield_prefix
+      msg(sender, "%s &aForceField Whitelist:" % forcefield_prefix)
       c=0
       for uid in forcefield_whitelist[sender_id]:
         c+=1
-        msg(sender, "&a%s. &f%s") % (c, juuid(uid))
+        msg(sender, "&a%s. &f%s" % (c, juuid(uid)))
     elif args[1] == "clear":
       forcefield_whitelist[sender_id] = []
-      msg(sender, "%s &aForceField Whitelist cleared.")
+      msg(sender, "%s &aForceField Whitelist cleared." % forcefield_prefix)
     elif args[1] in ["add", "+"]:
       if not args[2:]:
-        msg(sender, "%s &cGive playernames to add to your whitelist." % forcefield_prefix)
+        msg(sender, "%s &cGive playernames to add to your whitelist.\nSeparate with spaces." % forcefield_prefix)
       else:
         for name in args[2:]:
           uid = str(server.getPlayer(name).getUniqueId())
           forcefield_whitelist[sender_id].append(uid)
     elif args[1] in ["remove", "delete", "rem", "del", "-"]:
       if not args[2:]:
-        msg(sender, "%s &cGive playernames to remove from your whitelist." % forcefield_prefix)
+        msg(sender, "%s &cGive playernames to remove from your whitelist. \nSeparate with spaces." % forcefield_prefix)
       else:
         for name in args[2:]:
           uid = str(server.getPlayer(name).getUniqueId())
@@ -60,7 +67,7 @@ def onForceFieldCommand(sender, args):
   elif args[0] in ["help", "?"]: #/forcefield help
     forcefield_help(sender)
   else:
-  	msg(sender, "%s &cInvalid syntax. Use &o/ff ? &cfor more info.")
+  	msg(sender, "%s &cInvalid syntax. Use &o/ff ? &cfor more info." % forcefield_prefix)
   return True
 
 def setVelocityAway(player, entity):
