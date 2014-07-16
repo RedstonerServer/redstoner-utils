@@ -1,19 +1,18 @@
 from helpers import *
 from java.util.UUID import fromString as java_uuid
 from org.bukkit.util import Vector
-from traceback import format_exc as print_traceback
 
 ff_perms       = ["utils.forcefield", "utils.forcefield.ignore"]
 ff_prefix      = "&8[&aFF&8]"
-enabled_worlds = ["Creative", "Trusted", "world"] # worlds in which the forcefield should work
 ff_users       = []
 whitelists     = {}  # {ff_owner_id: [white, listed, ids]}
 fd             = 4   # forcefield distance
 speed_limiter  = 100 # the higher, the lower the forcefield sensitivity.
 
-sphere_radius  = ((3.0*(fd**2.0))**0.5) # distance between center of box and corner of box when the ribs of the box are 2*fd long (pythagore)
-Xv = 1.0 / speed_limiter # used in set_velocity_away()
-Xve = 10 * Xv
+Xv = 1.0 / speed_limiter # used in set_velocity_away(), this is more efficient.
+Xve = 5 * Xv
+
+# /ff admin  is a future option I might implement
 
 @hook.command("forcefield")
 def on_forcefield_command(sender, args):
@@ -130,29 +129,20 @@ def invalid_syntax(sender):
 @hook.event("player.PlayerMoveEvent")
 def on_move(event):
   player = event.getPlayer()
-  #if player.getLocation.getWorld().getName() in enabled_worlds: (THIS DOESNT WORK)
-  player_id = str(player.getUniqueId())
-  if player_id in ff_users: # player has forcefield, entity should be blocked
-    for entity in player.getNearbyEntities(fd, fd, fd):
-      #if is_player(entity) and not entity.hasPermission(ff_perms[1]) and not (player_id in whitelists.get(str(entity.getUniqueId()), [])):
-      if is_player(entity) and not False and not (player_id in whitelists.get(str(entity.getUniqueId()), [])):
-      	#if not whitelists[entity_id], check in blank list e.g. False
-        set_velocity_away(player, entity)
+  if is_creative(player):
+    player_id = str(player.getUniqueId())
+    if player_id in ff_users: # player has forcefield, entity should be blocked
+      for entity in player.getNearbyEntities(fd, fd, fd):
+        if is_player(entity) and is_creative(entity) and not entity.hasPermission(ff_perms[1]) and not (player_id in whitelists.get(str(entity.getUniqueId()), [])):
+          #if not whitelists[entity_id], check in blank list e.g. False
+          set_velocity_away(player, entity)
 
-  if not False:#player.hasPermission(ff_perms[1]): # player should be blocked, entity has forcefield
-    try:
+    if not player.hasPermission(ff_perms[1]): # player should be blocked, entity has forcefield
       for entity in player.getNearbyEntities(fd, fd, fd):
         entity_id = str(entity.getUniqueId())
-        if is_player(entity) and (entity_id in ff_users) and not (player_id in whitelists.get(entity_id, [])):
+        if is_player(entity) and is_creative(entity) and (entity_id in ff_users) and not (player_id in whitelists.get(entity_id, [])):
           #if not whitelists[entity_id], check in blank list e.g. False
-          if event.getFrom().distance(entity.getLocation()) > circle_radius:
-            event.setCancelled(True)
-            msg(player, "&cYou may not get closer than %sm to %s &cdue to their forcefield." % (fd, entity.getDisplayName()))
-          else:
-            set_velocity_away(entity, player) #Other way around
-    except:
-      log("Error in passive detect:")
-      log(print_traceback)
+          set_velocity_away(entity, player) #Other way around
 
 
 def set_velocity_away(player, entity): #Moves entity away from player
@@ -172,6 +162,7 @@ def set_velocity_away(player, entity): #Moves entity away from player
   vz = Xv / Xve * dz
   entity.setVelocity(Vector(vx, vy, vz))
   #We don't want to go above max_speed, and we dont want to divide by 0.
+
 
 #--------------------------------------------------------------------------------------------------------#
 

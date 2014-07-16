@@ -13,11 +13,11 @@ server = bukkit.Bukkit.getServer()
 
 
 def log(text):
-  server.getLogger().info("[RedstonerUtils] %s" % colorify(str(text)))
+  server.getLogger().info("[RedstonerUtils] %s" % colorify(text))
 
 
 def error(text):
-  server.getLogger().severe("[RedstonerUtils] %s" % str(text))
+  server.getLogger().severe("[RedstonerUtils] %s" % text)
 
 
 def msg(player, text, usecolor = True, basecolor = None):
@@ -97,3 +97,7 @@ def warp(sender, args, warpname):
     return True
   runas(sender, " ".join(["warp", warpname, sender.getName()]))
   return True
+
+
+def is_creative(player):
+  return True if player.getGameMode() == "Creative" else False
