@@ -135,8 +135,8 @@ def on_move(event):
         set_velocity_away(player, entity)
 
   if not player.hasPermission(ff_perms[1]): # player should be blocked, entity has forcefield
-    for entity in player.getNearbyEntities(fd, fd, fd):
-      try:
+    try:
+      for entity in player.getNearbyEntities(fd, fd, fd):
         entity_id = str(entity.getUniqueId())
 
         if is_player(entity) and (entity_id in ff_users) and (entity_id in whitelists) and (player_id not in whitelists[entity_id]):
@@ -145,8 +145,8 @@ def on_move(event):
             msg(player, "&cYou may not get closer than %sm to %s &cdue to their forcefield." % (fd, entity.getDisplayName()))
           else:
             set_velocity_away(entity, player) #Other way around
-      except:
-        error(print_traceback())
+    except:
+      error(print_traceback())
 
 
 def set_velocity_away(player, entity): #Moves entity away from player
