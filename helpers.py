@@ -13,11 +13,11 @@ server = bukkit.Bukkit.getServer()
 
 
 def log(text):
-  server.getLogger().info("[RedstonerUtils] %s" % colorify(text))
+  server.getLogger().info("[RedstonerUtils] %s" % colorify(str(text)))
 
 
 def error(text):
-  server.getLogger().severe("[RedstonerUtils] %s" % text)
+  server.getLogger().severe("[RedstonerUtils] %s" % str(text))
 
 
 def msg(player, text, usecolor = True, basecolor = None):
