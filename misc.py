@@ -123,7 +123,8 @@ def on_echo_command(sender, args):
 
 def eval_thread(sender, code):
   try:
-    msg(sender, "%s" % unicode(eval(code)), False, "a")
+    result = eval(code)
+    msg(sender, "%s: %s" % (colorify("&3") + type(result).__name__, colorify("&a") + unicode(result)), usecolor = False)
   except Exception, e:
     msg(sender, "%s: %s" % (e.__class__.__name__, e), False, "c")
   thread.exit()
