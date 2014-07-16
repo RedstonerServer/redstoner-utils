@@ -1,5 +1,6 @@
 from helpers import *
 from java.util.UUID import fromString as java_uuid
+from traceback import format_exc as print_traceback
 
 ff_perms   = ["utils.forcefield", "utils.forcefield.ignore"]
 ff_prefix  = "&8[&aFF&8]"
@@ -135,16 +136,17 @@ def on_move(event):
 
   if not player.hasPermission(ff_perms[1]): # player should be blocked, entity has forcefield
     for entity in player.getNearbyEntities(fd, fd, fd):
-      entity_id = str(entity.getUniqueId())
-      if not entity_id in whitelists:
-        whitelists[entity_id] = []
+      try:
+        entity_id = str(entity.getUniqueId())
 
-      if is_player(entity) and entity_id in ff_users and not player_id in whitelists[entity_id]:
-        if event.getFrom().distance(entity.getLocation()) > 4:
-          event.setCancelled(True)
-          msg(player, "&cYou may not get closer than %sm to %s &cdue to their forcefield." % (fd, entity.getDisplayName()))
-        else:
-          set_velocity_away(entity, player) #Other way around
+        if is_player(entity) and (entity_id in ff_users) and (entity_id in whitelists) and (player_id not in whitelists[entity_id]):
+          if event.getFrom().distance(entity.getLocation()) > 4:
+            event.setCancelled(True)
+            msg(player, "&cYou may not get closer than %sm to %s &cdue to their forcefield." % (fd, entity.getDisplayName()))
+          else:
+            set_velocity_away(entity, player) #Other way around
+      except:
+        error(print_traceback())
 
 
 def set_velocity_away(player, entity): #Moves entity away from player
