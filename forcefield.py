@@ -7,11 +7,11 @@ ff_perms       = ["utils.forcefield", "utils.forcefield.ignore"]
 ff_prefix      = "&8[&aFF&8]"
 ff_users       = []
 whitelists     = {}  # {ff_owner_id: [white, listed, ids]}
-fd             = 4   # forcefield distance
+fd             = 6   # forcefield distance
 speed_limiter  = 100 # the higher, the lower the forcefield sensitivity.
 
 Xv = 1.0 / speed_limiter # used in set_velocity_away(), this is more efficient.
-Xve = 5 * Xv
+Xve = (0.6 * speed_limiter) * Xv
 
 # /ff admin  is a future option I might implement
 
@@ -47,7 +47,7 @@ def on_forcefield_command(sender, args):
 def whitelist_add(sender, add, players):
   if not players: msg(sender, "%s &cGive space-separated playernames." % ff_prefix)
   else:
-    sender_id = sender.getUniqueId()
+    sender_id = str(sender.getUniqueId())
     whitelists[sender_id] = [] if sender_id not in whitelists else whitelists[sender_id]
     for name in players:
       player = server.getOfflinePlayer(name)
@@ -60,19 +60,19 @@ def whitelist_add(sender, add, players):
           if not sender == player:
             whitelists[sender_id].append(player_id)
             msg(sender, "%s &aAdded %s to your forcefield whitelist." % (ff_prefix, pname))
-            if online == True: msg(player, "%s %s &aAdded you to his forcefield whitelist." % (ff_prefix, sname))
+            if online == True: msg(player, "%s &a%s &aadded you to his forcefield whitelist." % (ff_prefix, sname))
           else: msg(sender, "%s &cYou can't whitelist yourself." % ff_prefix)
         elif add == False and player_id in whitelists[sender_id]:
           whitelists[sender_id].remove(player_id)
           msg(sender, "%s &cRemoved %s from your forcefield whitelist." % (ff_prefix, pname))
-          if online == True: msg(player, "%s %s &cRemoved you from his forcefield whitelist." % (ff_prefix, sname))
+          if online == True: msg(player, "%s &c%s &cremoved you from his forcefield whitelist." % (ff_prefix, sname))
         elif add == True: msg(sender, "%s &c%s &cwas already in your forcefield whitelist." % (ff_prefix, pname))
         else: msg(sender, "%s &c%s &cwas not in your forcefield whitelist." % (ff_prefix, pname))
       else: msg(sender, "%s &cplayer %s &cwas not found." % (ff_prefix, name))
 
 
 def whitelist_list(sender):
-  sender_id = sender.getUniqueId()
+  sender_id = str(sender.getUniqueId())
   msg(sender, "%s &aForceField Whitelist:" % ff_prefix)
   try:
     count = 0
@@ -86,7 +86,7 @@ def whitelist_list(sender):
 
 
 def whitelist_clear(sender):
-  sender_id = sender.getUniqueId()
+  sender_id = str(sender.getUniqueId())
   if len(whitelists[sender_id]) == 0:
     msg(sender, "%s &cYou had no players whitelisted." % ff_prefix)
   else:
@@ -106,7 +106,7 @@ def forcefield_help(sender):
 
 
 def forcefield_toggle(sender):
-  sender_id = sender.getUniqueId()
+  sender_id = str(sender.getUniqueId())
   if sender_id in ff_users:
     ff_users.remove(sender_id)
     msg(sender, "%s &aForceField toggle: &cOFF" % ff_prefix)
@@ -129,15 +129,16 @@ def on_move(event):
     player_id = str(player.getUniqueId())
     if player_id in ff_users: # player has forcefield, entity should be blocked
       for entity in player.getNearbyEntities(fd, fd, fd):
-        if is_player(entity) and is_creative(entity) and not entity.hasPermission(ff_perms[1]) and not (player_id in whitelists.get(str(entity.getUniqueId()), [])):
+        #if is_player(entity) and is_creative(entity) and not entity.hasPermission(ff_perms[1]) and not (player_id in whitelists.get(str(entity.getUniqueId()), [])):
+        if is_player(entity) and is_creative(entity) and not (str(entity.getUniqueId()) in whitelists.get(player_id, [])):
           #if not whitelists[entity_id], check in blank list e.g. False
           set_velocity_away(player, entity)
 
-    if not player.hasPermission(ff_perms[1]): # player should be blocked, entity has forcefield
+    if not False: #player.hasPermission(ff_perms[1]): # player should be blocked, entity has forcefield
       for entity in player.getNearbyEntities(fd, fd, fd):
         entity_id = str(entity.getUniqueId())
         if is_player(entity) and is_creative(entity) and (entity_id in ff_users) and not (player_id in whitelists.get(entity_id, [])):
-          #if not whitelists[entity_id], check in blank list e.g. False
+        #if not whitelists[entity_id], check in blank list e.g. False
           set_velocity_away(entity, player) #Other way around
 
 
@@ -156,7 +157,8 @@ def set_velocity_away(player, entity): #Moves entity away from player
   dz = entity_loc.getZ() - player_loc.getZ()
   dz = dz if not (-Xv < dz < Xv) else Xv
   vz = Xv / Xve * dz
-  entity.setVelocity(Vector(vx, vy, vz))
+  ev = entity.getVelocity()
+  entity.setVelocity(Vector(vx + ev.getX(), vy + ev.getY(), vz + ev.getZ()))
   #We don't want to go above max_speed, and we dont want to divide by 0.
 
 

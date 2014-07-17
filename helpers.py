@@ -100,4 +100,4 @@ def warp(sender, args, warpname):
 
 
 def is_creative(player):
-  return True if player.getGameMode() == "Creative" else False
+  return True if str(player.getGameMode()) == "CREATIVE" else False
