@@ -99,3 +99,7 @@ def warp(player, args, warpname):
 
 def is_creative(player):
   return str(player.getGameMode()) == "CREATIVE"
+
+
+def uid(player):
+  return str(player.get-removeme-UniqueId())

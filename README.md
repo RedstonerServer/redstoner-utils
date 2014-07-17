@@ -190,7 +190,7 @@ foo = int(player_data[str(server.getPlayer(args[4]).getUniqueId())]["details"].[
 
 # good
 player     = server.getPlayer(args[4])
-player_id  = str(player.getUniqueId())
+player_id  = uid(player)
 logintime  = player_data[played_id]["last_login"]
 epoch_time = int(logintime.strftime("%s"))
 ```

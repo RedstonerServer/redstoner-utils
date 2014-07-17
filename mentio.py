@@ -50,8 +50,8 @@ def on_chat(event):
 def on_listen_command(sender, args):
   try:
     currWords = []
-    if str(sender.getUniqueId()) in mentions.keys():
-      currWords = mentions[str(sender.getUniqueId())]
+    if uid(sender) in mentions.keys():
+      currWords = mentions[uid(sender)]
 
     # /listen add <word>
     if len(args) == 2 and args[0].lower() == "add":
@@ -65,7 +65,7 @@ def on_listen_command(sender, args):
       if args[1].lower() is sender.getName():
         msg(sender, "&cYou are always listening for your full ingame name by default")
       currWords.append(args[1].lower())
-      mentions[str(sender.getUniqueId())] = currWords
+      mentions[uid(sender)] = currWords
       msg(sender, "&aYou are now listening for '&2"+args[1].lower()+"'!")
       save_mentions()
       return True
@@ -78,7 +78,7 @@ def on_listen_command(sender, args):
       for word in currWords[:]:
         if word.lower() == args[1].lower():
           currWords.remove(word.lower())
-          mentions[str(sender.getUniqueId())] = currWords
+          mentions[uid(sender)] = currWords
           success = True
       if success == True:
         save_mentions()

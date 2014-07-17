@@ -103,7 +103,7 @@ def on_report_command(sender, args):
   text = " ".join(args)
   loc = sender.getLocation()
   reporter = sender.name
-  reporter_id = str(sender.getUniqueId())
+  reporter_id = uid(sender)
   report = {
     "uuid": reporter_id,
     "msg": text,
