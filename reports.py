@@ -1,4 +1,5 @@
 from helpers import *
+from java.util.UUID import fromString as id_to_player
 import json
 import time
 import thread
@@ -7,7 +8,8 @@ reports_filename = "plugins/redstoner-utils.py.dir/files/reports.json"
 time_format      = "%Y.%m.%d %H:%M"
 reports          = []
 check_reports    = True
-check_delay      = 60*10 # seconds
+check_delay      = 60 * 10 # Every 10 minutes, staff will be notified about pending reports.
+rp_permission    = "utils.rp"
 try:
   reports = json.loads(open(reports_filename).read())
 except Exception, e:
@@ -24,8 +26,7 @@ def print_help(sender):
 def print_list(sender):
   msg(sender, "&a" + str(len(reports)) + " reports:")
   for i, report in enumerate(reports):
-    msg(sender, "&8[&e" + str(i) + " &c" + report["time"] + "&8] &3" + report["player"] + "&f: &a" + report["msg"])
-
+    msg(sender, "&8[&e" + str(i) + " &c" + report["time"] + "&8] &3" + server.getOfflinePlayer(id_to_player(report["uuid"])).getName() + "&f: &a" + report["msg"])
 
 def tp_report(sender, rep_id):
   if rep_id >= len(reports) or rep_id < 0:
@@ -43,7 +44,7 @@ def delete_report(sender, rep_id):
     reports.pop(rep_id)
     save_reports()
     msg(sender, "&aReport #%s deleted." % rep_id)
-    reporter = server.getOfflinePlayer(report["player"])
+    reporter = server.getOfflinePlayer(id_to_player(report["uuid"]))
     plugin_header(reporter, "Report")
     msg(reporter, "&aReport '&e%s&a' was resolved by %s." % (report["msg"], sender.getName()))
   else:
@@ -61,7 +62,7 @@ def save_reports():
 
 @hook.command("rp")
 def on_rp_command(sender, args):
-  if sender.hasPermission("utils.rp"):
+  if sender.hasPermission(rp_permission):
     plugin_header(sender, "Reports")
     if len(args) > 0:
       if args[0] == "list":
@@ -102,8 +103,9 @@ def on_report_command(sender, args):
   text = " ".join(args)
   loc = sender.getLocation()
   reporter = sender.name
+  reporter_id = str(sender.getUniqueId())
   report = {
-    "player": reporter,
+    "uuid": reporter_id,
     "msg": text,
     "x": int(loc.x),
     "y": int(loc.y),
@@ -115,7 +117,7 @@ def on_report_command(sender, args):
   }
   reports.append(report)
   save_reports()
-  broadcast("utils.rp", "&aReport #" + str(len(reports) -1) + ": " + reporter + "&f: " + text)
+  broadcast(rp_permission, "&aReport #" + str(len(reports) -1) + ": " + reporter + "&f: " + text)
   msg(sender, "&aReported \"&e" + text + "&a\"")
   return True
 
@@ -128,8 +130,8 @@ def reports_reminder(): # needs 2 args for unknown reason
         log("Reports reminder thread killed.")
         thread.exit()
     if len(reports) > 0:
-      broadcast("utils.rp", "&2--=[ Reports ]=--")
-      broadcast("utils.rp", "&aThere are %s pending reports!" % len(reports))
+      broadcast(rp_permission, "&2--=[ Reports ]=--")
+      broadcast(rp_permission, "&aThere are %s pending reports!" % len(reports))
 
 
 def stop_reporting():
