@@ -53,14 +53,14 @@ def on_forcefield_command(sender, args):
 
 def change_whitelist(sender, add, names):
   if names:
-    sender_id = str(sender.getUniqueId())
+    sender_id = uid(sender)
     if sender_id not in whitelists:
       whitelists[sender_id] = []
 
     for name in names:
       player = server.getOfflinePlayer(name)
       if player:
-        player_id = str(player.getUniqueId())
+        player_id = uid(player)
         pname     = player.getName()
         sname     = sender.getDisplayName()
 
@@ -86,7 +86,7 @@ def change_whitelist(sender, add, names):
 
 
 def whitelist_list(sender):
-  sender_id = str(sender.getUniqueId())
+  sender_id = uid(sender)
   count     = 0
   msg(sender, "%s &aForceField Whitelist:" % ff_prefix)
   for player_id in whitelists.get(sender_id, []):
@@ -97,7 +97,7 @@ def whitelist_list(sender):
 
 
 def whitelist_clear(sender):
-  sender_id = str(sender.getUniqueId())
+  sender_id = uid(sender)
   if whitelists.get(sender_id):
     whitelists.pop(sender_id)
     msg(sender, "%s &aForceField Whitelist cleared." % ff_prefix)
@@ -118,7 +118,7 @@ def forcefield_help(sender):
 
 
 def forcefield_toggle(sender):
-  sender_id = str(sender.getUniqueId())
+  sender_id = uid(sender)
   if sender_id in ff_users:
     ff_users.remove(sender_id)
     msg(sender, "%s &aForceField toggle: &cOFF" % ff_prefix)
@@ -156,19 +156,19 @@ def move_away(player, entity):
 def on_move(event):
   player = event.getPlayer()
   if is_creative(player):
-    player_id = str(player.getUniqueId())
+    player_id = uid(player)
 
     # moving player has forcefield, nerby player should be moved away
     if player_id in ff_users:
       for entity in player.getNearbyEntities(fd, fd, fd):
-        whitelisted = (str(entity.getUniqueId()) in whitelists.get(player_id, []))
+        whitelisted = (uid(entity) in whitelists.get(player_id, []))
         if is_player(entity) and not entity.hasPermission(pass_perm) and not whitelisted:
           move_away(player, entity)
 
     # nerby player has forcefield, moving player should be moved away
     if player.hasPermission(pass_perm):
       for entity in player.getNearbyEntities(fd, fd, fd):
-        entity_id   = str(entity.getUniqueId())
+        entity_id   = uid(entity)
         ff_enabled  = (entity_id in ff_users)
         whitelisted = (player_id in whitelists.get(entity_id, []))
         if is_player(entity) and is_creative(entity) and ff_enabled and not whitelisted:
@@ -181,6 +181,6 @@ def on_move(event):
 @hook.event("player.PlayerQuitEvent")
 def on_quit(event):
   player = event.getPlayer()
-  uid    = str(player.getUniqueId())
+  uid    = uid(player)
   if uid in ff_users:
     ff_users.remove(uid)

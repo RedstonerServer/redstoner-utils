@@ -18,7 +18,7 @@ except Exception, e:
 def on_chatgroup_command(sender, args):
   try:
     plugin_header(sender, "ChatGroups")
-    sender_id = str(sender.getUniqueId())
+    sender_id = uid(sender)
     if len(args) == 1 and args[0] == "leave":
       if sender_id in groups.keys():
         groupchat(sender, "left the group", True)
@@ -57,7 +57,7 @@ def on_chatgroup_command(sender, args):
 
 @hook.command("cgt")
 def on_cgt_command(sender, args):
-  p = str(sender.getUniqueId())
+  p = uid(sender)
   if p in cg_toggle_list:
     cg_toggle_list.remove(p)
     msg(sender, "&8[&bCG&8] &e&oCG toggle: off")
@@ -69,7 +69,7 @@ def on_cgt_command(sender, args):
 
 def groupchat(sender, message, ann = False):
   #try:
-  group = groups.get(str(sender.getUniqueId()))
+  group = groups.get(uid(sender))
   if group == None:
     msg(sender, "&cYou are not in a group!")
     return
@@ -80,7 +80,7 @@ def groupchat(sender, message, ann = False):
     mesg = "&8[&bCG&8] &f%s&f: &6%s" % (name, message)
   log("[ChatGroups] %s (%s): %s" % (sender, group, message))
   for receiver in server.getOnlinePlayers():
-    groups.get(str(receiver.getUniqueId())) == group and msg(receiver, mesg)
+    groups.get(uid(receiver)) == group and msg(receiver, mesg)
   #except Exception, e:
   #  error(e)
 
@@ -99,7 +99,7 @@ def on_chat(event):
   sender = event.getPlayer()
   msge = event.getMessage()
   if not event.isCancelled():
-    sender_id = str(sender.getUniqueId())
+    sender_id = uid(sender)
     if msge[:len(cg_key)] == cg_key and sender_id in groups.keys():
       groupchat(sender, msge[1:])
       event.setCancelled(True)

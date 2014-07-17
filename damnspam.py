@@ -30,7 +30,7 @@ def location_str(block):
 def add_input(creator, block, timeout_off, timeout_on):
   global inputs
   inputs[location_str(block)] = {
-    "creator"     : str(creator.getUniqueId()),
+    "creator"     : uid(creator),
     "timeout_off" : timeout_off,
     "timeout_on"  : timeout_on,
     "last_time"   : 0
