@@ -44,7 +44,7 @@ def on_dammnspam_command(sender, args):
   plugin_header(sender, "DamnSpam")
   if len(args) in [1,2]:
 
-    if not str(sender.getGameMode()) == "CREATIVE":
+    if not is_creative(sender):
       msg(sender, "&cYou can only do this in Creative mode.")
       return True
 
