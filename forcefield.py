@@ -126,8 +126,9 @@ def on_move(event):
   if is_creative(player):
     player_id = str(player.getUniqueId())
     if player_id in ff_users: # player has forcefield, entity should be blocked
+      log("1")
       for entity in player.getNearbyEntities(fd, fd, fd):
-        if is_player(entity) and is_creative(entity) and not entity.hasPermission(ff_perms[1]) and not (str(entity.getUniqueId() in whitelists.get(player_id, []))):
+        if is_player(entity) and is_creative(entity) and not entity.hasPermission(ff_perms[1]) and not (str(entity.getUniqueId()) in whitelists.get(player_id, [])):
           #if not whitelists[entity_id], check in blank list e.g. False
           set_velocity_away(player, entity)
 
@@ -155,7 +156,7 @@ def set_velocity_away(player, entity): #Moves entity away from player
   dz = dz if not (-Xv < dz < Xv) else Xv
   vz = Xv / Xve * dz
   ev = entity.getVelocity()
-  entity.setVelocity(Vector(vx + ev.getX(), vy + ev.getY(), vz + ev.getZ()))
+  entity.setVelocity(Vector(vx + ev.getX(), vy, vz + ev.getZ()))
   #We don't want to go above max_speed, and we dont want to divide by 0.
 
 
