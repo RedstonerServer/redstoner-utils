@@ -44,7 +44,7 @@ def on_cycler_command(sender, args):
 @hook.event("player.PlayerItemHeldEvent", "normal")
 def on_slot_change(event):
   player    = event.getPlayer()
-  if str(player.getGameMode()) == "CREATIVE" and str(player.getUniqueId()) not in no_cyclers and not player.isSneaking():
+  if is_creative(player) and str(player.getUniqueId()) not in no_cyclers and not player.isSneaking():
     prev_slot = event.getPreviousSlot()
     new_slot  = event.getNewSlot()
     if (prev_slot == 0 and new_slot == 8): # left -> right
