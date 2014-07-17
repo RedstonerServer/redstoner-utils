@@ -1,7 +1,6 @@
 from helpers import *
-from java.util.UUID import fromString as java_uuid
+from java.util.UUID import fromString as id_to_player
 from org.bukkit.util import Vector
-from traceback import format_exc as print_traceback
 
 ff_perms       = ["utils.forcefield", "utils.forcefield.ignore"]
 ff_prefix      = "&8[&aFF&8]"
@@ -76,15 +75,12 @@ def whitelist_add(sender, add, players):
 def whitelist_list(sender):
   sender_id = str(sender.getUniqueId())
   msg(sender, "%s &aForceField Whitelist:" % ff_prefix)
-  try:
-    count = 0
-    for player_id in whitelists.get(sender_id, []):
-      count += 1
-      msg(sender, "&a      %s. &f%s" % (count, server.getOfflinePlayer(java_uuid(player_id)).getName()))
-    if count == 0:
-      msg(sender, "&c      Your whitelist has no entries.")
-  except:
-  	log(print_traceback())
+  count = 0
+  for player_id in whitelists.get(sender_id, []):
+    count += 1
+    msg(sender, "&a      %s. &f%s" % (count, server.getOfflinePlayer(id_to_player(player_id)).getName()))
+  if count == 0:
+    msg(sender, "&c      Your whitelist has no entries.")
 
 
 def whitelist_clear(sender):
