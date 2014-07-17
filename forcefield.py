@@ -10,8 +10,10 @@ whitelists     = {}  # {ff_owner_id: [white, listed, ids]}
 fd             = 6   # forcefield distance
 speed_limiter  = 100 # the higher, the lower the forcefield sensitivity.
 
-Xv = 1.0 / speed_limiter # used in set_velocity_away(), this is more efficient.
-Xve = (0.6 * speed_limiter) * Xv
+sphere_radius = (3*(fd**2))**0.5 # Distance from box center to box corner if box rib = 1/2 * fd
+safe_radius   = sphere_radius + 0.1 # Distance which is probably not going to throw errors and get people stuck
+Xv            = 1.0 / speed_limiter # used in set_velocity_away(), this is more efficient.
+Xve           = (0.6 * speed_limiter) * Xv
 
 # /ff admin  is a future option I might implement
 
@@ -137,8 +139,19 @@ def on_move(event):
       for entity in player.getNearbyEntities(fd, fd, fd):
         entity_id = str(entity.getUniqueId())
         if is_player(entity) and is_creative(entity) and (entity_id in ff_users) and not (player_id in whitelists.get(entity_id, [])):
-        #if not whitelists[entity_id], check in blank list e.g. False
-          set_velocity_away(entity, player) #Other way around
+          #if not whitelists[entity_id], check in blank list e.g. False
+          evloc = event.getFrom()
+          enloc = entity.getLocation()
+          dx = evloc.getX() - enloc.getX()
+          if dx < -fd or dx > fd:
+            dy = evloc.getY() - enloc.getY()
+            if dy < -fd or dy > fd:
+              dz = evloc.getZ() - enloc.getZ() # This is more efficient.
+              if dz < -fd or dz > fd:
+                event.setCancelled(True)
+                msg(player, "&cYou can't get closer than %sm to %s due to their forcefield." % (fd, stripcolors(entity.getDisplayName())))
+          if not event.isCancelled():
+          	set_velocity_away(entity, player)
 
 
 def set_velocity_away(player, entity): #Moves entity away from player
