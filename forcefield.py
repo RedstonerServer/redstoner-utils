@@ -1,6 +1,7 @@
 from helpers import *
 from java.util.UUID import fromString as java_uuid
 from org.bukkit.util import Vector
+from traceback import format_exc as print_traceback
 
 ff_perms       = ["utils.forcefield", "utils.forcefield.ignore"]
 ff_prefix      = "&8[&aFF&8]"
@@ -22,17 +23,17 @@ def on_forcefield_command(sender, args):
   sender_id = str(sender.getUniqueId())
 
   if not args or args[0].lower() == "toggle": #Toggle
-    toggle_forcefield(sender, sender_id)
+    forcefield_toggle(sender)
 
   elif args[0].lower() in ["whitelist", "wl", "wlist"]: #Whitelist commands
     if not args[1:] or args[1].lower() == "list":
-      whitelist_list(sender, sender_id)
+      whitelist_list(sender)
     elif args[1].lower() == "clear":
-      whitelist_clear(sender, sender_id)
+      whitelist_clear(sender)
     elif args[1].lower() in ["add", "+"]:
-      whitelist_add(sender, sender_id, True, args[2:])
+      whitelist_add(sender, True, args[2:])
     elif args[1].lower() in ["remove", "delete", "rem", "del", "-"]:
-      whitelist_add(sender, sender_id, False, args[2:])
+      whitelist_add(sender, False, args[2:])
     else:
       invalid_syntax(sender)
 
@@ -43,59 +44,53 @@ def on_forcefield_command(sender, args):
   return True
 
 
-def whitelist_add(sender, sender_id, add, players):
-  if not players:
-    msg(sender, "%s &cGive space-separated playernames." % ff_prefix)
-  elif add == True and sender_id not in whitelists:
-    whitelists[sender_id] = []
-  online_players = []
-  for name in list(server.getOnlinePlayers()):
-    online_players.append(str(name).lower())
-  for name in players:
-    online = False
-    player = server.getPlayer(name) if name.lower() in online_players else server.getOfflinePlayer(name)
-    if not player == None:    
-      if name.lower() in online_players:
-        online = True
-      uid = str(player.getUniqueId())
-      pname = stripcolors(player.getDisplayName())
-      if add == True and uid not in whitelists[sender_id]:
-        if player == sender:
-          msg(sender, "%s &cYou can't whitelist yourself." % ff_prefix)
-        else:
-          whitelists[sender_id].append(uid)
-          msg(sender, "%s &aAdded %s to your forcefield whitelist." % (ff_prefix, pname))
-          if online == True:
-            msg(player, "%s %s &aAdded you to his forcefield whitelist." % (ff_prefix, sender.getDisplayName()))
-      elif add == False and uid in whitelists[sender_id]:
-        whitelists[sender_id].remove(uid)
-        msg(sender, "%s &cRemoved %s from your forcefield whitelist." % (ff_prefix, pname))
-        if online == True:
-          msg(player, "%s %s &cRemoved you from his forcefield whitelist." % (ff_prefix, sender.getDisplayName()))
-      elif add == True:
-        msg(sender, "%s &c%s &cWas already in your forcefield whitelist." % (ff_prefix, pname))
-      else:
-        msg(sender, "%s &c%s &cWas not in your forcefield whitelist." % (ff_prefix, pname))
-    else:
-      msg(sender, "%s &cplayer %s &cwas not found." % (ff_prefix, name))
-
-
-def whitelist_list(sender, sender_id):
-  msg(sender, "%s &aForceField Whitelist:" % ff_prefix)
-  if not sender_id in whitelists or len(whitelists[sender_id]) == 0:
-    msg(sender, "&c      Your whitelist has no entries.")
+def whitelist_add(sender, add, players):
+  if not players: msg(sender, "%s &cGive space-separated playernames." % ff_prefix)
   else:
-    c = 0
-    for uid in whitelists[sender_id]:
-      c+=1
-      msg(sender, "&a      %s. &f%s" % (c, stripcolors(server.getPlayer(java_uuid(uid)).getDisplayName())))
+    sender_id = sender.getUniqueId()
+    whitelists[sender_id] = [] if sender_id not in whitelists else whitelists[sender_id]
+    for name in players:
+      player = server.getOfflinePlayer(name)
+      if player:
+        player_id = str(player.getUniqueId())
+        pname = player.getName()
+        sname = stripcolors(sender.getDisplayName())
+        online = True if player in list(server.getOnlinePlayers()) else False
+        if add == True and player_id not in whitelists[sender_id]:
+          if not sender == player:
+            whitelists[sender_id].append(player_id)
+            msg(sender, "%s &aAdded %s to your forcefield whitelist." % (ff_prefix, pname))
+            if online == True: msg(player, "%s %s &aAdded you to his forcefield whitelist." % (ff_prefix, sname))
+          else: msg(sender, "%s &cYou can't whitelist yourself." % ff_prefix)
+        elif add == False and player_id in whitelists[sender_id]:
+          whitelists[sender_id].remove(player_id)
+          msg(sender, "%s &cRemoved %s from your forcefield whitelist." % (ff_prefix, pname))
+          if online == True: msg(player, "%s %s &cRemoved you from his forcefield whitelist." % (ff_prefix, sname))
+        elif add == True: msg(sender, "%s &c%s &cwas already in your forcefield whitelist." % (ff_prefix, pname))
+        else: msg(sender, "%s &c%s &cwas not in your forcefield whitelist." % (ff_prefix, pname))
+      else: msg(sender, "%s &cplayer %s &cwas not found." % (ff_prefix, name))
 
 
-def whitelist_clear(sender, sender_id):
+def whitelist_list(sender):
+  sender_id = sender.getUniqueId()
+  msg(sender, "%s &aForceField Whitelist:" % ff_prefix)
+  try:
+    count = 0
+    for player_id in whitelists.get(sender_id, []):
+      count += 1
+      msg(sender, "&a      %s. &f%s" % (count, server.getOfflinePlayer(java_uuid(player_id)).getName()))
+    if count == 0:
+      msg(sender, "&c      Your whitelist has no entries.")
+  except:
+  	log(print_traceback())
+
+
+def whitelist_clear(sender):
+  sender_id = sender.getUniqueId()
   if len(whitelists[sender_id]) == 0:
     msg(sender, "%s &cYou had no players whitelisted." % ff_prefix)
   else:
-    whitelists[sender_id] = []
+    whitelists.pop(sender_id)
     msg(sender, "%s &aForceField Whitelist cleared." % ff_prefix)
 
 
@@ -110,7 +105,8 @@ def forcefield_help(sender):
   msg(sender, "&a6. &6/ff wl &oremove <players> &a: aliases: &odelete, rem, del, -")
 
 
-def toggle_forcefield(sender, sender_id):
+def forcefield_toggle(sender):
+  sender_id = sender.getUniqueId()
   if sender_id in ff_users:
     ff_users.remove(sender_id)
     msg(sender, "%s &aForceField toggle: &cOFF" % ff_prefix)
