@@ -129,12 +129,11 @@ def on_move(event):
     player_id = str(player.getUniqueId())
     if player_id in ff_users: # player has forcefield, entity should be blocked
       for entity in player.getNearbyEntities(fd, fd, fd):
-        #if is_player(entity) and is_creative(entity) and not entity.hasPermission(ff_perms[1]) and not (player_id in whitelists.get(str(entity.getUniqueId()), [])):
-        if is_player(entity) and is_creative(entity) and not (str(entity.getUniqueId()) in whitelists.get(player_id, [])):
+        if is_player(entity) and is_creative(entity) and not entity.hasPermission(ff_perms[1]) and not (player_id in whitelists.get(str(entity.getUniqueId()), [])):
           #if not whitelists[entity_id], check in blank list e.g. False
           set_velocity_away(player, entity)
 
-    if not False: #player.hasPermission(ff_perms[1]): # player should be blocked, entity has forcefield
+    if not player.hasPermission(ff_perms[1]): # player should be blocked, entity has forcefield
       for entity in player.getNearbyEntities(fd, fd, fd):
         entity_id = str(entity.getUniqueId())
         if is_player(entity) and is_creative(entity) and (entity_id in ff_users) and not (player_id in whitelists.get(entity_id, [])):
