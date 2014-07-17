@@ -21,7 +21,7 @@ def error(text):
 
 
 def msg(player, text, usecolor = True, basecolor = None):
-  if player and (player == server.getConsoleSender() or player.getPlayer()): #getPlayer() returns None when offline
+  if player and (player == server.getConsoleSender() or player.getPlayer()): # getPlayer() returns None when offline
     if basecolor:
       player.sendMessage(colorify("&%s" % basecolor) + (colorify(text) if usecolor else text))
     else:
@@ -54,15 +54,13 @@ def safetp(player, world, x, y, z, yaw = 0, pitch = 0):
     safetp(player, world, x, y+1, z, yaw, pitch)
 
 
-def plugin_header(sender = None, name="Redstoner Utils"):
+def plugin_header(recipient = None, name="Redstoner Utils"):
   """
-  sends the recipient a "Plugin Header", in the format of:
-
-  --=[ PluginName ]=--
+  sends the recipient a "Plugin Header", in the format of: --=[ PluginName ]=--
   """
 
   head = "\n&2--=[ %s ]=--" % name
-  msg(sender, head)
+  msg(recipient, head)
   return head
 
 
@@ -74,8 +72,8 @@ def runas(player, cmd):
   server.dispatchCommand(player, cmd)
 
 
-def is_player(sender):
-  return (isinstance(sender, Player))
+def is_player(obj):
+  return (isinstance(obj, Player))
 
 
 def checkargs(sender, args, amin, amax):
@@ -92,12 +90,12 @@ def checkargs(sender, args, amin, amax):
   return True
 
 
-def warp(sender, args, warpname):
-  if not checkargs(sender, args, 0, 1):
+def warp(player, args, warpname):
+  if not checkargs(player, args, 0, 1):
     return True
-  runas(sender, " ".join(["warp", warpname, sender.getName()]))
+  runas(player, " ".join(["warp", warpname, player.getName()]))
   return True
 
 
 def is_creative(player):
-  return True if str(player.getGameMode()) == "CREATIVE" else False
+  return str(player.getGameMode()) == "CREATIVE"
