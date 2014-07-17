@@ -140,18 +140,7 @@ def on_move(event):
         entity_id = str(entity.getUniqueId())
         if is_player(entity) and is_creative(entity) and (entity_id in ff_users) and not (player_id in whitelists.get(entity_id, [])):
           #if not whitelists[entity_id], check in blank list e.g. False
-          evloc = event.getFrom()
-          enloc = entity.getLocation()
-          dx = evloc.getX() - enloc.getX()
-          if dx < -fd or dx > fd:
-            dy = evloc.getY() - enloc.getY()
-            if dy < -fd or dy > fd:
-              dz = evloc.getZ() - enloc.getZ() # This is more efficient.
-              if dz < -fd or dz > fd:
-                event.setCancelled(True)
-                msg(player, "&cYou can't get closer than %sm to %s due to their forcefield." % (fd, stripcolors(entity.getDisplayName())))
-          if not event.isCancelled():
-          	set_velocity_away(entity, player)
+          set_velocity_away(entity, player)
 
 
 def set_velocity_away(player, entity): #Moves entity away from player
