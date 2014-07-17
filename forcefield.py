@@ -1,18 +1,14 @@
 from helpers import *
 from java.util.UUID import fromString as id_to_player
 from org.bukkit.util import Vector
+from math import sin
 
 ff_perms       = ["utils.forcefield", "utils.forcefield.ignore"]
 ff_prefix      = "&8[&aFF&8]"
 ff_users       = []
 whitelists     = {}  # {ff_owner_id: [white, listed, ids]}
 fd             = 6   # forcefield distance
-speed_limiter  = 100 # the higher, the lower the forcefield sensitivity.
-
-sphere_radius = (3*(fd**2))**0.5 # Distance from box center to box corner if box rib = 1/2 * fd
-safe_radius   = sphere_radius + 0.1 # Distance which is probably not going to throw errors and get people stuck
-Xv            = 1.0 / speed_limiter # used in set_velocity_away(), this is more efficient.
-Xve           = (0.6 * speed_limiter) * Xv
+Xv            = 3.05 / fd # used in set_velocity_away(), this is more efficient.
 
 # /ff admin  is a future option I might implement
 
@@ -130,33 +126,26 @@ def on_move(event):
       for entity in player.getNearbyEntities(fd, fd, fd):
         if is_player(entity) and is_creative(entity) and not entity.hasPermission(ff_perms[1]) and not (str(entity.getUniqueId()) in whitelists.get(player_id, [])):
           #if not whitelists[entity_id], check in blank list e.g. False
-          set_velocity_away(player, entity)
+          move_away(player, entity)
 
-    if not player.hasPermission(ff_perms[1]): # player should be blocked, entity has forcefield
+    if player.hasPermission(ff_perms[1]): # player should be blocked, entity has forcefield
       for entity in player.getNearbyEntities(fd, fd, fd):
         entity_id = str(entity.getUniqueId())
         if is_player(entity) and is_creative(entity) and (entity_id in ff_users) and not (player_id in whitelists.get(entity_id, [])):
           #if not whitelists[entity_id], check in blank list e.g. False
-          set_velocity_away(entity, player)
+          move_away(entity, player)
 
 
-def set_velocity_away(player, entity): #Moves entity away from player
+def move_away(player, entity): #Moves entity away from player
   player_loc = player.getLocation()
   entity_loc = entity.getLocation()
-
   dx = entity_loc.getX() - player_loc.getX()
-  dx = dx if not (-Xv < dx < Xv) else Xv
-  vx = Xv / Xve * dx
-
+  vx = sin(Xv * dx)
   dy = entity_loc.getY() - player_loc.getY()
-  dy = dy if not (-Xv < dy < Xv) else Xv
-  vy = Xv / Xve * dy
-
+  vy = sin(Xv * dy)
   dz = entity_loc.getZ() - player_loc.getZ()
-  dz = dz if not (-Xv < dz < Xv) else Xv
-  vz = Xv / Xve * dz
-  ev = entity.getVelocity()
-  entity.setVelocity(Vector(vx + ev.getX(), vy, vz + ev.getZ()))
+  vz = sin(Xv * dz)
+  entity.setVelocity(Vector(vx , vy, vz))
   #We don't want to go above max_speed, and we dont want to divide by 0.
 
 
