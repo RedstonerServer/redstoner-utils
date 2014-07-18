@@ -57,7 +57,7 @@ def change_whitelist(sender, add, names): #Add names if add == True else Remove 
     for name in names:
       player = server.getOfflinePlayer(name)
       if player.hasPlayedBefore():
-        player_id = str(player.getUniqueId())
+        player_id = uid(player)
         pname     = player.getName()
         sname     = stripcolors(sender.getDisplayName())
 
@@ -88,7 +88,7 @@ def change_whitelist(sender, add, names): #Add names if add == True else Remove 
 
 
 def whitelist_list(player):
-  player_id = str(player.getUniqueId())
+  player_id = uid(player)
   count     = 0
   forcefield_header(player, "&bForcefield whitelist:")
   for user_id in whitelists.get(player_id, []):
@@ -100,7 +100,7 @@ def whitelist_list(player):
 
 
 def whitelist_clear(player):
-  player_id = str(player.getUniqueId())
+  player_id = uid(player)
   if whitelists.get(player_id):
     whitelists.pop(player_id)
     forcefield_header(player, "&bForcefield whitelist cleared.")
@@ -122,11 +122,11 @@ def forcefield_help(player):
 
 
 def forcefield_check(player): # Returns a string to tell the player its forcefield status
-  return "&eYour forcefield is %s" % "&2ON" if str(player.getUniqueId()) in ff_users else "&cOFF"
+  return "&eYour forcefield is %s" % "&2ON" if uid(player) in ff_users else "&cOFF"
 
 
 def forcefield_toggle(player, arg): # arg is a list with max 1 string
-  player_id = str(player.getUniqueId())
+  player_id = uid(player)
   enabled   = player_id in ff_users
   argoff    = arg[0].upper() == "OFF" if arg else False
   if enabled and (not arg or argoff): # 3 possibilities for arg: [], ["OFF"], ["ON"]. This is the most efficient way. (Case insensitive)
@@ -200,6 +200,6 @@ def move_away(player, entity):
 @hook.event("player.PlayerQuitEvent")
 def on_quit(event):
   player    = event.getPlayer()
-  player_id = str(player.getUniqueId())
+  player_id = uid(player)
   if player_id in ff_users:
     ff_users.remove(player_id)
