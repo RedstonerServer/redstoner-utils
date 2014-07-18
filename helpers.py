@@ -6,6 +6,7 @@ import org.bukkit.Location as Location
 import org.bukkit.entity.Player as Player
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause as TeleportCause
 import org.bukkit.block as bblock
+import json
 
 
 shared = {} # this dict can be used to share stuff across modules
@@ -110,3 +111,20 @@ def uid(player):
 
 def retrieve_player(uid):
   return server.getOfflinePlayer(id_to_player(uid))
+
+
+def open_json_file(json_file):
+  try:
+    with open(json_file) as obj:
+      return json.loads(obj.read())
+  except Exception, reading_error:
+    error("Failed to read from %s: %s" % (json_file, str(reading_error)))
+
+
+def save_json_file(json_file, json_object): # json file is the path to the file, obj is the variable you want to write to the file.
+  global json_object
+  try:
+    with open(json_file) as obj:
+      obj.write(json.dumps(json_object))
+  except Exception, writing_error:
+    error("Failed to write to %s: %s" % (json_file, str(writing_error)))
