@@ -144,7 +144,10 @@ def forcefield_header(player, message):
 
 @hook.event("player.PlayerMoveEvent")
 def on_move(event):
+  if not ff_users:
+    return
   player = event.getPlayer()
+  log(player)
   if is_creative(player):
     player_id = uid(player)
 
