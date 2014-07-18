@@ -3,13 +3,15 @@ from helpers import *
 from org.bukkit.util import Vector
 from math import sin
 
-ff_perm        = "utils.forcefield"
-pass_perm      = "utils.forcefield.ignore"
-ff_prefix      = "&8[&bFF&8] "
-ff_users       = []
-whitelists     = {}        # {ff_owner_id: [white, listed, ids]}
-fd             = 6         # forcefield distance
-Xv             = 2.95 / fd # used in move_away(), this is more efficient.
+ff_perm         = "utils.forcefield"
+pass_perm       = "utils.forcefield.ignore"
+ff_prefix       = "&8[&bFF&8] "
+ff_users        = []
+fd              = 6                                                         # forcefield distance
+Xv              = 2.95 / fd                                                 # used in move_away(), this is more efficient.
+whitelists_filename = "plugins/redstoner-utils.py.dir/files/forcefield.json"
+whitelists      = {}                     # {ff_owner_id: [white, listed, ids]} (Adding file usage later, should be simple but just not yet.)
+
 
 # /ff admin  is a future option I might implement
 
@@ -144,28 +146,26 @@ def forcefield_header(player, message):
 
 @hook.event("player.PlayerMoveEvent")
 def on_move(event):
-  if not ff_users:
-    return
-  player = event.getPlayer()
-  log(player)
-  if is_creative(player):
-    player_id = uid(player)
+  if ff_users:
+    player = event.getPlayer()
+    if is_creative(player):
+      player_id = uid(player)
 
-    # moving player has forcefield, nearby player should be moved away
-    if player_id in ff_users:
-      for entity in player.getNearbyEntities(fd, fd, fd):
-        whitelisted = (uid(entity) in whitelists.get(player_id, []))
-        if is_player(entity) and not entity.hasPermission(pass_perm) and not whitelisted:
-          move_away(player, entity)
+      # moving player has forcefield, nearby player should be moved away
+      if player_id in ff_users:
+        for entity in player.getNearbyEntities(fd, fd, fd):
+          whitelisted = (uid(entity) in whitelists.get(player_id, []))
+          if is_player(entity) and not entity.hasPermission(pass_perm) and not whitelisted:
+            move_away(player, entity)
 
-    # nearby player has forcefield, moving player should be moved away
-    if not player.hasPermission(pass_perm):
-      for entity in player.getNearbyEntities(fd, fd, fd):
-        entity_id   = uid(entity)
-        ff_enabled  = (entity_id in ff_users)
-        whitelisted = (player_id in whitelists.get(entity_id, []))
-        if is_player(entity) and is_creative(entity) and ff_enabled and not whitelisted:
-          move_away(entity, player)
+      # nearby player has forcefield, moving player should be moved away
+      if not player.hasPermission(pass_perm):
+        for entity in player.getNearbyEntities(fd, fd, fd):
+          entity_id   = uid(entity)
+          ff_enabled  = (entity_id in ff_users)
+          whitelisted = (player_id in whitelists.get(entity_id, []))
+          if is_player(entity) and is_creative(entity) and ff_enabled and not whitelisted:
+            move_away(entity, player)
 
 
 def move_away(player, entity):
