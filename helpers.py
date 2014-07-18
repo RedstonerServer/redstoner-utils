@@ -102,4 +102,4 @@ def is_creative(player):
 
 
 def uid(player):
-  return str(player.get-removeme-UniqueId())
+  return str(player.getUniqueId())
