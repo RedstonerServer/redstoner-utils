@@ -1,5 +1,6 @@
 #pylint: disable = F0401
 from re import sub
+from java.util.UUID import fromString as id_to_player
 import org.bukkit as bukkit
 import org.bukkit.Location as Location
 import org.bukkit.entity.Player as Player
@@ -92,9 +93,11 @@ def checkargs(sender, args, amin, amax):
 
 def warp(player, args, warpname):
   if not checkargs(player, args, 0, 1):
-    return True
-  runas(player, " ".join(["warp", warpname, player.getName()]))
+    return False # You can check if it worked
+  runas(player, "warp %s" % warpname) 
   return True
+""" Changed to this, from runas(player, " ".join(["warp", warpname])) because it doesnt make sense
+to make the player add its own name to the command to warp that name which is the same player """
 
 
 def is_creative(player):
@@ -103,3 +106,7 @@ def is_creative(player):
 
 def uid(player):
   return str(player.getUniqueId())
+
+
+def retrieve_player(uid):
+  return server.getOfflinePlayer(id_to_player(uid))

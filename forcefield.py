@@ -1,6 +1,5 @@
 #pylint: disable = F0401
 from helpers import *
-from java.util.UUID import fromString as id_to_player
 from org.bukkit.util import Vector
 from math import sin
 
@@ -93,7 +92,7 @@ def whitelist_list(player):
   forcefield_header(player, "&bForcefield whitelist:")
   for user_id in whitelists.get(player_id, []):
     count += 1
-    pname = server.getOfflinePlayer(id_to_player(user_id)).getName()
+    pname = retrieve_player(user_id).getName()
     msg(player, "&b %s. &f%s" % (count, pname))
   if count == 0:
     msg(player, "&c Your whitelist has no entries.")
@@ -110,19 +109,16 @@ def whitelist_clear(player):
 
 def forcefield_help(player):
   msg(player, " ")
-  forcefield_header(player, "&b&l/Forcefield help:         %s" % forcefield_check(player))
+  forcefield_header(player, "&b&l/Forcefield help:     Your forcefield is %s" % ("&2&lON" if uid(player) in ff_users else "&c&lOFF"))
   msg(player, "&b You can use the forcefield to keep players on distance.")
   msg(player, "&b Commands:")
-  msg(player, "&b 1. &6/ff &ohelp &b:                         aliases: &6?")
+  msg(player, "&b 1. &6/ff &ohelp &b                         aliases: &6?")
   msg(player, "&b 2. &6/ff &o(on off)")
-  msg(player, "&b 3. &6/ff &owhitelist (list) &b:              aliases: &6wlist, wl")
+  msg(player, "&b 3. &6/ff &owhitelist (list) &b             aliases: &6wlist, wl")
   msg(player, "&b 4. &6/ff wl &oclear")
-  msg(player, "&b 5. &6/ff wl &oadd <players> &b:          aliases: &6+")
-  msg(player, "&b 6. &6/ff wl &oremove <players> &b:     aliases: &6delete, rem, del, - \n")
-
-
-def forcefield_check(player): # Returns a string to tell the player its forcefield status
-  return "&eYour forcefield is %s" % "&2ON" if uid(player) in ff_users else "&cOFF"
+  msg(player, "&b 5. &6/ff wl &oadd <players> &b         aliases: &6+")
+  msg(player, "&b 6. &6/ff wl &oremove <players> &b     aliases: &6delete, rem, del, -")
+  msg(player, " ")
 
 
 def forcefield_toggle(player, arg): # arg is a list with max 1 string
@@ -131,22 +127,12 @@ def forcefield_toggle(player, arg): # arg is a list with max 1 string
   argoff    = arg[0].upper() == "OFF" if arg else False
   if enabled and (not arg or argoff): # 3 possibilities for arg: [], ["OFF"], ["ON"]. This is the most efficient way. (Case insensitive)
     ff_users.remove(player_id)
-    forcefield_header(player, "&bForcefield toggle: &cOFF")
+    forcefield_header(player, "&bForcefield toggle: &c&lOFF")
   elif not enabled and not argoff:
     ff_users.append(player_id)
-    forcefield_header(player, "&bForcefield toggle: &2ON")
-
-
-def forcefield_help(sender):
-  msg(sender, "%s &a&l/ForceField Help:" % ff_prefix)
-  msg(sender, "&aYou can use the forcefield to keep players on distance.")
-  msg(sender, "&2Commands:")
-  msg(sender, "&a1. &6/ff &ohelp &a: aliases: ?")
-  msg(sender, "&a2. &6/ff &o(toggle)")
-  msg(sender, "&a3. &6/ff &owhitelist (list) &a: aliases: wlist, wl")
-  msg(sender, "&a4. &6/ff wl &oclear")
-  msg(sender, "&a5. &6/ff wl &oadd <players> &a: aliases: &o+")
-  msg(sender, "&a6. &6/ff wl &oremove <players> &a: aliases: &odelete, rem, del, -")
+    forcefield_header(player, "&bForcefield toggle: &2&lON")
+  else:
+    forcefield_header(player, "&cYour forcefield is already %s!" % arg[0].lower())
 
 
 def forcefield_header(player, message):
