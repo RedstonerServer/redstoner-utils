@@ -56,13 +56,8 @@ def change_whitelist(sender, add, names): #Add names if add == True else Remove 
 
     for name in names:
       player = server.getOfflinePlayer(name)
-<<<<<<< HEAD
       if player.hasPlayedBefore():
         player_id = str(player.getUniqueId())
-=======
-      if player:
-        player_id = uid(player)
->>>>>>> 3c5b0d8114070baf198595a5fd3580308d5f7b4f
         pname     = player.getName()
         sname     = stripcolors(sender.getDisplayName())
 
@@ -92,13 +87,8 @@ def change_whitelist(sender, add, names): #Add names if add == True else Remove 
     forcefield_header(sender, "&cGive space-separated playernames.")
 
 
-<<<<<<< HEAD
 def whitelist_list(player):
   player_id = str(player.getUniqueId())
-=======
-def whitelist_list(sender):
-  sender_id = uid(sender)
->>>>>>> 3c5b0d8114070baf198595a5fd3580308d5f7b4f
   count     = 0
   forcefield_header(player, "&bForcefield whitelist:")
   for user_id in whitelists.get(player_id, []):
@@ -109,7 +99,6 @@ def whitelist_list(sender):
     msg(player, "&c Your whitelist has no entries.")
 
 
-<<<<<<< HEAD
 def whitelist_clear(player):
   player_id = str(player.getUniqueId())
   if whitelists.get(player_id):
@@ -146,14 +135,6 @@ def forcefield_toggle(player, arg): # arg is a list with max 1 string
   elif not enabled and not argoff:
     ff_users.append(player_id)
     forcefield_header(player, "&bForcefield toggle: &2ON")
-=======
-def whitelist_clear(sender):
-  sender_id = uid(sender)
-  if whitelists.get(sender_id):
-    whitelists.pop(sender_id)
-    msg(sender, "%s &aForceField Whitelist cleared." % ff_prefix)
-  else:
-    msg(sender, "%s &cYou had no players whitelisted." % ff_prefix)
 
 
 def forcefield_help(sender):
@@ -166,16 +147,6 @@ def forcefield_help(sender):
   msg(sender, "&a4. &6/ff wl &oclear")
   msg(sender, "&a5. &6/ff wl &oadd <players> &a: aliases: &o+")
   msg(sender, "&a6. &6/ff wl &oremove <players> &a: aliases: &odelete, rem, del, -")
-
-
-def forcefield_toggle(sender):
-  sender_id = uid(sender)
-  if sender_id in ff_users:
-    ff_users.remove(sender_id)
-    msg(sender, "%s &aForceField toggle: &cOFF" % ff_prefix)
->>>>>>> 3c5b0d8114070baf198595a5fd3580308d5f7b4f
-  else:
-    forcefield_header(player, "&cYour forcefield is already %s!" % arg[0].upper())
 
 
 def forcefield_header(player, message):
@@ -228,14 +199,7 @@ def move_away(player, entity):
 
 @hook.event("player.PlayerQuitEvent")
 def on_quit(event):
-<<<<<<< HEAD
   player    = event.getPlayer()
   player_id = str(player.getUniqueId())
   if player_id in ff_users:
     ff_users.remove(player_id)
-=======
-  player = event.getPlayer()
-  uid    = uid(player)
-  if uid in ff_users:
-    ff_users.remove(uid)
->>>>>>> 3c5b0d8114070baf198595a5fd3580308d5f7b4f
