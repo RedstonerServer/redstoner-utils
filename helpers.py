@@ -135,3 +135,35 @@ def save_json_file(filename, obj):
       obj.write(json_dumps(obj))
   except Exception, e:
     error("Failed to write to %s: %s" % (filename, e))
+
+
+def toggle(player, variable, operation = None, messages = ["&aToggle now on!", "&cToggle now off!", "&cToggle was already %s"]):
+  """
+  Toggles if a player('s id) is in variable.
+  messages[0] is displayed when it is turned on, messages[1] when off, and messages[2] when already of/on + "ON!" or "OFF!"
+  if operation is True, player will be added, and if already added, it will receive messages[2] and %s will be replaced with "OFF!"
+  if operation is False, player will be removed, and if already removed, it will receive messages[2] and %s will be replaced with "OFF"
+  if operation is not given or None, variable will simply be toggled for that player.
+  messages and operation are completely optional of course. There's a default!
+
+  FYI, I checked in PyScripter if the variables is changed and it seems like it. I'm not entirely sure if it will
+  transfer between modules though, but it should.
+  http://puu.sh/ahAjr/6862c6e5a6.png Returns ["Hi"]
+  """
+
+  pid     = uid(player)
+  enabled = pid in variable
+
+  # Do some checks and remove pid.
+  if enabled and not operation == True:
+    variable.remove(pid)
+    msg(player, messages[0])
+
+  # Do some checks and append pid.
+  elif not enabled and not operation == False:
+    variable.append(pid)
+    msg(player, messages[1])
+
+  # Already on/off (optional)
+  else:
+    msg(player, messages[2] % (" ON" if operation == True else " OFF"))
