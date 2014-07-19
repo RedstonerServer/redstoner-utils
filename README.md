@@ -172,10 +172,10 @@ a      = 3
 
 Pro Tip: Use the AlignTab plugin for Sublime Text!
 
-## Vertical spacing
+## Horizontal spacing
 Use at least one space left and one space right to equals signs, and one space right to colons.
 
-## Horizontal spacing
+## Vertical spacing
 Leave two empty lines before function definitions. In case you need to use `@hook.something`, add the two lines before that, directly followed by the definition.
 
 ## Meaningful names
