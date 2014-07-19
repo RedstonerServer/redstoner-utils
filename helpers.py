@@ -1,12 +1,12 @@
 #pylint: disable = F0401
 from re import sub
-from java.util.UUID import fromString as id_to_player
+from java.util.UUID import fromString as juuid
+from json import dumps as json_dumps, loads as json_loads
 import org.bukkit as bukkit
 import org.bukkit.Location as Location
 import org.bukkit.entity.Player as Player
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause as TeleportCause
 import org.bukkit.block as bblock
-from json import dumps as json_dumps, loads as json_loads
 
 
 shared = {} # this dict can be used to share stuff across modules
@@ -109,21 +109,29 @@ def uid(player):
   return str(player.getUniqueId())
 
 
-def retrieve_player(uid):
-  return server.getOfflinePlayer(id_to_player(uid))
+def retrieve_player(uuid):
+  return server.getOfflinePlayer(juuid(uuid))
 
 
-def open_json_file(json_filename): # json file is the path + name to the file
+def open_json_file(filename):
+  """
+  opens the given json file and returns an object or returns None on error
+  filename is the path + name of the file.
+  """
   try:
-    with open(json_file) as obj:
+    with open(filename) as obj:
       return json_loads(obj.read())
-  except Exception, reading_error:
-    error("Failed to read from %s: %s" % (json_file, str(reading_error)))
+  except Exception, e:
+    error("Failed to read from %s: %s" % (filename, e))
 
 
-def save_json_file(json_filename, json_object): # json file is the path + name to the file, json_object is the variable you want to write to the file.
+def save_json_file(filename, obj):
+  """
+  saves the given object as json into filename
+  filename is the path + name of the file.
+  """
   try:
-    with open(json_file) as obj:
-      obj.write(json_dumps(json_object))
-  except Exception, writing_error:
-    error("Failed to write to %s: %s" % (json_file, str(writing_error)))
+    with open(filename) as obj:
+      obj.write(json_dumps(obj))
+  except Exception, e:
+    error("Failed to write to %s: %s" % (filename, e))
