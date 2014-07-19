@@ -131,8 +131,8 @@ def save_json_file(filename, obj):
   filename is the path + name of the file.
   """
   try:
-    with open(filename) as obj:
-      obj.write(json_dumps(obj))
+    with open(filename) as fyle:
+      fyle.write(json_dumps(obj))
   except Exception, e:
     error("Failed to write to %s: %s" % (filename, e))
 
