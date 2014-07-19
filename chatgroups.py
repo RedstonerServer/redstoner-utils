@@ -32,9 +32,9 @@ def on_chatgroup_command(sender, args):
         group = groups[sender_id]
         msg(sender, "&aCurrent chatgroup: %s" % group)
         users = []
-        for uid, ugroup in groups.iteritems():
+        for uuid, ugroup in groups.iteritems():
           if ugroup == group:
-            usr = server.getPlayer(juuid(uid))
+            usr = server.getPlayer(juuid(uuid))
             if usr:
               users.append(usr.getDisplayName())
         msg(sender, "&aUsers in this group:")
