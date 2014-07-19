@@ -3,14 +3,14 @@ from helpers import *
 from org.bukkit.util import Vector
 from math import sin
 
-ff_perm         = "utils.forcefield"
-pass_perm       = "utils.forcefield.ignore"
-ff_prefix       = "&8[&bFF&8] "
-ff_users        = []
-fd              = 6                                                         # forcefield distance
-Xv              = 2.95 / fd                                                 # used in move_away(), this is more efficient.
+ff_perm             = "utils.forcefield"
+pass_perm           = "utils.forcefield.ignore"
+ff_prefix           = "&8[&bFF&8] "
+ff_users            = []
+fd                  = 6 # forcefield distance
+Xv                  = 2.95 / fd # used in move_away(), this is more efficient.
 whitelists_filename = "plugins/redstoner-utils.py.dir/files/forcefield.json"
-whitelists      = {}                     # {ff_owner_id: [white, listed, ids]} (Adding file usage later, should be simple but just not yet.)
+whitelists          = {} # {ff_owner_id: [white, listed, ids]} (Adding file usage later, should be simple but just not yet.)
 
 
 # /ff admin  is a future option I might implement
