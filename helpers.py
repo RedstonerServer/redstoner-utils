@@ -6,7 +6,7 @@ import org.bukkit.Location as Location
 import org.bukkit.entity.Player as Player
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause as TeleportCause
 import org.bukkit.block as bblock
-from json import dumps as json.dumps, loads as json.loads
+from json import dumps as json_dumps, loads as json_loads
 
 
 shared = {} # this dict can be used to share stuff across modules
@@ -95,7 +95,7 @@ def checkargs(sender, args, amin, amax):
 def warp(player, args, warpname):
   if not checkargs(player, args, 0, 1):
     return False # You can check if it worked
-  runas(player, "warp %s" % warpname) 
+  runas(player, "warp %s" % warpname)
   return True
 """ Changed to this, from runas(player, " ".join(["warp", warpname])) because it doesnt make sense
 to make the player add its own name to the command to warp that name which is the same player """
@@ -116,7 +116,7 @@ def retrieve_player(uid):
 def open_json_file(json_filename): # json file is the path + name to the file
   try:
     with open(json_file) as obj:
-      return json.loads(obj.read())
+      return json_loads(obj.read())
   except Exception, reading_error:
     error("Failed to read from %s: %s" % (json_file, str(reading_error)))
 
@@ -124,6 +124,6 @@ def open_json_file(json_filename): # json file is the path + name to the file
 def save_json_file(json_filename, json_object): # json file is the path + name to the file, json_object is the variable you want to write to the file.
   try:
     with open(json_file) as obj:
-      obj.write(json.dumps(json_object))
+      obj.write(json_dumps(json_object))
   except Exception, writing_error:
     error("Failed to write to %s: %s" % (json_file, str(writing_error)))
