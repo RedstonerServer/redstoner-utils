@@ -78,7 +78,7 @@ def groupchat(sender, message, ann = False):
     mesg = "&8[&bCG&8] &e&o%s&e&o %s" % (name, message)
   else:
     mesg = "&8[&bCG&8] &f%s&f: &6%s" % (name, message)
-  log("[ChatGroups] %s (%s): %s" % (sender, group, message))
+  log("[ChatGroups] %s (%s): %s" % (sender.getDisplayName(), group, message))
   for receiver in server.getOnlinePlayers():
     groups.get(uid(receiver)) == group and msg(receiver, mesg)
   #except Exception, e:
