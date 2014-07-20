@@ -18,9 +18,9 @@ def on_setmotd_command(sender, args):
       return True
 
     motd = colorify(" ".join(args).replace("\\n", "\n"))
-    broadcast("", plugin_header(name="MOTD"))
-    broadcast("", "&aNew MOTD:&r\n%s" % motd)
-    broadcast(" ")
+    broadcast(None, plugin_header(name="MOTD"))
+    broadcast(None, "&aNew MOTD:&r\n%s" % motd)
+    broadcast(None, " ")
   else:
     noperm(sender)
   return True
