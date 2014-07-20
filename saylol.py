@@ -39,7 +39,7 @@ def print_lol(sender, lid):
   if time() - last_msg > timeout:
     if len(lols) > lid:
       dispname = sender.getDisplayName() if is_player(sender) else sender.getName()
-      broadcast("", "&8[&blol&8] &7%s&8: &e%s" % (dispname, lols[lid]))
+      broadcast(None, "&8[&blol&8] &7%s&8: &e%s" % (dispname, lols[lid]))
       last_msg = time()
     else:
       plugin_header(sender, "SayLol")
