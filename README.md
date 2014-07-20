@@ -41,12 +41,24 @@ Detailed description:
 
 **Never** edit the files directly on the server!
 The dev server uses the *dev* branch, the live server uses *master*.
+**Do not use `git pull` on the server!** *(All files must be pulled/owned by the 'redstoner' user.)*
 
-Please use the script `<server-dir>/git_pull_utils.sh`.
-**Do not use `git pull` on the server!**
-All files must be owned and pulled by the *redstoner* user.
+### Deploying on test server
+* Push all changes
+* Run `<server-dir>/git_pull_utils.sh`.
+* Restart (You can try reloading here, but expect the unexpected)
 
-Be **very careful** with the live server! Make sure you're in the *master* branch and the code is working before pulling/restarting!
+### Deploying on production server
+* Test all code carefully on the test server  
+  ***on your machine:***
+* `git checkout master`
+* `git pull`
+* `git merge dev`
+* `git push -u origin master`
+* `git checkout dev`  
+  ***on the server:***
+* `rs update_utils`
+* Restart
 
 
 # Modules / Files
