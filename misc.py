@@ -124,9 +124,9 @@ def on_echo_command(sender, args):
 def eval_thread(sender, code):
   try:
     result = eval(code)
-    msg(sender, "%s: %s" % (colorify("&3") + type(result).__name__, colorify("&a") + unicode(result)), usecolor = False)
+    msg(sender, ">>> %s: %s" % (colorify("&3") + type(result).__name__, colorify("&a") + unicode(result) + "\n "), usecolor = False)
   except Exception, e:
-    msg(sender, "%s: %s" % (e.__class__.__name__, e), False, "c")
+    msg(sender, ">>> %s: %s" % (e.__class__.__name__, e) + "\n ", False, "c")
   thread.exit()
 
 
