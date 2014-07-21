@@ -3,6 +3,7 @@ from helpers import *
 
 motd = server.getMotd()
 
+raise TypeError("testing /modules") # remove this line!
 
 @hook.command("getmotd")
 def on_getmotd_command(sender, args):
