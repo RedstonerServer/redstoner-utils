@@ -1,7 +1,7 @@
 #pylint: disable = F0401
 from helpers import *
 
-motd = server.getMotd()
+motd = colorify(server.getMotd())
 
 @hook.command("getmotd")
 def on_getmotd_command(sender, args):
