@@ -30,7 +30,7 @@ def on_disable():
 log("Loading RedstonerUtils...")
 
 # Import all modules, in this order
-load_modules = [
+shared["load_modules"] = [
   "misc",
   "adminchat",
   "lagchunks",
@@ -46,7 +46,7 @@ load_modules = [
   "forcefield"
 ]
 shared["modules"] = {}
-for module in load_modules:
+for module in shared["load_modules"]:
   try:
     shared["modules"][module] = __import__(module)
     log("Module %s loaded." % module)

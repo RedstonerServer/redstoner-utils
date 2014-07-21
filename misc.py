@@ -143,3 +143,11 @@ def on_pyeval_command(sender, args):
   else:
     noperm(sender)
   return True
+
+
+@hook.command("modules")
+def on_modules_command(sender, args):
+  plugin_header("Modules")
+  for mod in shared["load_modules"]:
+    color = "a" if mod in shared["modules"] else "c"
+    msg(sender, "&" + color + mod)
