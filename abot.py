@@ -3,7 +3,7 @@ from helpers import *
 from re import compile as reg_compile
 
 answers_filename = "plugins/redstoner-utils.py.dir/files/abot.json"
-answers = []
+answers          = []
 
 
 def load_answers():
@@ -57,7 +57,7 @@ def on_chat(event):
   for answer in answers:
     for regex in answer["regex"]:
       if regex.search(message):
-        if answer["hide-perm"] and not sender.hasPermission(answer["hide-perm"]):
+        if not answer["hide-perm"] or not sender.hasPermission(answer["hide-perm"]):
           plugin_header(sender, "AnswerBot")
           msg(sender, answer["message"] + "\n ")
           event.setCancelled(True)
