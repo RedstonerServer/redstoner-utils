@@ -113,6 +113,12 @@ def retrieve_player(uuid):
   return server.getOfflinePlayer(juuid(uuid))
 
 
+def played_before(player):
+  if player.getFirstPlayed() == 0:
+    return False
+  return True
+
+
 def open_json_file(filename):
   """
   opens the given json file and returns an object or returns None on error
@@ -131,7 +137,7 @@ def save_json_file(filename, obj):
   filename is the path + name of the file.
   """
   try:
-    with open(filename) as f:
+    with open(filename, "w") as f:
       f.write(json_dumps(obj))
   except Exception, e:
     error("Failed to write to %s: %s" % (filename, e))
