@@ -27,10 +27,10 @@ def friendmessage(player, message): # sends a message with a prefix
 
 @hook.command("friends")
 def on_friend_command(sender, args):
-  sender_id = uid(sender)
   if not is_player(sender):
     friendmessage(sender, "&c&lYou can't have friends!")
     return True
+  sender_id = uid(sender)
   if not args or args[0] in ["list", "lst", "*"]: #/friends list
     sender_friends = friends.get(sender_id, False)
     if sender_friends:
