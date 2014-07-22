@@ -1,5 +1,4 @@
 from helpers import *
-from traceback import format_exc as print_traceback
 
 friends_filename  = "plugins/redstoner-utils.py.dir/files/friends.json"
 friends           = open_json_file(friends_filename) # {Player_UUID:[List_of_friend_uuids]}
