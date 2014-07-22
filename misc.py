@@ -3,7 +3,6 @@ from helpers import *
 from time import time as now
 import thread
 import org.bukkit.inventory.ItemStack as ItemStack
-from player import Player as RPlayer
 
 #
 # Welcome new players
