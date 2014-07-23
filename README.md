@@ -195,6 +195,7 @@ Give function and variable names meaningful names. If you want to shorten long n
 
 ## Readability
 Don't create long lines with lots of function calls. Split into multiple lines instead.
+Also avoid methods with lots of lines. Split into multiple methods instead.
 
 ```Python
 # bad
@@ -227,26 +228,20 @@ Watch out for something like `org.python.pycode._pyx5.horribleCode$23(/path/to/b
 0. `/path/to/badcode.py` is the actual file of our module
 0. `:214` is the line in which the error occured.
 
-Please note that the line may not be accurate. You'll often get the start or end of a loop, method, or the like - when the actual error was somewhere in there.
+Please note that the line may not be accurate. You'll often get the start of a loop, or the end of a method - when the actual error was somewhere in there.
 
 In many cases, this is enough to find your bug. If you still cannot find it,try to catch exceptions in your code, as follows:
 
 
 ## Catching exceptions
 
-If you want to catch all exceptions (e.g. for debugging), do not:
-```python
-try:
-  # code
-except Exception, e:
-  print(e)
-```
+If you want to catch all exceptions (e.g. for debugging), do not `catch Exception`.
 Since we're using jython, this will not catch Java exceptions.
 This will give you some more deatails:
 ```python
-import traceback
+from traceback import format_exc as trace
 try:
   #code
 except: # everything
-  print(traceback.format_exc())
+  print(trace())
 ```
