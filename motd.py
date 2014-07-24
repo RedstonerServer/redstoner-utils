@@ -1,7 +1,8 @@
 #pylint: disable = F0401
 from helpers import *
 
-motd = colorify(server.getMotd())
+default_motd = colorify(server.getMotd())
+motd         = default_motd
 
 @hook.command("getmotd")
 def on_getmotd_command(sender, args):
@@ -17,6 +18,10 @@ def on_setmotd_command(sender, args):
       return True
 
     motd = colorify(" ".join(args).replace("\\n", "\n"))
+
+    if motd == "--reset":
+      motd = default_motd
+
     broadcast(None, plugin_header(name="MOTD"))
     broadcast(None, "&aNew MOTD:&r\n%s" % motd)
     broadcast(None, " ")
