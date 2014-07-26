@@ -1,4 +1,4 @@
-import simplejson as json
+import json
 from helpers import *
 from re import compile as reg_compile
 from traceback import format_exc as print_traceback
@@ -22,9 +22,9 @@ def onChat(event):
       sender     = event.getPlayer()
       words      = event.getMessage().split(" ")
       recipients = event.getRecipients()
-      listeners   = mentions[sender.getUniqueId()]
 
       for recipient in list(recipients):
+        listeners   = mentions[str(recipient.getUniqueId())]
         rec_words = words[:] # copy
         for i in range(len(rec_words)):
           word = rec_words[i]
@@ -49,7 +49,7 @@ def onChat(event):
             pass
           message = " ".join([sender.getDisplayName(), arrow] + rec_words)
           msg(recipient, message, usecolor = False)
-          recipient.playSound(recipient.getLocation(), "mob.chicken.plop", 1, 0)
+          recipient.playSound(recipient.getLocation(), "liquid.lavapop", 1, 2)
   except:
     error("Failed to handle PlayerChatEvent:")
     error(print_traceback())
