@@ -14,7 +14,7 @@ shared = {} # this dict can be used to share stuff across modules
 server = bukkit.Bukkit.getServer()
 
 
-def log(text):
+def info(text):
   server.getLogger().info("[RedstonerUtils] %s" % text)
 
 

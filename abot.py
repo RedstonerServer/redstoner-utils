@@ -56,7 +56,7 @@ def on_chat(event):
           plugin_header(sender, "AnswerBot")
           msg(sender, answer["message"] + "\n ")
           event.setCancelled(True)
-          log("(hidden) %s: '%s'" % (sender.getName(), message))
+          info("(hidden) %s: '%s'" % (sender.getName(), message))
           break
 
 

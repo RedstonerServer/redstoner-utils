@@ -18,16 +18,16 @@ except:
 
 @hook.enable
 def on_enable():
-  log("RedstonerUtils enabled!")
+  info("RedstonerUtils enabled!")
 
 
 @hook.disable
 def on_disable():
   shared["modules"]["reports"].stop_reporting()
-  log("RedstonerUtils disabled!")
+  info("RedstonerUtils disabled!")
 
 
-log("Loading RedstonerUtils...")
+info("Loading RedstonerUtils...")
 
 # Import all modules, in this order
 shared["load_modules"] = [
@@ -50,7 +50,7 @@ shared["modules"] = {}
 for module in shared["load_modules"]:
   try:
     shared["modules"][module] = __import__(module)
-    log("Module %s loaded." % module)
+    info("Module %s loaded." % module)
   except:
     error("Failed to import module %s:" % module)
     error(print_traceback())
