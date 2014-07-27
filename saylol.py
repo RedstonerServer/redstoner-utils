@@ -57,6 +57,8 @@ def search_lols(sender, keyword):
 
 @hook.command("lol")
 def on_lol_command(sender, args):
+  plugin_header(sender, "SayLol")
+
   cmd = args[0] if len(args) > 0 else None
   if len(args) == 0:
     if sender.hasPermission("utils.lol"):
@@ -70,13 +72,11 @@ def on_lol_command(sender, args):
         i = int(args[1])
         print_lol(sender, i)
       except ValueError:
-        plugin_header(sender, "SayLol")
         msg(sender, "&cInvalid number '&e%s&c'" % args[1])
     else:
       noperm(sender)
 
   elif cmd == "list":
-    plugin_header(sender, "SayLol")
     for i in range(len(lols)):
       msg(sender, "&a%s: &e%s" % (str(i).rjust(3), lols[i]))
 
@@ -88,7 +88,6 @@ def on_lol_command(sender, args):
 
   elif cmd == "add":
     if sender.hasPermission("utils.lol.modify"):
-      plugin_header(sender, "SayLol")
       add_lol(" ".join(args[1:]))
       msg(sender, "&aNew lol message added!")
     else:
@@ -96,7 +95,6 @@ def on_lol_command(sender, args):
 
   elif cmd == "del":
     if sender.hasPermission("utils.lol.modify"):
-      plugin_header(sender, "SayLol")
       try:
         i = int(args[1])
         del_lol(i)
@@ -105,7 +103,6 @@ def on_lol_command(sender, args):
         msg(sender, "&cInvalid number '&e%s&c'" % args[1])
 
   else:
-    plugin_header(sender, "SayLol")
     msg(sender, "&a/lol            &eSay random message")
     msg(sender, "&a/lol list       &eList all messages")
     msg(sender, "&a/lol id <id>    &eSay specific message")
