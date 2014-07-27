@@ -49,6 +49,12 @@ def print_lol(sender, lid):
     msg(sender, "&cYou can use SayLol again in &a%s seconds!" % int(timeout + 1 - (time() - last_msg)))
 
 
+def search_lols(sender, keyword):
+  for i, lol in enumerate(lols):
+    if keyword in lol:
+      msg(sender, "&a%s: &e%s" % (str(i).rjust(3), lol))
+
+
 @hook.command("lol")
 def on_lol_command(sender, args):
   cmd = args[0] if len(args) > 0 else None
@@ -73,6 +79,12 @@ def on_lol_command(sender, args):
     plugin_header(sender, "SayLol")
     for i in range(len(lols)):
       msg(sender, "&a%s: &e%s" % (str(i).rjust(3), lols[i]))
+
+  elif cmd == "search":
+    if sender.hasPermission("utils.lol.search"):
+      search_lols(sender, " ".join(args[1:]))
+    else:
+      noperm(sender)
 
   elif cmd == "add":
     if sender.hasPermission("utils.lol.modify"):
