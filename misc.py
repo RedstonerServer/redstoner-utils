@@ -1,6 +1,7 @@
 #pylint: disable = F0401
 from helpers import *
 from time import time as now
+from sys import exc_info
 import thread
 import org.bukkit.inventory.ItemStack as ItemStack
 
@@ -86,7 +87,7 @@ def on_player_entity_interact(event):
       sender = event.getPlayer()
       entity = event.getRightClicked()
       if is_player(entity) and uid(entity) == "ae795aa8-6327-408e-92ab-25c8a59f3ba1" and str(sender.getItemInHand().getType()) == "SHEARS" and is_creative(sender):
-        for i in range(5):
+        for _ in range(5):
           entity.getWorld().dropItemNaturally(entity.getLocation(), ItemStack(bukkit.Material.getMaterial("REDSTONE")))
           entity.getWorld().dropItemNaturally(entity.getLocation(), ItemStack(bukkit.Material.getMaterial("WOOL")))
         sender.playSound(entity.getLocation(), "mob.cow.say", 1, 1)
@@ -125,8 +126,13 @@ def eval_thread(sender, code):
   try:
     result = eval(code)
     msg(sender, ">>> %s: %s" % (colorify("&3") + type(result).__name__, colorify("&a") + unicode(result) + "\n "), usecolor = False)
-  except Exception, e:
-    msg(sender, ">>> %s: %s" % (e.__class__.__name__, e) + "\n ", False, "c")
+  except:
+    e = exc_info()[1]
+    try:
+      eclass = e.__class__
+    except AttributeError:
+      eclass = type(e)
+    msg(sender, ">>> %s: %s" % (eclass.__name__, e) + "\n ", False, "c")
   thread.exit()
 
 
@@ -136,10 +142,7 @@ def on_pyeval_command(sender, args):
     if not checkargs(sender, args, 1, -1):
       return True
     msg(sender, "%s" % " ".join(args), False, "e")
-    try:
-      thread.start_new_thread(eval_thread, (sender, " ".join(args)))
-    except Exception, e:
-      msg(sender, "&cInternal error: %s" % e)
+    thread.start_new_thread(eval_thread, (sender, " ".join(args)))
   else:
     noperm(sender)
   return True
