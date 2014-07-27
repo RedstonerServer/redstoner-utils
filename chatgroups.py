@@ -10,43 +10,40 @@ cg_toggle_list = []
 
 @hook.command("chatgroup")
 def on_chatgroup_command(sender, args):
-  try:
-    plugin_header(sender, "ChatGroups")
-    sender_id = uid(sender)
-    if len(args) == 1 and args[0] == "leave":
-      if sender_id in groups.keys():
-        groupchat(sender, "left the group", True)
-        group = groups[sender_id]
-        del(groups[sender_id])
-        save_groups()
-      else:
-        msg(sender, "&aYou can't leave no group, derp!")
-    elif len(args) == 1 and args[0] == "info":
-      if sender_id in groups.keys():
-        group = groups[sender_id]
-        msg(sender, "&aCurrent chatgroup: %s" % group)
-        users = []
-        for uuid, ugroup in groups.iteritems():
-          if ugroup == group:
-            usr = server.getPlayer(juuid(uuid))
-            if usr:
-              users.append(usr.getDisplayName())
-        msg(sender, "&aUsers in this group:")
-        msg(sender,  "&a%s" % ", ".join(users))
-      else:
-        msg(sender, "&aYou're in no chatgroup.")
-    elif len(args) == 2 and args[0] == "join":
-      groups[sender_id] = args[1]
-      groupchat(sender, "joined the group", True)
+  plugin_header(sender, "ChatGroups")
+  sender_id = uid(sender)
+  if len(args) == 1 and args[0] == "leave":
+    if sender_id in groups.keys():
+      groupchat(sender, "left the group", True)
+      group = groups[sender_id]
+      del(groups[sender_id])
       save_groups()
-      msg(sender, "&aYour chatgroup is set to '%s'" % args[1])
-      msg(sender, "&aUse chat like '&e%s<message>' to send messages to this group." % cg_key)
     else:
-      msg(sender, "&e/chatgroup join <name>")
-      msg(sender, "&e/chatgroup leave")
-      msg(sender, "&e/chatgroup info")
-  except Exception, e:
-    error(e)
+      msg(sender, "&aYou can't leave no group, derp!")
+  elif len(args) == 1 and args[0] == "info":
+    if sender_id in groups.keys():
+      group = groups[sender_id]
+      msg(sender, "&aCurrent chatgroup: %s" % group)
+      users = []
+      for uuid, ugroup in groups.iteritems():
+        if ugroup == group:
+          usr = server.getPlayer(juuid(uuid))
+          if usr:
+            users.append(usr.getDisplayName())
+      msg(sender, "&aUsers in this group:")
+      msg(sender,  "&a%s" % ", ".join(users))
+    else:
+      msg(sender, "&aYou're in no chatgroup.")
+  elif len(args) == 2 and args[0] == "join":
+    groups[sender_id] = args[1]
+    groupchat(sender, "joined the group", True)
+    save_groups()
+    msg(sender, "&aYour chatgroup is set to '%s'" % args[1])
+    msg(sender, "&aUse chat like '&e%s<message>' to send messages to this group." % cg_key)
+  else:
+    msg(sender, "&e/chatgroup join <name>")
+    msg(sender, "&e/chatgroup leave")
+    msg(sender, "&e/chatgroup info")
 
 
 @hook.command("cgt")
@@ -62,7 +59,6 @@ def on_cgt_command(sender, args):
 
 
 def groupchat(sender, message, ann = False):
-  #try:
   group = groups.get(uid(sender))
   if group == None:
     msg(sender, "&cYou are not in a group!")
@@ -75,8 +71,7 @@ def groupchat(sender, message, ann = False):
   info("[ChatGroups] %s (%s): %s" % (sender.getDisplayName(), group, message))
   for receiver in server.getOnlinePlayers():
     groups.get(uid(receiver)) == group and msg(receiver, mesg)
-  #except Exception, e:
-  #  error(e)
+
 
 
 def save_groups():

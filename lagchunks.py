@@ -12,19 +12,16 @@ def print_help(sender):
 
 
 def scan_chunks(amount):
-  try:
-    global lagchunks
-    chunks = []
-    for world in bukkit.Bukkit.getServer().getWorlds():
-      for chunk in world.getLoadedChunks():
-        if len(chunk.getEntities()) >= amount:
-          ents = chunk.getEntities()
-          #                [0]world           [1]X                                [2]Y                               [3]Z                               [4]amount
-          chunks.append([chunk.getWorld(), int(ents[-1].getLocation().getX()), int(ents[0].getLocation().getY()), int(ents[0].getLocation().getZ()), len(ents)])
-    chunks.sort(key = lambda entry: entry[4], reverse = True)
-    lagchunks = chunks
-  except Exception, e:
-    error(e)
+  global lagchunks
+  chunks = []
+  for world in bukkit.Bukkit.getServer().getWorlds():
+    for chunk in world.getLoadedChunks():
+      if len(chunk.getEntities()) >= amount:
+        ents = chunk.getEntities()
+        #                [0]world           [1]X                                [2]Y                               [3]Z                               [4]amount
+        chunks.append([chunk.getWorld(), int(ents[-1].getLocation().getX()), int(ents[0].getLocation().getY()), int(ents[0].getLocation().getZ()), len(ents)])
+  chunks.sort(key = lambda entry: entry[4], reverse = True)
+  lagchunks = chunks
 
 
 def list_chunks(sender):
@@ -41,26 +38,23 @@ def tp_chunk(sender, id):
 
 @hook.command("lagchunks")
 def on_lagchunks_command(sender, args):
-  try:
-    if sender.hasPermission("utils.lagchunks"):
-      plugin_header(sender, "Lagchunks")
-      global lagchunks
-      if len(args) == 1 and args[0].isdigit() and int(args[0]) > 0:
-        amount = args[0]
-        msg(sender, "&aChunks with at least &b%s &aentities:" % amount, )
-        scan_chunks(int(amount))
-        list_chunks(sender)
-      elif len(args) == 1 and args[0].lower() == "list":
-        list_chunks(sender)
-      elif len(args) == 2 and args[0].lower() == "tp" and args[1].isdigit() and int(args[1]) <= len(lagchunks)-1:
-        if isinstance(sender, Player):
-          tp_chunk(sender, int(args[1]))
-        else:
-          msg(sender, "&cOnly players can do this!")
+  if sender.hasPermission("utils.lagchunks"):
+    plugin_header(sender, "Lagchunks")
+    global lagchunks
+    if len(args) == 1 and args[0].isdigit() and int(args[0]) > 0:
+      amount = args[0]
+      msg(sender, "&aChunks with at least &b%s &aentities:" % amount, )
+      scan_chunks(int(amount))
+      list_chunks(sender)
+    elif len(args) == 1 and args[0].lower() == "list":
+      list_chunks(sender)
+    elif len(args) == 2 and args[0].lower() == "tp" and args[1].isdigit() and int(args[1]) <= len(lagchunks)-1:
+      if isinstance(sender, Player):
+        tp_chunk(sender, int(args[1]))
       else:
-        print_help(sender)
+        msg(sender, "&cOnly players can do this!")
     else:
-      noperm(sender)
-    return True
-  except Exception, e:
-    error(e)
+      print_help(sender)
+  else:
+    noperm(sender)
+  return True
