@@ -37,7 +37,8 @@ def broadcast(perm, text):
   """
   text = colorify(text)
   for recipient in list(server.getOnlinePlayers()) + [server.getConsoleSender()]:
-    (not perm or recipient.hasPermission(perm)) and msg(recipient, text)
+    if not perm or recipient.hasPermission(perm):
+      msg(recipient, text)
 
 
 def colorify(text):
