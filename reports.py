@@ -118,7 +118,7 @@ def reports_reminder(): # needs 2 args for unknown reason
     for i in range(0, check_delay*2):
       time.sleep(0.5) # check every 0.5 seconds if we should kill the thread
       if not check_reports:
-        log("Reports reminder thread killed.")
+        info("Reports reminder thread killed.")
         thread.exit()
     if len(reports) > 0:
       broadcast(rp_permission, "&2--=[ Reports ]=--")
@@ -127,7 +127,7 @@ def reports_reminder(): # needs 2 args for unknown reason
 
 def stop_reporting():
   global check_reports
-  log("Ending reports reminder thread")
+  info("Ending reports reminder thread")
   check_reports = False
 
 
