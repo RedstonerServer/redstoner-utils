@@ -15,7 +15,11 @@ server = bukkit.Bukkit.getServer()
 
 
 def log(text):
-  server.getLogger().info("[RedstonerUtils] %s" % colorify(text))
+  server.getLogger().info("[RedstonerUtils] %s" % text)
+
+
+def warn(text):
+  server.getLogger().warning("[RedstonerUtils] %s" % text)
 
 
 def error(text):
