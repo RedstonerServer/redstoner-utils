@@ -27,6 +27,12 @@ def error(text):
 
 
 def msg(player, text, usecolor = True, basecolor = None):
+  """
+  send a message to player
+  the player may be None or offline, which this method just ignores
+  unless usecolor is False, &-codes are translated to real color codes
+  for that case, basecolor can be useful. basecolor accepts a single character as color code
+  """
   if player and (player == server.getConsoleSender() or player.getPlayer()): # getPlayer() returns None when offline
     if basecolor:
       if usecolor:
@@ -48,14 +54,24 @@ def broadcast(perm, text):
 
 
 def colorify(text):
+  """
+  replace &-codes with real color codes
+  """
   return sub("&(?=[?\\da-fk-or])", u"\u00A7", "%s" % text)
 
 
 def stripcolors(text):
+  """
+  strips all (real) color codes from text
+  """
   return sub(u"\u00A7[\\da-fk-or]", "", "%s" % text)
 
 
 def safetp(player, world, x, y, z, yaw = 0, pitch = 0):
+  """
+  teleports the player to the given Location
+  if the player would spawn inside blocks, the location is escalated until the location is safe
+  """
   tpblock = Location(world, x, y, z).getBlock()
   if (tpblock.isEmpty() and tpblock.getRelative(bblock.BlockFace.UP).isEmpty()) or y > 255:
     player.teleport(Location(world, x+0.5, y, z+0.5, yaw, pitch), TeleportCause.COMMAND)
@@ -78,14 +94,28 @@ def noperm(player):
 
 
 def runas(player, cmd):
+  """
+  run a command as player
+  the cmd should no be prefixed with a /
+  """
   server.dispatchCommand(player, cmd)
 
 
 def is_player(obj):
+  """
+  return True when ob is a bukkit Player
+  """
   return (isinstance(obj, Player))
 
 
 def checkargs(sender, args, amin, amax):
+  """
+  check if a command has a valid amount of args, otherwise notify the sender
+  amin is the minimum amount of args
+  amax is the maximum amount of args
+  if amax is < 0, infinite args will be accepted
+  return True if args has a valid length, False otherwise
+  """
   if not (len(args) >= amin and (amax < 0 or len(args) <= amax)):
     if amin == amax:
       msg(sender, "&cNeeds " + str(amin) + " arguments!")
@@ -104,26 +134,36 @@ def warp(player, args, warpname):
     return False # You can check if it worked
   runas(player, "warp %s" % warpname)
   return True
-""" Changed to this, from runas(player, " ".join(["warp", warpname])) because it doesnt make sense
-to make the player add its own name to the command to warp that name which is the same player """
 
 
 def is_creative(player):
+  """
+  returns True if the player is in Creative mode
+  """
   return str(player.getGameMode()) == "CREATIVE"
 
 
 def uid(player):
+  """
+  returns the player's UUID
+  """
   return str(player.getUniqueId())
 
 
-def retrieve_player(uuid):
-  return server.getOfflinePlayer(juuid(uuid))
+def retrieve_player(uuid_str):
+  """
+  gets an offline player by UUID string
+  the uuid MUST contain dashes
+  """
+  return server.getOfflinePlayer(juuid(uuid_str))
 
 
 def played_before(player):
-  if player.getFirstPlayed() == 0:
-    return False
-  return True
+  """
+  returns True if the player has played before
+  this is different to getHasPlayed(), which will return False on first join
+  """
+  return player.getFirstPlayed() != 0
 
 
 def open_json_file(filename, default):
