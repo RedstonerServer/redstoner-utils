@@ -126,7 +126,7 @@ def open_json_file(filename, default):
   """
   data = None
   try:
-    with open(filename) as obj:
+    with open("plugins/redstoner-utils.py.dir/files/%s.json" % filename) as obj:
       data = json_loads(obj.read())
   except Exception, e:
     error("Failed to read from %s: %s" % (filename, e))
@@ -139,7 +139,7 @@ def save_json_file(filename, obj):
   filename is the path + name of the file.
   """
   try:
-    with open(filename, "w") as f:
+    with open("plugins/redstoner-utils.py.dir/files/%s.json" % filename, "w") as f:
       f.write(json_dumps(obj))
   except Exception, e:
     error("Failed to write to %s: %s" % (filename, e))

@@ -1,7 +1,6 @@
 from helpers import *
 
-friends_filename  = "plugins/redstoner-utils.py.dir/files/friends.json"
-friends           = open_json_file(friends_filename, {}) # {Player_UUID:[List_of_friend_uuids]}
+friends           = open_json_file("friends", {}) # {Player_UUID:[List_of_friend_uuids]}
 friend_join_sound = "random.orb"
 
 
@@ -18,7 +17,7 @@ def fjm(event): # friend join message
 
 
 def save_friends(): # saves to friends file
-  save_json_file(friends_filename, friends)
+  save_json_file("friends", friends)
 
 
 def friendmessage(player, message): # sends a message with a prefix
