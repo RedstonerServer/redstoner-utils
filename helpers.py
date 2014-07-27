@@ -119,16 +119,18 @@ def played_before(player):
   return True
 
 
-def open_json_file(filename):
+def open_json_file(filename, default):
   """
   opens the given json file and returns an object or returns None on error
   filename is the path + name of the file.
   """
+  data = None
   try:
     with open(filename) as obj:
-      return json_loads(obj.read())
+      data = json_loads(obj.read())
   except Exception, e:
     error("Failed to read from %s: %s" % (filename, e))
+  return (default if data is None else data)
 
 
 def save_json_file(filename, obj):
