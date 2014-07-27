@@ -158,10 +158,11 @@ def retrieve_player(uuid_str):
   return server.getOfflinePlayer(juuid(uuid_str))
 
 
-def played_before(player):
+def known_player(player):
   """
-  returns True if the player has played before
-  this is different to getHasPlayed(), which will return False on first join
+  to be used on OfflinePlayer
+  returns True if the player has been on the server
+  this is different to HasPlayedBefore(), which will return False on first join
   """
   return player.getFirstPlayed() != 0
 
