@@ -2,25 +2,13 @@
 from helpers import *
 from time import time as now
 import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
-import json
 
-spam_filename   = "plugins/redstoner-utils.py.dir/files/damnspam.json"
-inputs          = {} # format "x;y;z;World"
+inputs          = open_json_file("damnspam", {}) # format "x;y;z;World"
 accepted_inputs = ["WOOD_BUTTON", "STONE_BUTTON", "LEVER"]
-
-try:
-  inputs = json.loads(open(spam_filename).read())
-except Exception, e:
-  error("Failed to load buttons and levers: %s" % e)
 
 
 def save_inputs():
-  try:
-    spam_file = open(spam_filename, "w")
-    spam_file.write(json.dumps(inputs))
-    spam_file.close()
-  except Exception, e:
-    error("Failed to save damnspam: " + str(e))
+  save_json_file("damnspam", inputs)
 
 
 def location_str(block):
@@ -28,7 +16,6 @@ def location_str(block):
 
 
 def add_input(creator, block, timeout_off, timeout_on):
-  global inputs
   inputs[location_str(block)] = {
     "creator"     : uid(creator),
     "timeout_off" : timeout_off,
@@ -39,8 +26,6 @@ def add_input(creator, block, timeout_off, timeout_on):
 
 @hook.command("damnspam")
 def on_dammnspam_command(sender, args):
-  global inputs
-
   plugin_header(sender, "DamnSpam")
   if len(args) in [1,2]:
 
@@ -101,8 +86,6 @@ def on_dammnspam_command(sender, args):
 
 @hook.event("block.BlockBreakEvent", "normal")
 def on_block_break(event):
-  global inputs
-
   sender = event.getPlayer()
   block = event.getBlock()
   if str(block.getType()) in accepted_inputs and not event.isCancelled():

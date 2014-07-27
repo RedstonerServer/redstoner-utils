@@ -1,18 +1,12 @@
-import json
 from helpers import *
 from re import compile as reg_compile
 from traceback import format_exc as print_traceback
 
-mentio_filename = "plugins/redstoner-utils.py.dir/files/mentio.json"
-mentions = {}
-max_amount = 3
-arrow = colorify(u"&r&7\u2192&r")
-regex = reg_compile(u"\u00A7[\\da-fk-or]")
 
-try:
-  mentions = json.loads(open(mentio_filename).read())
-except Exception, e:
-  error("Failed to load mentions: %s" % e)
+mentions   = open_json_file("mentio", {})
+max_amount = 3
+arrow      = colorify(u"&r&7\u2192&r")
+regex      = reg_compile(u"\u00A7[\\da-fk-or]")
 
 
 @hook.event("player.AsyncPlayerChatEvent", "high")
@@ -39,7 +33,7 @@ def onChat(event):
           if isMentioned:
             colors = "".join(regex.findall("".join(words[:i+1]))) # join all color codes used upto this word
             rec_words[i] = colorify("&r&a<&6") + stripcolors(word) + colorify("&r&a>&r") + colors # extra fancy highlight
-        
+
         # player was mentioned
         if rec_words != words:
           try:
@@ -54,13 +48,14 @@ def onChat(event):
     error("Failed to handle PlayerChatEvent:")
     error(print_traceback())
 
+
 @hook.command("listen")
 def onListenCommand(sender, args):
   try:
     currWords = []
     if str(sender.getUniqueId()) in mentions.keys():
       currWords = mentions[str(sender.getUniqueId())]
-    
+
     # /listen add <word>
     if len(args) == 2 and args[0].lower() == "add":
 
@@ -110,10 +105,6 @@ def onListenCommand(sender, args):
   except Exception, e:
     error(e)
 
+
 def saveMentions():
-  try:
-    mentio_file = open(mentio_filename, "w")
-    mentio_file.write(json.dumps(mentions))
-    mentio_file.close()
-  except Exception, e:
-    error("Failed to write mentions: " + str(e))
+  save_json_file("mentio", mentions)

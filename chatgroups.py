@@ -1,17 +1,11 @@
 #pylint: disable = F0401
 from helpers import *
 from java.util.UUID import fromString as juuid
-import json
 
-chatgroups_filename = "plugins/redstoner-utils.py.dir/files/chatgroups.json"
-groups              = {}
-cg_key              = ":"
-cg_toggle_list      = []
+groups         = open_json_file("chatgroups", {})
+cg_key         = ":"
+cg_toggle_list = []
 
-try:
-  groups = json.loads(open(chatgroups_filename).read())
-except Exception, e:
-  error("Failed to load chatgroups: %s" % e)
 
 
 @hook.command("chatgroup")
@@ -86,12 +80,7 @@ def groupchat(sender, message, ann = False):
 
 
 def save_groups():
-  try:
-    chatgroups_file = open(chatgroups_filename, "w")
-    chatgroups_file.write(json.dumps(groups))
-    chatgroups_file.close()
-  except Exception, e:
-    error("Failed to write reports: " + str(e))
+  save_json_file("chatgroups", groups)
 
 
 @hook.event("player.AsyncPlayerChatEvent", "normal")

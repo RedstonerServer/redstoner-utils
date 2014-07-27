@@ -1,17 +1,12 @@
-import json
 from helpers import *
 from re import compile as reg_compile
 
-answers_filename = "plugins/redstoner-utils.py.dir/files/abot.json"
-answers          = []
+answers = []
 
 
 def load_answers():
   global answers
-  try:
-    answers = json.loads(open(answers_filename).read())
-  except Exception, e:
-    error("Failed to load answers: %s" % e)
+  answers = open_json_file("abot", [])
 
   # compile answers
   for answer in answers:

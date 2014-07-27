@@ -1,19 +1,14 @@
 from helpers import *
 from java.util.UUID import fromString as id_to_player
-import json
 import time
 import thread
 
-reports_filename = "plugins/redstoner-utils.py.dir/files/reports.json"
-time_format      = "%Y.%m.%d %H:%M"
-reports          = []
-check_reports    = True
-check_delay      = 60 * 10 # Every 10 minutes, staff will be notified about pending reports.
-rp_permission    = "utils.rp"
-try:
-  reports = json.loads(open(reports_filename).read())
-except Exception, e:
-  error("Failed to load reports: %s" % e)
+
+time_format   = "%Y.%m.%d %H:%M"
+reports       = open_json_file("reports", [])
+check_reports = True
+check_delay   = 60 * 10 # Every 10 minutes, staff will be notified about pending reports.
+rp_permission = "utils.rp"
 
 
 def print_help(sender):
@@ -27,6 +22,7 @@ def print_list(sender):
   msg(sender, "&a" + str(len(reports)) + " reports:")
   for i, report in enumerate(reports):
     msg(sender, "&8[&e" + str(i) + " &c" + report["time"] + "&8] &3" + server.getOfflinePlayer(id_to_player(report["uuid"])).getName() + "&f: &a" + report["msg"])
+
 
 def tp_report(sender, rep_id):
   if rep_id >= len(reports) or rep_id < 0:
@@ -52,12 +48,7 @@ def delete_report(sender, rep_id):
 
 
 def save_reports():
-  try:
-    reports_file = open(reports_filename, "w")
-    reports_file.write(json.dumps(reports))
-    reports_file.close()
-  except Exception, e:
-    error("Failed to write reports: " + str(e))
+  save_json_file("reports", reports)
 
 
 @hook.command("rp")
@@ -138,5 +129,6 @@ def stop_reporting():
   global check_reports
   log("Ending reports reminder thread")
   check_reports = False
+
 
 thread.start_new_thread(reports_reminder, ())
