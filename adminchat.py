@@ -10,7 +10,7 @@ def adminchat(sender, msg):
   name = "&7{unknown}"
   try:
     name = sender.getDisplayName()
-  except:
+  except AttributeError:
     name = sender.getName()
   broadcast(ac_permission, "%s &9%s&8: &b%s" % (ac_prefix, name, msg))
 
