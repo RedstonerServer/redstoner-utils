@@ -4,6 +4,7 @@ import net.minecraft.server.v1_7_R1.PlayerInteractManager as PlayerInteractManag
 import net.minecraft.util.com.mojang.authlib.GameProfile as GameProfile
 import org.bukkit.Bukkit as bukkit
 
+
 # players.txt contains 1 name per line
 players = [line.strip() for line in open("players.txt").readlines()]
 

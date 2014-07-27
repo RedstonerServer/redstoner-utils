@@ -1,12 +1,6 @@
-import json
 from helpers import *
 
-cyclers_file = "plugins/redstoner-utils.py.dir/files/cycle.json"
-no_cyclers   = [] # opt-out
-try:
-  no_cyclers = json.loads(open(cyclers_file).read())
-except Exception, e:
-  error("Failed to load no_cyclers: %s" % e)
+no_cyclers = open_json_file("cycle", [])
 
 
 @hook.command("cycle")
@@ -73,9 +67,4 @@ def do_cycle(player, down):
   inv.setContents(items)
 
 def save_cyclers():
-  try:
-    chatgroups_file = open(cyclers_file, "w")
-    chatgroups_file.write(json.dumps(no_cyclers))
-    chatgroups_file.close()
-  except Exception, e:
-    error("Failed to write reports: " + str(e))
+  save_json_file("cycle", no_cyclers)

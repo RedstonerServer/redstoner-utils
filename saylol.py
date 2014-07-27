@@ -1,27 +1,15 @@
-import json
 from time import time
 from helpers import *
 from random import randrange
 
-lol_filename = "plugins/redstoner-utils.py.dir/files/lol.json"
-lols         = []
-timeout      = 15
-last_msg     = 0
-
-try:
-  lols = json.loads(open(lol_filename).read())
-except Exception, e:
-  error("Failed to load lols: %s" % e)
+lols     = open_json_file("lol", [])
+timeout  = 15
+last_msg = 0
 
 
 
 def save_lols():
-  try:
-    lolfile = open(lol_filename, "w")
-    lolfile.write(json.dumps(lols))
-    lolfile.close()
-  except Exception, e:
-    error("Failed to write lols: " + str(e))
+  save_json_file("lol", lols)
 
 
 def add_lol(txt):
