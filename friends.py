@@ -59,7 +59,7 @@ def add(sender, names):
 
   for name in names:
     player = server.getOfflinePlayer(name)
-    if played_before(player):
+    if known_player(player):
       player_id = uid(player)
       not_yourself = player != sender
 
@@ -93,7 +93,7 @@ def rem(sender, names):
 
   for name in names:
     player = server.getOfflinePlayer(name)
-    if played_before(player):
+    if known_player(player):
       player_id = uid(player)
       if player_id in friends.get(sender_id, []):
         friends[sender_id].remove(player_id)
