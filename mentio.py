@@ -6,7 +6,7 @@ from traceback import format_exc as print_traceback
 mentions   = open_json_file("mentio", {})
 max_amount = 3
 arrow      = colorify(u"&r&7\u2192&r")
-regex      = reg_compile(u"\u00A7[\\da-fk-or]")
+colors_reg = reg_compile(u"\u00A7[\\da-fk-or]")
 
 
 @hook.event("player.AsyncPlayerChatEvent", "high")
@@ -31,8 +31,10 @@ def onChat(event):
             isMentioned = True
 
           if isMentioned:
-            colors = "".join(regex.findall("".join(words[:i+1]))) # join all color codes used upto this word
-            rec_words[i] = colorify("&r&a<&6") + stripcolors(word) + colorify("&r&a>&r") + colors # extra fancy highlight
+            # join all color codes used upto this word
+            colors = "".join(colors_reg.findall("".join(words[:i+1])))
+            # highlight word containing mention, then apply all previous color codes
+            rec_words[i] = colorify("&r&a&n") + stripcolors(word) + colorify("&r") + colors
 
         # player was mentioned
         if rec_words != words:
