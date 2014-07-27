@@ -25,7 +25,9 @@ def error(text):
 def msg(player, text, usecolor = True, basecolor = None):
   if player and (player == server.getConsoleSender() or player.getPlayer()): # getPlayer() returns None when offline
     if basecolor:
-      player.sendMessage(colorify("&%s" % basecolor) + (colorify(text) if usecolor else text))
+      if usecolor:
+        text = colorify(text)
+      player.sendMessage(colorify("&%s" % basecolor) + text)
     else:
       player.sendMessage(colorify(text) if usecolor else text)
 
