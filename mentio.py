@@ -68,7 +68,7 @@ def onListenCommand(sender, args):
       msg(sender, "&cYou are always listening for your full ingame name by default")
     currWords.append(args[1].lower())
     mentions[str(sender.getUniqueId())] = currWords
-    msg(sender, "&aYou are now listening for '&2"+args[1].lower()+"'!")
+    msg(sender, "&aYou are now listening for '&2%s'!" % args[1].lower())
     saveMentions()
     return True
   # /listen del <word>
@@ -84,7 +84,7 @@ def onListenCommand(sender, args):
         success = True
     if success == True:
       saveMentions()
-      msg(sender, "&eYou are no longer listening for '&2"+args[1].lower()+"&e'!")
+      msg(sender, "&eYou are no longer listening for '&2%s&e'!" % args[1].lower())
     else:
       msg(sender, "&cWe can't remove something that doesn't exist! Try &6/listen list")
     return True
