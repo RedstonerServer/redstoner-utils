@@ -100,7 +100,11 @@ def del_keyword(sender, args):
 
   if del_word in keywords:
     keywords.remove(del_word)
-    mentions[uid(sender)] = keywords
+    sender_id = uid(sender)
+    if keywords:
+      mentions[sender_id] = keywords
+    elif sender_id in mentions:
+      del mentions[sender_id]
     saveMentions()
     msg(sender, "&aYou are no longer listening for '&2%s&e'!" % del_word)
   else:
