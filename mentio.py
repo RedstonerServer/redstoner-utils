@@ -33,8 +33,9 @@ def onChat(event):
       for index, word in enumerate(rec_words):
         isMentioned = False
 
-        if word.lower() in keywords: # is the word in the keywords list
-          isMentioned = True
+        for keyword in keywords:
+          if keyword in word.lower(): # is the keyword mentioned
+            isMentioned = True
 
         if isMentioned:
           # join all color codes used upto this word
