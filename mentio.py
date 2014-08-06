@@ -27,7 +27,7 @@ def onChat(event):
         keywords = mentions[uid(recipient)]
       else:
         # player
-        keywords = [recipient.getName(), stripcolors(recipient.getDisplayName())]
+        keywords = [recipient.getName().lower(), stripcolors(recipient.getDisplayName()).lower()]
 
       rec_words = words[:] # copy
       for index, word in enumerate(rec_words):
