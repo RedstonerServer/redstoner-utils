@@ -119,6 +119,7 @@ def onListenCommand(sender, args):
   argnum = len(args)
   if argnum:
     cmd = args[0].lower()
+
     # /mentio add <word>
     if argnum == 2 and cmd == "add":
       add_keyword(sender, args)
@@ -130,9 +131,13 @@ def onListenCommand(sender, args):
     # /mentio list
     elif argnum == 1 and cmd == "list":
       msg(sender, "&aWords you're listening for:")
-      for word in get_keywords(sender):
+      keywords = get_keywords(sender)
+      for word in keywords:
         msg(sender, "&c- &3%s" % word)
+      if not keywords:
+        msg(sender, "&cYou are currently listening for no words! Try &6/mentio add <word>")
   else:
     msg(sender, "&a/mentio add <word>")
     msg(sender, "&a/mentio del <word>")
     msg(sender, "&a/mentio list")
+  return True
