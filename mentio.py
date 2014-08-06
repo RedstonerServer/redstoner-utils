@@ -41,7 +41,7 @@ def onChat(event):
           # join all color codes used upto this word
           colors = "".join(colors_reg.findall("".join(words[:index+1])))
           # highlight the word containing mention, then apply all previous color codes
-          rec_words[index] = colorify("&r&a&n") + stripcolors(word) + colorify("&r") + colors
+          rec_words[index] = colorify("&r&a&o") + stripcolors(word) + colorify("&r") + colors
           # No need to
           break
 
