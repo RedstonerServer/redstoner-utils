@@ -164,7 +164,7 @@ def known_player(player):
   returns True if the player has been on the server
   this is different to HasPlayedBefore(), which will return False on first join
   """
-  return player.getFirstPlayed() != 0
+  return player.hasPlayedBefore()
 
 
 def open_json_file(filename, default):
