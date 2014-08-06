@@ -54,7 +54,7 @@ def onChat(event):
           pass
         message = " ".join([sender.getDisplayName(), arrow] + rec_words)
         msg(recipient, message, usecolor = False)
-        recipient.playSound(recipient.getLocation(), "liquid.lavapop", 1, 2)
+        recipient.playSound(recipient.getLocation(), "mob.chicken.plop", 1, 2)
 
 
 def get_keywords(player):
