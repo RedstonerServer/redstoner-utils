@@ -41,7 +41,7 @@ def search_lols(sender, keyword):
   if not keyword:
     msg(sender, "&cPlease provide a keyword to search for!")
     return
-  msg(sender, "&aLols containing '&6%s&a':")
+  msg(sender, "&aLols containing '&6%s&a':" % keyword)
   for i, lol in enumerate(lols):
     if keyword in lol:
       msg(sender, "&a%s: &e%s" % (str(i).rjust(3), lol))
