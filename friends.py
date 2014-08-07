@@ -1,3 +1,4 @@
+import thread
 from helpers import *
 
 friends           = open_json_file("friends", {}) # {Player_UUID:[List_of_friend_uuids]}
