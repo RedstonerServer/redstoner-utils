@@ -22,7 +22,7 @@ def print_list(sender):
   try: # new thread, anything can happen.
     msg(sender, "&a" + str(len(reports)) + " reports:")
     for i, report in enumerate(reports):
-      name = server.getOfflinePlayer(juuid(report["uuid"])).getName()
+      name = retrieve_player(report["uuid"]).getName()
       msg(sender, "&8[&e%s&c%s&8] &3%s&f: &a%s" % (i, report["time"], name, report["msg"]))
   except:
     warn("Failed to complete report's print_list() thread")
@@ -62,7 +62,7 @@ def on_rp_command(sender, args):
     if len(args) > 0:
       if args[0] == "list":
         # needs to run in seperate thread because of getOfflinePlayer
-        thread.start_new_thread(print_list, (sender))
+        thread.start_new_thread(print_list, (sender,))
       else:
         if not checkargs(sender, args, 2, 2):
           return True
