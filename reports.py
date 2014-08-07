@@ -1,5 +1,5 @@
 from helpers import *
-from java.util.UUID import fromString as id_to_player
+from java.util.UUID import fromString as juuid
 import time
 import thread
 
@@ -19,9 +19,13 @@ def print_help(sender):
 
 
 def print_list(sender):
-  msg(sender, "&a" + str(len(reports)) + " reports:")
-  for i, report in enumerate(reports):
-    msg(sender, "&8[&e" + str(i) + " &c" + report["time"] + "&8] &3" + server.getOfflinePlayer(id_to_player(report["uuid"])).getName() + "&f: &a" + report["msg"])
+  try: # new thread, anything can happen.
+    msg(sender, "&a" + str(len(reports)) + " reports:")
+    for i, report in enumerate(reports):
+      name = server.getOfflinePlayer(juuid(report["uuid"])).getName()
+      msg(sender, "&8[&e%s&c%s&8] &3%s&f: &a%s" % (i, report["time"], name, report["msg"]))
+  except:
+    warn("Failed to complete report's print_list() thread")
 
 
 def tp_report(sender, rep_id):
@@ -40,7 +44,7 @@ def delete_report(sender, rep_id):
     reports.pop(rep_id)
     save_reports()
     msg(sender, "&aReport #%s deleted." % rep_id)
-    reporter = server.getOfflinePlayer(id_to_player(report["uuid"]))
+    reporter = server.getOfflinePlayer(juuid(report["uuid"]))
     plugin_header(reporter, "Report")
     msg(reporter, "&aReport '&e%s&a' was resolved by %s." % (report["msg"], sender.getName()))
   else:
@@ -57,7 +61,8 @@ def on_rp_command(sender, args):
     plugin_header(sender, "Reports")
     if len(args) > 0:
       if args[0] == "list":
-        print_list(sender)
+        # needs to run in seperate thread because of getOfflinePlayer
+        thread.start_new_thread(print_list, (sender))
       else:
         if not checkargs(sender, args, 2, 2):
           return True
