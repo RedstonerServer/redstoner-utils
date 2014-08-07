@@ -23,7 +23,7 @@ def print_list(sender):
     msg(sender, "&a" + str(len(reports)) + " reports:")
     for i, report in enumerate(reports):
       name = retrieve_player(report["uuid"]).getName()
-      msg(sender, "&8[&e%s&c%s&8] &3%s&f: &a%s" % (i, report["time"], name, report["msg"]))
+      msg(sender, "&8[&e%s &c%s&8] &3%s&f: &a%s" % (i, report["time"], name, report["msg"]))
   except:
     warn("Failed to complete report's print_list() thread")
 
