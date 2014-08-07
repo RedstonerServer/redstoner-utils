@@ -112,6 +112,12 @@ def del_keyword(sender, args):
     msg(sender, "&cWe can't remove something that doesn't exist! Try &6/mentio list")
 
 
+def show_help(player):
+  msg(player, "&a/mentio add <word>")
+  msg(player, "&a/mentio del <word>")
+  msg(player, "&a/mentio list")
+
+
 @hook.command("mentio")
 def onListenCommand(sender, args):
   plugin_header(sender, "Mentio")
@@ -136,8 +142,8 @@ def onListenCommand(sender, args):
         msg(sender, "&c- &3%s" % word)
       if not keywords:
         msg(sender, "&cYou are currently listening for no words! Try &6/mentio add <word>")
+    else:
+      show_help(sender)
   else:
-    msg(sender, "&a/mentio add <word>")
-    msg(sender, "&a/mentio del <word>")
-    msg(sender, "&a/mentio list")
+    show_help(sender)
   return True

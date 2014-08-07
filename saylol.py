@@ -30,10 +30,8 @@ def print_lol(sender, lid):
       broadcast(None, "&8[&blol&8] &7%s&8: &e%s" % (dispname, lols[lid]))
       last_msg = time()
     else:
-      plugin_header(sender, "SayLol")
       msg(sender, "&cInvalid id")
   else:
-    plugin_header(sender, "SayLol")
     msg(sender, "&cYou can use SayLol again in &a%s seconds!" % int(timeout + 1 - (time() - last_msg)))
 
 
