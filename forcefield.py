@@ -55,8 +55,8 @@ def change_whitelist(sender, add, names): #Add names if add == True else Remove 
       whitelists[sender_id] = []
 
     for name in names:
-      player = server.getOfflinePlayer(name)
-      if player.hasPlayedBefore():
+      player = server.getPlayer(name)
+      if player:
         player_id = uid(player)
         pname     = player.getName()
         sname     = stripcolors(sender.getDisplayName())
@@ -82,7 +82,7 @@ def change_whitelist(sender, add, names): #Add names if add == True else Remove 
           forcefield_header(sender, "&f%s &cwas %s in your forcefield whitelist!" % (pname, var))
 
       else:
-        forcefield_header(sender, "&cplayer &f%s &cwas not found." % name)
+        forcefield_header(sender, "&cplayer &f%s &cwas not found (must be online)." % name)
   else:
     forcefield_header(sender, "&cGive space-separated playernames.")
 
