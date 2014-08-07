@@ -58,8 +58,8 @@ def add(sender, names):
     friends[sender_id] = []
 
   for name in names:
-    player = server.getOfflinePlayer(name)
-    if known_player(player):
+    player = server.getPlayer(name)
+    if player:
       player_id = uid(player)
       not_yourself = player != sender
 
@@ -78,7 +78,7 @@ def add(sender, names):
   if added:
     friendmessage(sender, "&a&o%s&a added." % ", ".join(added))
   if notfound:
-    friendmessage(sender, "&c&o%s&c not found." % ", ".join(notfound))
+    friendmessage(sender, "&c&o%s&c not found. (must be online)" % ", ".join(notfound))
   if friendalready:
     friendmessage(sender, "&c&o%s&c is/are already your friend." % ", ".join(friendalready))
   if not not_yourself:
@@ -92,8 +92,8 @@ def rem(sender, names):
   notafriend = []
 
   for name in names:
-    player = server.getOfflinePlayer(name)
-    if known_player(player):
+    player = server.Player(name)
+    if player:
       player_id = uid(player)
       if player_id in friends.get(sender_id, []):
         friends[sender_id].remove(player_id)
@@ -108,7 +108,7 @@ def rem(sender, names):
   if removed:
     friendmessage(sender, "&a&o%s&a removed." % ", ".join(removed))
   if notfound:
-    friendmessage(sender, "&c&o%s&c not found." % ", ".join(notfound))
+    friendmessage(sender, "&c&o%s&c not found. (must be online)" % ", ".join(notfound))
   if notafriend:
     friendmessage(sender, "&c&o%s&c is/are not in your friends list." % ", ".join(notafriend))
 
