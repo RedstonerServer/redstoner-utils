@@ -25,22 +25,23 @@ def friendmessage(player, message): # sends a message with a prefix
 
 
 def ls(sender):
-  sender_friends = friends.get(uid(sender), False)
-  if sender_friends:
-    friends_string = ""
-    for uuid in sender_friends:
-      friends_string += (retrieve_player(uuid).getName() + ", ")
-    friendmessage(sender, "&aYour friends list: " + friends_string[:len(friends_string)-2])
-  else:
-    friendmessage(sender, "&cYour friends list is empty")
+  try:
+    sender_friends = friends.get(uid(sender), False)
+    if sender_friends:
+      friends_string = ""
+      for uuid in sender_friends:
+        friends_string += (retrieve_player(uuid).getName() + ", ")
+      friendmessage(sender, "&aYour friends list: " + friends_string[:len(friends_string)-2])
+    else:
+      friendmessage(sender, "&cYour friends list is empty")
+  except:
+    warn("Unable to finish friends' ls process")
 
 
 def clear(sender):
   sender_id = uid(sender)
 
   if friends.get(sender_id, False):
-    for uuid in friends[sender_id]:
-      friendmessage(retrieve_player(uuid), "&c&o%s &cremoved you from their friends list" % stripcolors(sender.getDisplayName()))
     friends.pop(sender_id)
     friendmessage(sender, "&aFriends list cleared")
     save_friends()
@@ -133,7 +134,7 @@ def on_friend_command(sender, args):
 
   # /friends list
   if cmd in ["list", "lst", "*"]:
-    ls(sender)
+    thread.start_new_thread(ls, (sender,))
 
   # /friends clear
   elif cmd in ["clear", "/"]:
