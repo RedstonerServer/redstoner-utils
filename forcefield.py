@@ -1,4 +1,5 @@
 #pylint: disable = F0401
+import thread
 from helpers import *
 from org.bukkit.util import Vector
 from math import sin
@@ -28,7 +29,7 @@ def on_forcefield_command(sender, args):
   args[0] = args[0].upper() # If it gets to this point, there are argument(s).
   if args[0] in ["WHITELIST", "WL", "WLIST"]: # Whitelist commands
     if not args[1:] or args[1].upper() == "LIST":
-      whitelist_list(sender)
+      thread.start_new_thread(whitelist_list, (sender,))
       return True
 
     args[1] = args[1].upper() # If it gets too this point, there is a second argument.
@@ -88,15 +89,18 @@ def change_whitelist(sender, add, names): #Add names if add == True else Remove 
 
 
 def whitelist_list(player):
-  player_id = uid(player)
-  count     = 0
-  forcefield_header(player, "&bForcefield whitelist:")
-  for user_id in whitelists.get(player_id, []):
-    count += 1
-    pname = retrieve_player(user_id).getName()
-    msg(player, "&b %s. &f%s" % (count, pname))
-  if count == 0:
-    msg(player, "&c Your whitelist has no entries.")
+  try:
+    player_id = uid(player)
+    count     = 0
+    forcefield_header(player, "&bForcefield whitelist:")
+    for user_id in whitelists.get(player_id, []):
+      count += 1
+      pname = retrieve_player(user_id).getName()
+      msg(player, "&b %s. &f%s" % (count, pname))
+    if count == 0:
+      msg(player, "&c Your whitelist has no entries.")
+  except:
+    warn("Unable to finish whitelist_list process")
 
 
 def whitelist_clear(player):

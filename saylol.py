@@ -30,10 +30,8 @@ def print_lol(sender, lid):
       broadcast(None, "&8[&blol&8] &7%s&8: &e%s" % (dispname, lols[lid]))
       last_msg = time()
     else:
-      plugin_header(sender, "SayLol")
       msg(sender, "&cInvalid id")
   else:
-    plugin_header(sender, "SayLol")
     msg(sender, "&cYou can use SayLol again in &a%s seconds!" % int(timeout + 1 - (time() - last_msg)))
 
 
@@ -41,9 +39,10 @@ def search_lols(sender, keyword):
   if not keyword:
     msg(sender, "&cPlease provide a keyword to search for!")
     return
+  keyword = keyword.lower()
   msg(sender, "&aLols containing '&6%s&a':" % keyword)
   for i, lol in enumerate(lols):
-    if keyword in lol:
+    if keyword in lol.lower():
       msg(sender, "&a%s: &e%s" % (str(i).rjust(3), lol))
   msg(sender, "") # empty line showing end of list
 
