@@ -59,8 +59,6 @@ def add(sender, names):
 
   for name in names:
     player = server.getOfflinePlayer(name)
-    # FIXME: breaks if player not known
-    # FIXME: might to a blocking call, maybe we can use getOfflinePlayers()
     if known_player(player):
       player_id = uid(player)
       not_yourself = player != sender

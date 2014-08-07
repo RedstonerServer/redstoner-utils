@@ -14,7 +14,7 @@ def on_join(event):
   player = event.getPlayer()
 
   # send welcome broadcast
-  if not server.getOfflinePlayer(player.getName()).hasPlayedBefore():
+  if not player.hasPlayedBefore():
     broadcast("utils.greet_new", "")
     broadcast("utils.greet_new", "&a&lPlease welcome &f" + player.getDisplayName() + " &a&lto Redstoner!")
     broadcast("utils.greet_new", "")
