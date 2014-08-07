@@ -160,7 +160,7 @@ def retrieve_player(uuid_str):
 
 def known_player(player):
   """
-  to be used on OfflinePlayer
+  to be used on OfflinePlayer (which can be online!)
   returns True if the player has been on the server
   this is different to HasPlayedBefore(), which will return False on first join
   """
