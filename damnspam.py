@@ -5,6 +5,7 @@ import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
 
 inputs          = open_json_file("damnspam", {}) # format "x;y;z;World"
 accepted_inputs = ["WOOD_BUTTON", "STONE_BUTTON", "LEVER"]
+changing_input  = False
 
 
 def save_inputs():
@@ -26,6 +27,8 @@ def add_input(creator, block, timeout_off, timeout_on):
 
 @hook.command("damnspam")
 def on_dammnspam_command(sender, args):
+  global changing_input
+
   plugin_header(sender, "DamnSpam")
   if len(args) in [1,2]:
 
@@ -67,10 +70,13 @@ def on_dammnspam_command(sender, args):
       msg(sender, "&cPlease look at a button or lever while executing this command!")
       return True
 
+    if location_str(target) in inputs:
+      changing_input = True # this input already has a timeout
+    # test if player is allowed to build here
     test_event = BlockBreakEvent(target, sender)
     server.getPluginManager().callEvent(test_event)
     if test_event.isCancelled():
-      msg(sender, "&cYou are not allowed to modify this button")
+      msg(sender, "&cYou are not allowed to modify this input")
       return True
 
     # add block to inputs
@@ -97,7 +103,7 @@ def on_block_break(event):
         save_inputs()
         msg(sender, "&eSuccessfully removed the input!")
         return True
-      else:
+      elif not changing_input: # FIXME: does this work??
         event.setCancelled(True)
         msg(sender, "&cYou cannot destroy this input!")
         msg(sender, "&c&nSneak&c and break if you want to remove it.")
