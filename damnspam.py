@@ -5,6 +5,8 @@ import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
 
 inputs          = open_json_file("damnspam", {}) # format "x;y;z;World"
 accepted_inputs = ["WOOD_BUTTON", "STONE_BUTTON", "LEVER"]
+changing_input  = False
+removing_input  = False
 
 
 def save_inputs():
@@ -26,6 +28,8 @@ def add_input(creator, block, timeout_off, timeout_on):
 
 @hook.command("damnspam")
 def on_dammnspam_command(sender, args):
+  global changing_input
+
   plugin_header(sender, "DamnSpam")
   if len(args) in [1,2]:
 
@@ -67,10 +71,14 @@ def on_dammnspam_command(sender, args):
       msg(sender, "&cPlease look at a button or lever while executing this command!")
       return True
 
+    if location_str(target) in inputs:
+      changing_input = True # this input already has a timeout
+    # test if player is allowed to build here
     test_event = BlockBreakEvent(target, sender)
     server.getPluginManager().callEvent(test_event)
+    changing_input = False
     if test_event.isCancelled():
-      msg(sender, "&cYou are not allowed to modify this button")
+      msg(sender, "&cYou are not allowed to modify this %s" % str(target.getType()).lower())
       return True
 
     # add block to inputs
@@ -86,20 +94,34 @@ def on_dammnspam_command(sender, args):
 
 @hook.event("block.BlockBreakEvent", "normal")
 def on_block_break(event):
+  global removing_input
+
+  if removing_input:
+    return True
   sender = event.getPlayer()
-  block = event.getBlock()
+  block  = event.getBlock()
+  btype  = str(block.getType()).lower()
   if str(block.getType()) in accepted_inputs and not event.isCancelled():
     pos_str = location_str(block)
     if inputs.get(pos_str):
       plugin_header(sender, "DamnSpam")
       if sender.isSneaking():
+        # test if player is allowed to build here
+        removing_input = True
+        test_event     = BlockBreakEvent(block, sender)
+        server.getPluginManager().callEvent(test_event)
+        removing_input = False
+        if test_event.isCancelled():
+          event.setCancelled(True)
+          msg(sender, "&cYou are not allowed to remove this %s" % btype)
+          return True
         inputs.pop(pos_str) # remove
         save_inputs()
-        msg(sender, "&eSuccessfully removed the input!")
+        msg(sender, "&eSuccessfully removed this %s!" % btype)
         return True
-      else:
+      elif not changing_input:
         event.setCancelled(True)
-        msg(sender, "&cYou cannot destroy this input!")
+        msg(sender, "&cYou cannot destroy this %s!" % btype)
         msg(sender, "&c&nSneak&c and break if you want to remove it.")
         return True
 
