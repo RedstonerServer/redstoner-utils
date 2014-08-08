@@ -78,7 +78,7 @@ def on_dammnspam_command(sender, args):
     server.getPluginManager().callEvent(test_event)
     changing_input = False
     if test_event.isCancelled():
-      msg(sender, "&cYou are not allowed to modify this input")
+      msg(sender, "&cYou are not allowed to modify this %s" % str(target.getType()).lower())
       return True
 
     # add block to inputs
@@ -99,7 +99,8 @@ def on_block_break(event):
   if removing_input:
     return True
   sender = event.getPlayer()
-  block = event.getBlock()
+  block  = event.getBlock()
+  btype  = str(block.getType()).lower()
   if str(block.getType()) in accepted_inputs and not event.isCancelled():
     pos_str = location_str(block)
     if inputs.get(pos_str):
@@ -112,15 +113,15 @@ def on_block_break(event):
         removing_input = False
         if test_event.isCancelled():
           event.setCancelled(True)
-          msg(sender, "&cYou are not allowed to remove this input")
+          msg(sender, "&cYou are not allowed to remove this %s" % btype)
           return True
         inputs.pop(pos_str) # remove
         save_inputs()
-        msg(sender, "&eSuccessfully removed this input!")
+        msg(sender, "&eSuccessfully removed this %s!" % btype)
         return True
       elif not changing_input:
         event.setCancelled(True)
-        msg(sender, "&cYou cannot destroy this input!")
+        msg(sender, "&cYou cannot destroy this %s!" % btype)
         msg(sender, "&c&nSneak&c and break if you want to remove it.")
         return True
 
