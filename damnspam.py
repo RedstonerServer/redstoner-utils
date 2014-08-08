@@ -6,6 +6,7 @@ import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
 inputs          = open_json_file("damnspam", {}) # format "x;y;z;World"
 accepted_inputs = ["WOOD_BUTTON", "STONE_BUTTON", "LEVER"]
 changing_input  = False
+removing_input  = False
 
 
 def save_inputs():
@@ -93,6 +94,10 @@ def on_dammnspam_command(sender, args):
 
 @hook.event("block.BlockBreakEvent", "normal")
 def on_block_break(event):
+  global removing_input
+
+  if removing_input:
+    return True
   sender = event.getPlayer()
   block = event.getBlock()
   if str(block.getType()) in accepted_inputs and not event.isCancelled():
@@ -101,12 +106,14 @@ def on_block_break(event):
       plugin_header(sender, "DamnSpam")
       if sender.isSneaking():
         # test if player is allowed to build here
-        test_event = BlockBreakEvent(block, sender)
+        removing_input = True
+        test_event     = BlockBreakEvent(block, sender)
         server.getPluginManager().callEvent(test_event)
         if test_event.isCancelled():
           event.setCancelled(True)
           msg(sender, "&cYou are not allowed to remove this input")
           return True
+        removing_input = False
         inputs.pop(pos_str) # remove
         save_inputs()
         msg(sender, "&eSuccessfully removed this input!")
