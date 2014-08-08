@@ -109,11 +109,11 @@ def on_block_break(event):
         removing_input = True
         test_event     = BlockBreakEvent(block, sender)
         server.getPluginManager().callEvent(test_event)
+        removing_input = False
         if test_event.isCancelled():
           event.setCancelled(True)
           msg(sender, "&cYou are not allowed to remove this input")
           return True
-        removing_input = False
         inputs.pop(pos_str) # remove
         save_inputs()
         msg(sender, "&eSuccessfully removed this input!")
