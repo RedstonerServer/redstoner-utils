@@ -75,6 +75,7 @@ def on_dammnspam_command(sender, args):
     # test if player is allowed to build here
     test_event = BlockBreakEvent(target, sender)
     server.getPluginManager().callEvent(test_event)
+    changing_input = False
     if test_event.isCancelled():
       msg(sender, "&cYou are not allowed to modify this input")
       return True
