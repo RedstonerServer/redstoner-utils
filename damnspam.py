@@ -100,11 +100,18 @@ def on_block_break(event):
     if inputs.get(pos_str):
       plugin_header(sender, "DamnSpam")
       if sender.isSneaking():
+        # test if player is allowed to build here
+        test_event = BlockBreakEvent(block, sender)
+        server.getPluginManager().callEvent(test_event)
+        if test_event.isCancelled():
+          event.setCancelled(True)
+          msg(sender, "&cYou are not allowed to remove this input")
+          return True
         inputs.pop(pos_str) # remove
         save_inputs()
-        msg(sender, "&eSuccessfully removed the input!")
+        msg(sender, "&eSuccessfully removed this input!")
         return True
-      elif not changing_input: # FIXME: does this work??
+      elif not changing_input:
         event.setCancelled(True)
         msg(sender, "&cYou cannot destroy this input!")
         msg(sender, "&c&nSneak&c and break if you want to remove it.")
