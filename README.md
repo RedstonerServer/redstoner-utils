@@ -5,11 +5,6 @@ Redstoner's custom plugins, written in python.
 
 # Installation / Set-up
 
-1-line-install-script for bash:
-`wget -O install.sh "http://pastie.org/pastes/9310905/download?key = 6byp4mrqmiui8yqeo3s6yw"; md5sum --check <<<"3499671c0832e561bc9c7d476d2167cb  install.sh" && sh install.sh`
-
-Detailed description:
-
 0. Create a new directory called 'redstoner'
 0. Download [the latest spigot](http://ci.md-5.net/job/Spigot/lastStableBuild/artifact/Spigot-Server/target/spigot.jar)
 0. Run it once inside redstoner, then shut it down again
