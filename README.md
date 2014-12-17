@@ -6,15 +6,14 @@ Redstoner's custom plugins, written in python.
 # Installation / Set-up
 
 0. Create a new directory called 'redstoner'
-0. Download [the latest spigot](http://ci.md-5.net/job/Spigot/lastStableBuild/artifact/Spigot-Server/target/spigot.jar)
-0. Run it once inside redstoner, then shut it down again
+0. Get the latest spigot
+0. Run it once inside 'redstoner', then shut it down again
 0. Create a new directory (inside redstoner) called 'lib'
 0. Download [mysql-connector](https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.30.zip), extract 'mysql-connector-java-X.X.XX-bin.jar
 ' and save it as 'mysql-connector.jar' inside lib
 0. Download [PyPluginLoader](http://bamboo.gserv.me/browse/PLUG-PYPL/latestSuccessful/artifact/JOB1/Version-agnostic-jar/PyPluginLoader.jar) (we're using [this fork](https://github.com/gdude2002/Python-Plugin-Loader)) into the plugins directory
-0. inside plugins, clone this directory into 'redstoner-utils**.py.dir**':  
-`git clone git@bitbucket.org:redstonesheep/redstoner-utils.git redstoner-utils.py.dir`
-0. Download [PEX](http://dev.bukkit.org/media/files/789/291/PermissionsEx.jar) into plugins
+0. Inside plugins, clone this directory into 'redstoner-utils**.py.dir**'
+0. Download PEX from [here](https://github.com/PEXPlugins/PermissionsEx/releases/latest) into plugins
 0. **if you want** to develop mysql things, set up a local MySQL server
 
 
@@ -24,6 +23,7 @@ Redstoner's custom plugins, written in python.
   Always use this branch to change code, please test before pushing. (If something goes wrong here, that's okay)
 
 * **master**
+  This branch is used for the production server.
   Never commit into this branch directly! Only merge stable versions of *dev*:
   ```bash
   git checkout master
@@ -43,16 +43,16 @@ The dev server uses the *dev* branch, the live server uses *master*.
 * Restart (You can try reloading here, but expect the unexpected)
 
 ### Deploying on production server
-* Test all code carefully on the test server  
-  ***on your machine:***
-* `git checkout master`
-* `git pull`
-* `git merge dev`
-* `git push -u origin master`
-* `git checkout dev`  
-  ***on the server:***
-* `rs update_utils`
-* Restart
+0. Test all code carefully on the test server
+0. on your machine:
+  * `git checkout master`
+  * `git pull`
+  * `git merge dev`
+  * `git push origin master`
+  * `git checkout dev`  
+0. on the server:
+  * `rs update_utils`
+  * Restart (Do NOT `/reload`!)
 
 
 # Modules / Files
@@ -72,7 +72,7 @@ If you want the server to load a file (*module*) on startup, add it to the `modu
 
 * `main.py`
 
-  > The only file loaded by PyPluginLoader, loads all other modules  
+  > The only file loaded by PyPluginLoader, loads all other modules
   > Contains a few methods that **need to be cleaned up**
 
 * `helpers.py`
