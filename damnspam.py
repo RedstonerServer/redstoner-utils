@@ -43,8 +43,10 @@ def on_dammnspam_command(sender, args):
       try:
         timeout_on  = round(float(timeout_on), 2)
         timeout_off = timeout_on
-        if not 0 <= timeout_on <= 60:
-          msg(sender, "&cThe timeout must be within 0-60.")
+        if 60 >= timeout_on <= -2 or timeout_on == 0:
+          timeout_on = False
+        if timeout_on == False:
+          msg(sender, "&cThe timeout must be within 0-60 or -1.")
           return True
       except ValueError:
         msg(sender, "&cThe timeout must be a number")
@@ -57,8 +59,12 @@ def on_dammnspam_command(sender, args):
       try:
         timeout_on  = round(float(timeout_on), 2)
         timeout_off = round(float(timeout_off), 2)
-        if not 0 <= timeout_on <= 60 or not 0 <= timeout_off <= 60:
-          msg(sender, "&cThe timeout must be within 0-60.")
+        if 60 >= timeout_on <= -2 or timeout_on == 0:
+          timeout_on = False
+        if 60 >= timeout_off <= -2 or timeout_off == 0:
+          timeout_off = False
+        if timeout_on == False or timeout_off == False:
+          msg(sender, "&cThe timeout must be within 0-60 or -1.")
           return True
       except ValueError:
         msg(sender, "&cThe timeout must be a number")
@@ -137,7 +143,11 @@ def on_interact(event):
     data    = inputs.get(pos_str)
     if data:
       checktime = data["timeout_on"] if powered else data["timeout_off"]
-      if data["last_time"] + checktime > now():
+      if checktime == -1:
+        event.setCancelled(True)
+        plugin_header(sender, "DamnSpam")
+        msg(sender, "&cThis %s is locked permanently." % (btype))
+      elif data["last_time"] + checktime > now():
         event.setCancelled(True)
         plugin_header(sender, "DamnSpam")
         msg(sender, "&cThis %s has a timeout of %ss." % (btype, checktime))
