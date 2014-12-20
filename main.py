@@ -44,7 +44,8 @@ shared["load_modules"] = [
   "motd",
   "abot",
   "forcefield",
-  "damnspam"
+  "damnspam",
+  "check"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:
