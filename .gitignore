@@ -2,6 +2,8 @@
 *.class
 *sublime*
 
+secrets.py
+
 # these are player/ingame specific
 files/
 files/*
