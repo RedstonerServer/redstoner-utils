@@ -78,24 +78,23 @@ def on_sudo_command(sender, args):
 
 #@hook.command("gm")
 #def on_gm_command(sender, args):
+#  if not is_player(sender):
+#    noperm(sender)
+#    return True
+#  if not checkargs(sender, args, 1, 2):
+#    return True
 #  mode = args[0]
 #  target = args[1]
-#  if target and not sender.hasPermission(utils.gm.other):
-#    msg(sender, "You do not have permission to change the gamemode of other players")
+#  if target and not sender.hasPermission("utils.gm.other"):
+#    msg(sender, "&cYou cannot change the gamemode of another player!")
 #  else:
 #    target = sender
 #  if mode < 0 or mode > 3:
-#    msg(sender, "That gamemode does not exist!")
-#  elif mode == 0 and sender.hasPermission(utils.gm.0):
-#    runas(server.getConsoleSender(), "gamemode 0 " % target)
-#  elif mode == 1 and sender.hasPermission(utils.gm.1):
-#    runas(server.getConsoleSender(), "gamemode 1 " % target)
-#  elif mode == 2 and sender.hasPermission(utils.gm.2):
-#    runas(server.getConsoleSender(), "gamemode 2 " % target)
-#  elif mode == 3 and sender.hasPermission(utils.gm.3):
-#    runas(server.getConsoleSender(), "gamemode 3 " % target)
+#    msg(sender, "&cThat gamemode does not exist!")
+#  elif sender.hasPermission("utils.gm." % mode):
+#    runas(server.getConsoleSender(), "gamemode " % mode % " " % target)
 #  else:
-#    msg(sender), "You do not have access to that gamemode")
+#    msg(sender, "&cYou cannot access that gamemode!")
 #  return True
 
 
