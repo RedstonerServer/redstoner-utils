@@ -79,7 +79,7 @@ def on_sudo_command(sender, args):
 #@hook.command("gm")
 #def on_gm_command(sender, args):
 #  if not is_player(sender):
-#    noperm(sender)
+#    msg(sender, "&cDerp! Can't run that from console!")
 #    return True
 #  if not checkargs(sender, args, 1, 2):
 #    return True
