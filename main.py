@@ -33,6 +33,8 @@ info("Loading RedstonerUtils...")
 shared["load_modules"] = [
   "misc",
   "adminchat",
+  "badges",
+  "calc"
   "lagchunks",
   "reports",
   "chatgroups",
