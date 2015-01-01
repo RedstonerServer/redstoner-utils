@@ -72,6 +72,33 @@ def on_sudo_command(sender, args):
 
 
 #
+# /gm - custom gamemode command with extra perms for greater control
+#
+
+
+#@hook.command("gm")
+#def on_gm_command(sender, args):
+#  if not is_player(sender):
+#    msg(sender, "&cDerp! Can't run that from console!")
+#    return True
+#  if not checkargs(sender, args, 1, 2):
+#    return True
+#  mode = args[0]
+#  target = args[1]
+#  if target and not sender.hasPermission("utils.gm.other"):
+#    msg(sender, "&cYou cannot change the gamemode of another player!")
+#  else:
+#    target = sender
+#  if mode < 0 or mode > 3:
+#    msg(sender, "&cThat gamemode does not exist!")
+#  elif sender.hasPermission("utils.gm." % mode):
+#    runas(server.getConsoleSender(), "gamemode " % mode % " " % target)
+#  else:
+#    msg(sender, "&cYou cannot access that gamemode!")
+#  return True
+
+
+#
 # Clicking redstone_sheep with shears will drop redstone + wool and makes a moo sound
 #
 

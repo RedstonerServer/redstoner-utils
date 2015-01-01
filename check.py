@@ -39,8 +39,9 @@ def get_all_data(sender, player):
     msg(sender, "&6>  UUID: &e%s" % str(player.getUniqueId()))
     msg(sender, "&6>  First joined: &7(y-m-d h:m:s) &e%s" % get_first_join(player))
     msg(sender, "")
-    msg(sender, "&7   -- Data provided by Mojang")
+    msg(sender, "&7   -- Data provided by ipinfo.io")
     msg(sender, "&6>  Country: &e%s" % get_country(data))
+    msg(sender, "&7   -- Data provided by Mojang")
     msg(sender, "&6>  All ingame names used so far: &e%s" % get_all_names(player))
   except Exception as e:
     # can throw exceptions such as timeouts when Mojang API is down
