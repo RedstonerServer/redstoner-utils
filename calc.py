@@ -6,8 +6,6 @@ calc_perm = "utils.calc"
 def lex(msg):
   fullmessage = msg
   msg = list(msg)
-  msg.append("f")
-  print(msg)
   tok = ""
   expression = False
   counter = 0
@@ -19,40 +17,37 @@ def lex(msg):
     if char.isnumeric():
       if not expression:
         startPos = counter
-      expression = True
+      # expression = True
       tok += char
     elif char == "+" or char == "-" or char == "*" or char == "/":
+      expression = True
       tok += char
     elif tok == " ":
       if not expression:
         tok = ""
       else:
         tok += char
-    elif char.isalpha():
+    if char.isalpha() or counter >= len(msg):
       if expression:
         msg = "".join(msg)
-        return_value = msg[0:startPos-1]
-        return_value += str(eval(tok))
-        return_value += msg[counter:]
+        result = str(eval(tok))
         expression = False
-        return return_value
+        return result
       else:
         tok = ""
-  return fullmessage
+  return False
  
 
 
 @hook.event("player.AsyncPlayerChatEvent", "high")
 def on_calc_chat(event):
-  try:
-    sender = event.getPlayer()
-    message = event.getMessage()
-    if sender.getName() not in evals_toggle_list:
-      return
-    output = lex(message)
-    event.setMessage(colorify(str(output)))
-  except Exception as e:
-    print(e)
+  sender = event.getPlayer()
+  message = event.getMessage()
+  if sender.getName() not in evals_toggle_list:
+    return
+  output = lex(message)
+  if output:
+    msg(sender, "&2=== Calc: "+output)
   
 @hook.command("calc", description="Toggles chat calculations")
 def on_calc_command(sender, args):
