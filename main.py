@@ -34,7 +34,7 @@ shared["load_modules"] = [
   "misc",
   "adminchat",
   "badges",
-  "calc"
+  "calc",
   "lagchunks",
   "reports",
   "chatgroups",
