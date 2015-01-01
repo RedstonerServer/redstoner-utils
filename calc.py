@@ -30,21 +30,13 @@ def lex(msg):
         tok += char
     elif char.isalpha():
       if expression:
-        print("It is an expression")
         msg = "".join(msg)
-
-        print("Before evaluating: "+msg)
-        print("Before evaluating (Token): "+tok)
-        print("So that's str eval tok" +str(eval(tok)))
-
         return_value = msg[0:startPos-1]
         return_value += str(eval(tok))
         return_value += msg[counter:]
-        print("Evaluated it: "+msg)
         expression = False
         return return_value
       else:
-        print("It is NOT an expression - " + tok)
         tok = ""
   return fullmessage
  
