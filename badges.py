@@ -20,7 +20,7 @@ def save_badges():
 
 def get_badges(player):
   sender_id = uid(player)
-  return badges_list.get(sender_id, [])
+  return badges.get(sender_id, [])
 
 
 def show_badges(sender, player):
