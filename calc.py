@@ -25,8 +25,8 @@ def calc(text):
       break
   if should_calc and not any(op in expression for op in ignore_operators):
     try:
-      result = str(eval(expression))
-    except:
+      result = str(eval(expression)) # pylint: disable = W0123
+    except: # pylint: disable = W0702
       # we can run into all kinds of errors here
       # most probably SyntaxError
       return None
