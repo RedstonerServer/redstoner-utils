@@ -15,14 +15,23 @@ server = bukkit.Bukkit.getServer()
 
 
 def info(text):
+  """
+  Log info to console
+  """
   server.getLogger().info("[RedstonerUtils] %s" % text)
 
 
 def warn(text):
+  """
+  Log warning to console
+  """
   server.getLogger().warning("[RedstonerUtils] %s" % text)
 
 
 def error(text):
+  """
+  Log error to console
+  """
   server.getLogger().severe("[RedstonerUtils] %s" % text)
 
 
@@ -90,6 +99,9 @@ def plugin_header(recipient = None, name="Redstoner Utils"):
 
 
 def noperm(player):
+  """
+  Send the default permission failure message to the player
+  """
   msg(player, "&cno permission")
 
 
@@ -126,13 +138,6 @@ def checkargs(sender, args, amin, amax):
     else:
       msg(sender, "&cNeeds " + str(amin) + " to " + str(amax) + " arguments!")
       return False
-  return True
-
-
-def warp(player, args, warpname):
-  if not checkargs(player, args, 0, 1):
-    return False # You can check if it worked
-  runas(player, "warp %s" % warpname)
   return True
 
 
