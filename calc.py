@@ -36,7 +36,7 @@ def on_calc_chat(event):
   if not event.isCancelled() and sender.getName() in evals_toggle_list and sender.hasPermission(calc_perm):
     output = calc(message)
     if output:
-      msg(sender, "&2=== Calc: &e" + output[0] + " = &c" + output[1])
+      msg(sender, "&2=== Calc: &e" + output[0] + " &2= &c" + output[1])
 
 
 @hook.command("calc", description="Toggles chat calculations")
