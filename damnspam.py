@@ -90,7 +90,7 @@ def on_dammnspam_command(sender, args):
     # add block to inputs
     add_input(sender, target, timeout_off, timeout_on)
     save_inputs()
-    msg(sender, "&aSuccessfully set a timeout for this %s." % ttype.lower())
+    msg(sender, "&aSuccessfully set a timeout for this %s." % ttype.lower().replace("_", " "))
     return True
 
   else:
