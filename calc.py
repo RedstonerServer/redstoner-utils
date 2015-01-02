@@ -1,6 +1,6 @@
 from helpers import *
 
-evals_toggle_list = []
+calc_users         = open_json_file("calc", [])
 math_operators    = ["+", "-", "*", "/", "&", "|"]
 ignore_operators  = ["**", "&&", "||"] # ** may be too intensive, the others cause syntax errors
 calc_perm = "utils.calc"
@@ -38,7 +38,7 @@ def calc(text):
 def on_calc_chat(event):
   sender = event.getPlayer()
   message = event.getMessage()
-  if not event.isCancelled() and sender.getName() in evals_toggle_list and sender.hasPermission(calc_perm):
+  if not event.isCancelled() and uid(sender) in calc_users and sender.hasPermission(calc_perm):
     output = calc(message)
     if output:
       msg(sender, "&2=== Calc: &e" + output[0] + " &2= &c" + output[1])
@@ -47,31 +47,23 @@ def on_calc_chat(event):
 @hook.command("calc", description="Toggles chat calculations")
 def on_calc_command(sender, args):
   plugin_header(sender, "Chat Calculator")
-  if len(args):
-    if not sender.hasPermission(calc_perm):
-      noperm(sender)
-      return
-    target = args[0].lower()
-    if not is_player(target):
-      msg(sender, "&cLooks like %s isn't a player at all!" % target)
-      return
-    target = server.getPlayer(target)
+  if not sender.hasPermission(calc_perm):
+    noperm(sender)
+    return True
+  if not checkargs(sender, args, 0, 1):
+    return True
 
-    status = "disabled"
-    if target.getName() in evals_toggle_list:
-      evals_toggle_list.remove(target.getName())
-    else:
-      status = "enabled"
-      evals_toggle_list.append(target.getName())
-    msg(target, "&6We just &e%s&6 Chat Calculator for you!" % status)
+  target = server.getPlayer(args[0:1]) or sender
+  if not is_player(target):
+    msg(sender, "&cLooks like %s isn't a player at all!" % target)
+    return True
+
+  toggle(target, calc_users)
+  save_json_file("calc", calc_users)
+
+  status = "enabled" if uid(target) in calc_users  else "disabled"
+  msg(target, "&6We just &e%s&6 Chat Calculator for you!" % status)
+  if target != sender:
     msg(sender, "&6We &e%s&6 this player's Chat Calculator" % status)
 
-    return
-
-  status = "disabled"
-  if sender.getName() in evals_toggle_list:
-    evals_toggle_list.remove(sender.getName())
-  else:
-    status = "enabled"
-    evals_toggle_list.append(sender.getName())
-  msg(sender, "&6We just &e%s&6 Chat Calculator for you!" % status)
+  return True
