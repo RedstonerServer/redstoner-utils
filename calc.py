@@ -5,7 +5,12 @@ math_operators    = ["+", "-", "*", "/", "&", "|"]
 ignore_operators  = ["**", "&&", "||"] # ** may be too intensive, the others cause syntax errors
 calc_perm = "utils.calc"
 
+
 def calc(text):
+  """
+  extracts a mathematical expression from `text`
+  returns (expression, result) or None
+  """
   expression = ""
   should_calc = False
   for char in text:
