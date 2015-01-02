@@ -31,7 +31,10 @@ def on_dammnspam_command(sender, args):
   global changing_input
 
   plugin_header(sender, "DamnSpam")
-  if len(args) in [1,2]:
+  if not checkargs(sender, args, 1, 2):
+    msg(sender, "&c/damnspam <seconds> &e(Buttons/Levers)")
+    msg(sender, "&c/damnspam <seconds after off> <seconds after on> &e(Levers only)")
+    return True
 
     if not is_creative(sender):
       msg(sender, "&cYou can only do this in Creative mode.")
@@ -92,10 +95,6 @@ def on_dammnspam_command(sender, args):
     save_inputs()
     msg(sender, "&aSuccessfully set a timeout for this %s." % ttype.lower().replace("_", " "))
     return True
-
-  else:
-    msg(sender, "&c/damnspam <seconds> &e(Buttons/Levers)")
-    msg(sender, "&c/damnspam <seconds after off> <seconds after on> &e(Levers only)")
 
 
 @hook.event("block.BlockBreakEvent", "normal")
