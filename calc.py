@@ -14,7 +14,7 @@ def calc(text):
   expression = ""
   should_calc = False
   for char in text:
-    if char.isdigit() or char in [".", " "]:
+    if char.isdigit() or (should_calc and char in [".", " "]):
       expression += char
     elif char in math_operators:
       # calculation must include at least 1 operator
