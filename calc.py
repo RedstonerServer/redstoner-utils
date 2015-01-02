@@ -1,54 +1,44 @@
 from helpers import *
 
 evals_toggle_list = []
+math_operators    = ["+", "-", "*", "/", "&", "|"]
+ignore_operators  = ["**", "&&", "||"] # ** may be too intensive, the others cause syntax errors
 calc_perm = "utils.calc"
 
-def lex(msg):
-  fullmessage = msg
-  msg = list(msg)
-  tok = ""
-  expression = False
-  counter = 0
-  startPos = 0
-  startPos_set = False
-  endPos = 0
-  for char in msg: 
-    counter += 1
-    if char.isnumeric():
-      if not expression:
-        startPos = counter
-      # expression = True
-      tok += char
-    elif char == "+" or char == "-" or char == "*" or char == "/":
-      expression = True
-      tok += char
-    elif tok == " ":
-      if not expression:
-        tok = ""
-      else:
-        tok += char
-    if char.isalpha() or counter >= len(msg):
-      if expression:
-        msg = "".join(msg)
-        result = str(eval(tok))
-        expression = False
-        return result
-      else:
-        tok = ""
-  return False
- 
+def calc(text):
+  expression = ""
+  should_calc = False
+  for char in text:
+    if char.isdigit() or char in [".", " "]:
+      expression += char
+    elif char in math_operators:
+      # calculation must include at least 1 operator
+      should_calc = True
+      expression += char
+    elif should_calc and char.isalpha():
+      # don't include any more text in the calculation
+      break
+  if should_calc and not any(op in expression for op in ignore_operators):
+    try:
+      result = str(eval(expression))
+    except:
+      # we can run into all kinds of errors here
+      # most probably SyntaxError
+      return None
+    return (expression, result)
+  return None
 
 
-@hook.event("player.AsyncPlayerChatEvent", "high")
+@hook.event("player.AsyncPlayerChatEvent", "monitor")
 def on_calc_chat(event):
   sender = event.getPlayer()
   message = event.getMessage()
-  if sender.getName() not in evals_toggle_list:
-    return
-  output = lex(message)
-  if output:
-    msg(sender, "&2=== Calc: "+output)
-  
+  if not event.isCancelled() and sender.getName() in evals_toggle_list and sender.hasPermission(calc_perm):
+    output = calc(message)
+    if output:
+      msg(sender, "&2=== Calc: &e" + output[0] + " = &c" + output[1])
+
+
 @hook.command("calc", description="Toggles chat calculations")
 def on_calc_command(sender, args):
   plugin_header(sender, "Chat Calculator")
@@ -61,7 +51,7 @@ def on_calc_command(sender, args):
       msg(sender, "&cLooks like %s isn't a player at all!" % target)
       return
     target = server.getPlayer(target)
-    
+
     status = "disabled"
     if target.getName() in evals_toggle_list:
       evals_toggle_list.remove(target.getName())
@@ -70,10 +60,9 @@ def on_calc_command(sender, args):
       evals_toggle_list.append(target.getName())
     msg(target, "&6We just &e%s&6 Chat Calculator for you!" % status)
     msg(sender, "&6We &e%s&6 this player's Chat Calculator" % status)
-  
-  
+
     return
-  
+
   status = "disabled"
   if sender.getName() in evals_toggle_list:
     evals_toggle_list.remove(sender.getName())
