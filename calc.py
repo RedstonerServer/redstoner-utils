@@ -52,18 +52,14 @@ def on_calc_command(sender, args):
     return True
   if not checkargs(sender, args, 0, 1):
     return True
-
-  target = server.getPlayer(args[0:1]) or sender
-  if not is_player(target):
-    msg(sender, "&cLooks like %s isn't a player at all!" % target)
+  if not is_player(sender):
+    msg(sender, "&cYou are not a player!" % sender)
     return True
 
-  toggle(target, calc_users)
+  toggle(sender, calc_users)
   save_json_file("calc", calc_users)
 
-  status = "enabled" if uid(target) in calc_users  else "disabled"
-  msg(target, "&6We just &e%s&6 Chat Calculator for you!" % status)
-  if target != sender:
-    msg(sender, "&6We &e%s&6 this player's Chat Calculator" % status)
+  status = "enabled" if uid(sender) in calc_users  else "disabled"
+  msg(sender, "&6We just &e%s&6 Chat Calculator for you!" % status)
 
   return True
