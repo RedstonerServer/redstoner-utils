@@ -26,8 +26,9 @@ def get_badges(player):
 def show_badges(sender, player):
   player_badges = get_badges(player)
   if player_badges:
+    msg(sender, "&6Badges of " + player.getName())
     for key in player_badges:
-      msg(sender, "&6> %s" % badges_available[key])
+      msg(sender, "&b> &3&o%s" % badges_available[key])
   else:
     msg(sender, "&eThis player has no badges yet")
 
@@ -48,7 +49,7 @@ def del_badge_event(player, badge):
 def list_badges(sender):
   if badges_available:
     for key in badges_available.keys():
-      msg(sender, "&e> %s = %s" % (key, badges_available[key]))
+      msg(sender, "&b> &3%s &7&o\"%s\"" % (key, badges_available[key]))
   else:
     msg(sender, "&cThere are currently no badges available")
 
@@ -74,15 +75,10 @@ def del_badge(sender, target, badge):
     player_badges = get_badges(target)
     if badge in player_badges:
       player_badges.remove(badge)
-      msg(sender, "&7... just removed badge from player_badges ...")
-      msg(sender, "&7... result: %s" % ", ".join(player_badges))
       badges[uid(target)] = player_badges
-      msg(sender, "&7... set player_badges to uid badges target ...")
-      msg(sender, "&7... result: %s" % ", ".join(badges[uid(target)]))
-
       msg(sender, "&aYou just took %s from %s!" % (badge, target.getName()))
       save_badges()
-      del_badge_event(target)
+      del_badge_event(target, badge)
       return
     msg(sender, "&c%s doesn't have this badge!" % target.getName())
   else:
