@@ -5,10 +5,8 @@ from sys import exc_info
 import thread
 import org.bukkit.inventory.ItemStack as ItemStack
 
-#
-# Welcome new players
-#
 
+# Welcome new players
 @hook.event("player.PlayerJoinEvent", "monitor")
 def on_join(event):
   player = event.getPlayer()
@@ -36,11 +34,7 @@ def on_join(event):
     player.teleport(player.getWorld().getSpawnLocation())
 
 
-#
 # /sudo - execute command/chat *as* a player/console
-#
-
-
 @hook.command("sudo")
 def on_sudo_command(sender, args):
   if sender.hasPermission("utils.sudo"):
@@ -71,11 +65,7 @@ def on_sudo_command(sender, args):
   return True
 
 
-#
 # /gm - custom gamemode command with extra perms for greater control
-#
-
-
 #@hook.command("gm")
 #def on_gm_command(sender, args):
 #  if not is_player(sender):
@@ -98,10 +88,8 @@ def on_sudo_command(sender, args):
 #  return True
 
 
-#
-# Clicking redstone_sheep with shears will drop redstone + wool and makes a moo sound
-#
-
+# Clicking redstone_sheep with shears will drop redstone + wool
+# also makes a moo sound for the shearer
 last_shear = 0.0
 
 @hook.event("player.PlayerInteractEntityEvent")
@@ -120,10 +108,7 @@ def on_player_entity_interact(event):
         sender.playSound(entity.getLocation(), "mob.cow.say", 1, 1)
 
 
-#
 # /pluginversions - print all plugins + versions; useful when updating plugins
-#
-
 @hook.command("pluginversions")
 def on_pluginversions_command(sender, args):
   plugin_header(sender, "Plugin versions")
@@ -135,20 +120,14 @@ def on_pluginversions_command(sender, args):
   return True
 
 
-#
 # /echo - essentials echo sucks and prints mail alerts sometimes
-#
-
 @hook.command("echo")
 def on_echo_command(sender, args):
   msg(sender, " ".join(args).replace("\\n", "\n"))
 
 
-#
 # /pyeval - run python ingame
-#
 # has to be in main.py so we can access the modules
-
 def eval_thread(sender, code):
   try:
     result = eval(code)
@@ -163,6 +142,7 @@ def eval_thread(sender, code):
   thread.exit()
 
 
+# /pyeval - run python code ingame
 @hook.command("pyeval")
 def on_pyeval_command(sender, args):
   if sender.hasPermission("utils.pyeval"):
@@ -175,6 +155,7 @@ def on_pyeval_command(sender, args):
   return True
 
 
+# /modules - list all modules, unloaded modules in red
 @hook.command("modules")
 def on_modules_command(sender, args):
   plugin_header(sender, "Modules")
