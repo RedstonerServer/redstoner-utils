@@ -198,14 +198,15 @@ def save_json_file(filename, obj):
     error("Failed to write to %s: %s" % (filename, e))
 
 
-def toggle(player, ls, name = "Toggle"):
+def toggle(player, ls, name = "Toggle", add = None):
   """
   Toggles presence of a player's UUID in a list
+  If add is given, True explicitely adds it whereas False removes it
   """
   pid = uid(player)
-  if pid in ls:
+  if pid in ls or add == False:
     ls.remove(pid)
     msg(player, "&a%s turned off!" % name)
-  else:
+  elif add != False:
     ls.append(pid)
     msg(player, "&a%s turned on!" % name)
