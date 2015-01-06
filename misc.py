@@ -181,3 +181,12 @@ def on_modules_command(sender, args):
   for mod in shared["load_modules"]:
     color = "a" if mod in shared["modules"] else "c"
     msg(sender, "&" + color + mod)
+
+
+# Disable spectator teleportation
+@hook.event("player.PlayerTeleportEvent")
+def on_player_teleport(event):
+  player = event.getPlayer()
+  if not event.isCancelled() and str(event.getCause()) == "SPECTATE" and not player.hasPermission("utils.tp.spectate"):
+    event.setCancelled(True)
+    msg(event.getPlayer(), "&cSpectator teleportation is disabled")
