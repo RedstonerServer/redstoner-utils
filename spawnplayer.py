@@ -18,45 +18,45 @@ upmul  = 0.95  # multiplicate with goup each row
 
 
 def spawn(dispname, sender, x, y, z):
-  """
-  Sends the actual player to sender
-  """
-  server  = bukkit.getServer().getServer()
-  world   = server.getWorldServer(0)                      # main world
-  profile = GameProfile(dispname, dispname)               # set player details
-  manager = PlayerInteractManager(world)
-  entity  = EntityPlayer(server, world, profile, manager) # create Player's entity
-  entity.setPosition(x, y, z)
-  packet  = PacketPlayOutNamedEntitySpawn(entity)         # create packet for entity spawn
-  sender.getHandle().playerConnection.sendPacket(packet)  # send packet
+    """
+    Sends the actual player to sender
+    """
+    server  = bukkit.getServer().getServer()
+    world   = server.getWorldServer(0)                      # main world
+    profile = GameProfile(dispname, dispname)               # set player details
+    manager = PlayerInteractManager(world)
+    entity  = EntityPlayer(server, world, profile, manager) # create Player's entity
+    entity.setPosition(x, y, z)
+    packet  = PacketPlayOutNamedEntitySpawn(entity)         # create packet for entity spawn
+    sender.getHandle().playerConnection.sendPacket(packet)  # send packet
 
 
 @hook.command("spawnplayer")
 def on_spawnplayer_command(sender, args):
-  global amount, row, ground, goup
+    global amount, row, ground, goup
 
-  # X and Z position
-  xpos = sender.getLocation().add(-float(row-1 * shift + (amount * margin) / 2), 0, 0).getX()
-  row  = sender.getLocation().add(0, 0, -row).getZ()
+    # X and Z position
+    xpos = sender.getLocation().add(-float(row-1 * shift + (amount * margin) / 2), 0, 0).getX()
+    row  = sender.getLocation().add(0, 0, -row).getZ()
 
-  count = 0
-  stop  = False
-  while not stop:
-    for i in range(amount):
-      player = players[count]
-      x = int(xpos + i*margin)
-      spawn(player, sender, x, ground, row)
-      print(player, x, ground, row)
-      count += 1
-      if count >= len(players):
-        stop = True
-        print "breaking"
-        break
-    print("next row")
-    row -= 1                      # next row (-z)
-    xpos -= shift                 # shift left
-    amount += int(shift*margin*2) # add players left and right
-    if abs(row) % int(goup) == 0:
-      goup   *= upmul
-      ground += 1
-      print "Going up by 1: %s" % ground
+    count = 0
+    stop  = False
+    while not stop:
+        for i in range(amount):
+            player = players[count]
+            x = int(xpos + i*margin)
+            spawn(player, sender, x, ground, row)
+            print(player, x, ground, row)
+            count += 1
+            if count >= len(players):
+                stop = True
+                print "breaking"
+                break
+        print("next row")
+        row -= 1                      # next row (-z)
+        xpos -= shift                 # shift left
+        amount += int(shift*margin*2) # add players left and right
+        if abs(row) % int(goup) == 0:
+            goup   *= upmul
+            ground += 1
+            print "Going up by 1: %s" % ground
