@@ -1,4 +1,7 @@
 #pylint: disable = F0401
+"""
+A plugin that automatically tiles (stacks) blocks inside a selected region in configurable directions.
+"""
 import org.bukkit.event.block.BlockPlaceEvent as BlockPlaceEvent
 import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
 import org.bukkit.event.player.PlayerInteractEvent as PlayerInteractEvent

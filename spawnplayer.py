@@ -1,3 +1,9 @@
+"""
+Code that was used once to create this awesome screenshot
+- https://i.imgur.com/v4wg5kl.png
+- https://i.imgur.com/tIZ3jmC.png
+- https://www.reddit.com/r/Minecraft/comments/28le52/screenshot_of_all_players_that_joined_my_server/
+"""
 import net.minecraft.server.v1_7_R1.EntityPlayer as EntityPlayer
 import net.minecraft.server.v1_7_R1.PacketPlayOutNamedEntitySpawn as PacketPlayOutNamedEntitySpawn
 import net.minecraft.server.v1_7_R1.PlayerInteractManager as PlayerInteractManager

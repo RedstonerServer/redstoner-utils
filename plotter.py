@@ -1,7 +1,9 @@
 #!/usr/bin/python
 
-# this was going to be a PlotMe-like plugin "plotter"
-# but it seems like PlotMe is still beeing developed, so we don't need our own.
+"""
+*Very basic* start of a custom plot-plugin like PlotMe
+on hold because the PlotMe developer continued to develop PlotMe
+"""
 
 import sys
 

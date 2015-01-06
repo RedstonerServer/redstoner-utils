@@ -1,4 +1,9 @@
 #pylint: disable = F0401
+"""
+A library that makes use of the so called ClassPathHack for jython
+to allow proper loading of mysql-connector.jar at runtime.
+Import only, no methods.
+"""
 import java.lang.reflect.Method
 import java.io.File
 import java.net.URL
