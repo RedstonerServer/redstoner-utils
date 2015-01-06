@@ -198,7 +198,7 @@ def save_json_file(filename, obj):
     error("Failed to write to %s: %s" % (filename, e))
 
 
-def toggle(player, ls):
+def toggle(player, ls, name = "Toggle"):
   """
   Toggles presence of a player's UUID in a list
   """
