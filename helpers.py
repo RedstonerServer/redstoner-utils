@@ -211,12 +211,12 @@ def toggle(player, ls, add = None, name = "Toggle", on = "&a%s now on!", off = "
   enabled = pid in ls
 
   # Do some checks and remove pid.
-  if enabled and add == False:
+  if enabled: #and add == False:
     ls.remove(pid)
     msg(player, on % name)
 
   # Do some checks and append pid.
-  elif not enabled and add == True:
+  elif not enabled: # and add == True:  #Sorry i fail to see the relevance of that if we want to just toggle, since if its none, none of these statements will go thru
     ls.append(pid)
     msg(player, off % name)
 
