@@ -198,28 +198,14 @@ def save_json_file(filename, obj):
     error("Failed to write to %s: %s" % (filename, e))
 
 
-def toggle(player, ls, add = None, name = "Toggle", on = "&a%s now on!", off = "&c%s now off!", already = "&c%s was already %s"):
+def toggle(player, ls):
   """
-  Toggle presence of a player's UUID in a list (ls)
-  'add' controls if a player should be added(True) or removed(False)
-  if 'add' is None, ls will simply be toggled for that player.
-  %s in on, off, and already is replaced with the name
-  when 'add' is given, but won't change anything, %s in 'already' is replaced with "ON" or "OFF"
+  Toggles presence of a player's UUID in a list
   """
-
-  pid     = uid(player)
-  enabled = pid in ls
-
-  # Do some checks and remove pid.
-  if enabled: #and add == False:
+  pid = uid(player)
+  if pid in ls:
     ls.remove(pid)
-    msg(player, on % name)
-
-  # Do some checks and append pid.
-  elif not enabled: # and add == True:  #Sorry i fail to see the relevance of that if we want to just toggle, since if its none, none of these statements will go thru
-    ls.append(pid)
-    msg(player, off % name)
-
-  # Already on/off (optional)
+    msg(player, "&a%s turned off!" % name)
   else:
-    msg(player, already % (name, " ON" if add else " OFF"))
+    ls.append(pid)
+    msg(player, "&a%s turned on!" % name)
