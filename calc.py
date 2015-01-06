@@ -56,7 +56,7 @@ def on_calc_command(sender, args):
     msg(sender, "&cYou are not a player!" % sender)
     return True
 
-  toggle(sender, calc_users)
+  toggle(sender, calc_users, name = "Calc")
   save_json_file("calc", calc_users)
 
   status = "enabled" if uid(sender) in calc_users  else "disabled"
