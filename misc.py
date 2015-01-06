@@ -6,9 +6,11 @@ import thread
 import org.bukkit.inventory.ItemStack as ItemStack
 
 
-# Welcome new players
 @hook.event("player.PlayerJoinEvent", "monitor")
 def on_join(event):
+    """
+    Welcome new players
+    """
     player = event.getPlayer()
 
     # send welcome broadcast
@@ -34,9 +36,12 @@ def on_join(event):
         player.teleport(player.getWorld().getSpawnLocation())
 
 
-# /sudo - execute command/chat *as* a player/console
 @hook.command("sudo")
 def on_sudo_command(sender, args):
+    """
+    /sudo
+    execute command/chat *as* a player/console
+    """
     if sender.hasPermission("utils.sudo"):
         plugin_header(sender, "Sudo")
         if not checkargs(sender, args, 2, -1):
@@ -65,9 +70,11 @@ def on_sudo_command(sender, args):
     return True
 
 
-# /gm - custom gamemode command with extra perms for greater control
 #@hook.command("gm")
 #def on_gm_command(sender, args):
+#  """
+#  /gm - custom gamemode command with extra perms for greater control
+#  """
 #  if not is_player(sender):
 #    msg(sender, "&cDerp! Can't run that from console!")
 #    return True
@@ -88,12 +95,14 @@ def on_sudo_command(sender, args):
 #  return True
 
 
-# Clicking redstone_sheep with shears will drop redstone + wool
-# also makes a moo sound for the shearer
 last_shear = 0.0
 
 @hook.event("player.PlayerInteractEntityEvent")
 def on_player_entity_interact(event):
+    """
+    Clicking redstone_sheep with shears will drop redstone + wool
+    also makes a moo sound for the shearer
+    """
     global last_shear
     if not event.isCancelled():
         shear_time = now()
@@ -108,9 +117,12 @@ def on_player_entity_interact(event):
                 sender.playSound(entity.getLocation(), "mob.cow.say", 1, 1)
 
 
-# /pluginversions - print all plugins + versions; useful when updating plugins
 @hook.command("pluginversions")
 def on_pluginversions_command(sender, args):
+    """
+    /pluginversions
+    print all plugins + versions; useful when updating plugins
+    """
     plugin_header(sender, "Plugin versions")
     plugins = list(server.getPluginManager().getPlugins())
     plugins.sort(key = lambda pl: pl.getDescription().getName())
@@ -120,15 +132,20 @@ def on_pluginversions_command(sender, args):
     return True
 
 
-# /echo - essentials echo sucks and prints mail alerts sometimes
 @hook.command("echo")
 def on_echo_command(sender, args):
+    """
+    /echo
+    essentials echo sucks and prints mail alerts sometimes
+    """
     msg(sender, " ".join(args).replace("\\n", "\n"))
 
 
-# /pyeval - run python ingame
-# has to be in main.py so we can access the modules
 def eval_thread(sender, code):
+    """
+    /pyeval
+    run python ingame
+    """
     try:
         result = eval(code)
         msg(sender, ">>> %s: %s" % (colorify("&3") + type(result).__name__, colorify("&a") + unicode(result) + "\n "), usecolor = False)
@@ -142,9 +159,12 @@ def eval_thread(sender, code):
     thread.exit()
 
 
-# /pyeval - run python code ingame
 @hook.command("pyeval")
 def on_pyeval_command(sender, args):
+    """
+    /pyeval
+    run python code ingame
+    """
     if sender.hasPermission("utils.pyeval"):
         if not checkargs(sender, args, 1, -1):
             return True
@@ -155,18 +175,23 @@ def on_pyeval_command(sender, args):
     return True
 
 
-# /modules - list all modules, unloaded modules in red
 @hook.command("modules")
 def on_modules_command(sender, args):
+    """
+    /modules
+    list all modules, unloaded modules in red
+    """
     plugin_header(sender, "Modules")
     for mod in shared["load_modules"]:
         color = "a" if mod in shared["modules"] else "c"
         msg(sender, "&" + color + mod)
 
 
-# Disable spectator teleportation
 @hook.event("player.PlayerTeleportEvent")
 def on_player_teleport(event):
+    """
+    Disable spectator teleportation
+    """
     player = event.getPlayer()
     if not event.isCancelled() and str(event.getCause()) == "SPECTATE" and not player.hasPermission("utils.tp.spectate"):
         event.setCancelled(True)
