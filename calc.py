@@ -59,7 +59,4 @@ def on_calc_command(sender, args):
     toggle(sender, calc_users, name = "Calc")
     save_json_file("calc", calc_users)
 
-    status = "enabled" if uid(sender) in calc_users  else "disabled"
-    msg(sender, "&6We just &e%s&6 Chat Calculator for you!" % status)
-
     return True
