@@ -25,7 +25,8 @@ def get_country(data):
 def get_all_names(player):
     uuid = str(player.getUniqueId()).replace("-", "")
     names = json.load(urllib2.urlopen("https://api.mojang.com/user/profiles/%s/names" % uuid))
-    return ", ".join(names)
+    # [ {"name": "some_name"}, {"name": "other_name"} ]
+    return ", ".join([name["name"] for name in names])
 
 
 # combines data
