@@ -87,14 +87,12 @@ def get_all_data(sender, player):
 @hook.command("check", description="Displays useful stuff about a user", usage="/check <player>")
 def on_hook_command(sender, args):
     if sender.hasPermission("utils.check"):
+        if not checkargs(sender, args, 1, 1):
+            return True
         plugin_header(sender, "Check")
         msg(sender, "&7Please notice that the data may not be fully accurate!")
-
         player = server.getOfflinePlayer(args[0]) if len(args) > 0 else None
-        if is_player(player):
-            get_all_data(sender, player)
-        else:
-            msg(sender, "&cCouldn't find this player")
+        get_all_data(sender, player)
     else:
         msg(sender, "&4You don't have the required permissions to execute this command!")
     return True
