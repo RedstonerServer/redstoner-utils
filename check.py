@@ -2,6 +2,7 @@ import json
 import urllib2
 import datetime
 import mysqlhack #pylint: disable = unused-import
+from traceback import format_exc as print_traceback
 from com.ziclix.python.sql import zxJDBC
 from secrets import *
 from helpers import *
@@ -80,6 +81,7 @@ def get_all_data(sender, player):
         msg(sender, "&6>  All ingame names used so far: &e%s" % get_all_names(player))
     except:
         # can throw exceptions such as timeouts when Mojang API is down
+        warn(print_traceback())
         msg(sender, "&cSorry, something went wrong while fetching data")
 
 
