@@ -13,7 +13,7 @@ def ip_info(player):
     if player.isOnline():
         return json.load(urllib2.urlopen("http://ipinfo.io%s/json" % str(player.getAddress().getAddress())))
     else:
-      return None
+      return {}
 
 
 # receive first join date based on the player data (may not be accurate)
