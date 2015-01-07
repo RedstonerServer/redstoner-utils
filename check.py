@@ -39,7 +39,6 @@ def get_website_data(player):
     results = curs.fetchall()
     curs.close()
     conn.close()
-    return results
     if len(results) > 0:
         return {
             "link": "http://redstoner.com/users/%s" % results[0],
