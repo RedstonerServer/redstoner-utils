@@ -34,7 +34,10 @@ def get_last_seen(player):
 def get_website_data(player):
     conn    = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs    = conn.cursor()
-    uuid = str(uid(player)).replace("-", "")
+    try:
+        uuid = str(uid(player)).replace("-", "")
+    except:
+        print"failed to convert to string"
     try:
         curs.execute("SELECT DISTINCT `id`, `email` FROM users WHERE `uuid` = (?) LIMIT 1", (uuid,))
     except:
