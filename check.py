@@ -35,7 +35,7 @@ def get_website_data(player):
     conn    = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs    = conn.cursor()
     uuid = str(uid(player)).replace("-", "")
-    curs.execute("SELECT DISTINCT `id`, `email` FROM users WHERE `uuid` = ? LIMIT 1", [uuid])
+    curs.execute("SELECT DISTINCT `id`, `email` FROM users WHERE `uuid` = (%s) LIMIT 1", (uuid,))
     results = curs.fetchall()
     curs.close()
     conn.close()
