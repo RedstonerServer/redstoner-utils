@@ -23,7 +23,7 @@ def on_join(event):
         msg(player, " \n \n \n \n \n \n \n \n \n \n \n \n ")
         msg(player, "  &4Welcome to the Redstoner Server!")
         msg(player, "  &6Before you ask us things, take a quick")
-        msg(player, "  &6look at the &a&l/FAQ &6command.")
+        msg(player, "  &6look at &a&nredstoner.com/info")
         msg(player, "  \n&6thank you and happy playing ;)")
         msg(player, " \n \n")
 
