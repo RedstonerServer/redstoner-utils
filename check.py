@@ -81,6 +81,7 @@ def get_all_data(sender, player):
         msg(sender, "&6>  First joined: &7(y-m-d h:m:s) &e%s" % get_first_join(player))
         msg(sender, "&6>  Last seen: &7(y-m-d h:m:s) &e%s" % get_last_seen(player))
         website = get_website_data(player)
+        print (website) #Test to see if its returning correctly!
         msg(sender, "&6>  Website account: &e%s" % website.get("link"))
         msg(sender, "&6>    email: &e%s" % website.get("email"))
         msg(sender, "&7   -- Data provided by ipinfo.io")
