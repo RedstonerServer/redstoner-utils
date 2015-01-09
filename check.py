@@ -34,27 +34,19 @@ def get_last_seen(player):
 def get_website_data(player):
     conn    = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs    = conn.cursor()
-    try:
-        uuid = str(uid(player)).replace("-", "")
-    except:
-        print"failed to convert to string"
-    try:
-        curs.execute("SELECT DISTINCT `id`, `email` FROM users WHERE `uuid` = (?) LIMIT 1", (uuid,))
-    except:
-        print"Failed to curs.execute"
+    uuid = str(uid(player)).replace("-", "")
+    curs.execute("SELECT DISTINCT `id`, `email` FROM users WHERE `uuid` = ? LIMIT 1", (uuid,))
     results = curs.fetchall()
     curs.close()
     conn.close()
-    if len(results) > 0:
+    if len(results) == 1:
     	if len(results[0]) == 2:
-    	    print (results) #Test
-     	    try:
-                return {
-                    "link": "http://redstoner.com/users/%s" % results[0][0],
-                    "email": results[0][1]
-                }
-            except:
-                print "failed returning!"
+            return {
+                "link": "http://redstoner.com/users/%s" % results[0][0],
+                "email": results[0][1]
+            }
+        else:
+            return {}
     else:
         return {}
 
@@ -83,7 +75,6 @@ def get_all_data(sender, player):
         msg(sender, "&6>  First joined: &7(y-m-d h:m:s) &e%s" % get_first_join(player))
         msg(sender, "&6>  Last seen: &7(y-m-d h:m:s) &e%s" % get_last_seen(player))
         website = get_website_data(player)
-        print (website) #Test to see if its returning correctly!
         msg(sender, "&6>  Website account: &e%s" % website.get("link"))
         msg(sender, "&6>    email: &e%s" % website.get("email"))
         msg(sender, "&7   -- Data provided by ipinfo.io")
