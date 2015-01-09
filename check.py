@@ -48,8 +48,8 @@ def get_website_data(player):
     if len(results) > 0:
     	try:
             return {
-                "link": "http://redstoner.com/users/%s" % results[0],
-                "email": results[1]
+                "link": "http://redstoner.com/users/%s" % str(results[0]),
+                "email": str(results[1])
             }
         except:
             print "failed returning!"
