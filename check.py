@@ -46,10 +46,13 @@ def get_website_data(player):
     curs.close()
     conn.close()
     if len(results) > 0:
-        return {
-            "link": "http://redstoner.com/users/%s" % results[0],
-            "email": results[1]
-        }
+    	try:
+            return {
+                "link": "http://redstoner.com/users/%s" % results[0],
+                "email": results[1]
+            }
+        except:
+            print "failed returning!"
     else:
         return {}
 
