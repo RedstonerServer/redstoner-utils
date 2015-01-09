@@ -1,7 +1,7 @@
 from helpers import *
 
 calc_users        = open_json_file("calc", [])
-math_operators    = ["+", "-", "*", "/", "&", "|"]
+math_operators    = ["+", "-", "*", "/", "&", "|", ">", "<", "~", "%"]
 ignore_operators  = ["**", "&&", "||"] # ** may be too intensive, the others cause syntax errors
 calc_perm = "utils.calc"
 
