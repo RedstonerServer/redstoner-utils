@@ -1,7 +1,9 @@
 #!/usr/bin/python
 
-# this was going to be a PlotMe-like plugin "plotter"
-# but it seems like PlotMe is still beeing developed, so we don't need our own.
+"""
+*Very basic* start of a custom plot-plugin like PlotMe
+on hold because the PlotMe developer continued to develop PlotMe
+"""
 
 import sys
 
@@ -10,15 +12,15 @@ z_plot_size = 3
 padding     = 1
 
 def base_coords(x, z):
-  pid = plot_id(x, z)
-  return [pid[0] * (x_plot_size + padding), pid[1] * (z_plot_size + padding)]
+    pid = plot_id(x, z)
+    return [pid[0] * (x_plot_size + padding), pid[1] * (z_plot_size + padding)]
 
 def bounds(x, z):
-  base = base_coords(x, z)
-  return [base, [base[0] + x_plot_size, base[1] + z_plot_size]]
+    base = base_coords(x, z)
+    return [base, [base[0] + x_plot_size, base[1] + z_plot_size]]
 
 def plot_id(x, z):
-  return [x // (x_plot_size + padding), z // (z_plot_size + padding)]
+    return [x // (x_plot_size + padding), z // (z_plot_size + padding)]
 
 
 x = int(sys.argv[1])
