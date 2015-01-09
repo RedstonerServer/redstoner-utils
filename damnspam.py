@@ -40,61 +40,61 @@ def on_dammnspam_command(sender, args):
             msg(sender, "&cYou can only do this in Creative mode.")
             return True
 
-        # /damnspam <secs>
-        if len(args) == 1:
-            timeout_on = args[0]
-            try:
-                timeout_on  = round(float(timeout_on), 2)
-                timeout_off = timeout_on
-                if 60 >= timeout_on <= -2 or timeout_on == 0:
-                    timeout_on = False
-                if timeout_on == False:
-                    msg(sender, "&cThe timeout must be within 0-60 or -1.")
-                    return True
-            except ValueError:
-                msg(sender, "&cThe timeout must be a number")
+    # /damnspam <secs>
+    if len(args) == 1:
+        timeout_on = args[0]
+        try:
+            timeout_on  = round(float(timeout_on), 2)
+            timeout_off = timeout_on
+            if 60 >= timeout_on <= -2 or timeout_on == 0:
+                timeout_on = False
+            if timeout_on == False:
+                msg(sender, "&cThe timeout must be within 0-60 or -1.")
                 return True
-
-        # /damnspam <off> <on>
-        elif len(args) == 2:
-            timeout_on  = args[0]
-            timeout_off = args[1]
-            try:
-                timeout_on  = round(float(timeout_on), 2)
-                timeout_off = round(float(timeout_off), 2)
-                if 60 >= timeout_on <= -2 or timeout_on == 0:
-                    timeout_on = False
-                if 60 >= timeout_off <= -2 or timeout_off == 0:
-                    timeout_off = False
-                if timeout_on == False or timeout_off == False:
-                    msg(sender, "&cThe timeout must be within 0-60 or -1.")
-                    return True
-            except ValueError:
-                msg(sender, "&cThe timeout must be a number")
-                return True
-
-        # get the block we're looking at
-        target = sender.getTargetBlock(None, 10)
-        ttype  = str(target.getType())
-        if ttype not in accepted_inputs:
-            msg(sender, "&cPlease look at a button or lever while executing this command!")
+        except ValueError:
+            msg(sender, "&cThe timeout must be a number")
             return True
 
-        if location_str(target) in inputs:
-            changing_input = True # this input already has a timeout
-        # test if player is allowed to build here
-        test_event = BlockBreakEvent(target, sender)
-        server.getPluginManager().callEvent(test_event)
-        changing_input = False
-        if test_event.isCancelled():
-            msg(sender, "&cYou are not allowed to modify this %s" % str(target.getType()).lower())
+    # /damnspam <off> <on>
+    elif len(args) == 2:
+        timeout_on  = args[0]
+        timeout_off = args[1]
+        try:
+            timeout_on  = round(float(timeout_on), 2)
+            timeout_off = round(float(timeout_off), 2)
+            if 60 >= timeout_on <= -2 or timeout_on == 0:
+                timeout_on = False
+            if 60 >= timeout_off <= -2 or timeout_off == 0:
+                timeout_off = False
+            if timeout_on == False or timeout_off == False:
+                msg(sender, "&cThe timeout must be within 0-60 or -1.")
+                return True
+        except ValueError:
+            msg(sender, "&cThe timeout must be a number")
             return True
 
-        # add block to inputs
-        add_input(sender, target, timeout_off, timeout_on)
-        save_inputs()
-        msg(sender, "&aSuccessfully set a timeout for this %s." % ttype.lower().replace("_", " "))
+    # get the block we're looking at
+    target = sender.getTargetBlock(None, 10)
+    ttype  = str(target.getType())
+    if ttype not in accepted_inputs:
+        msg(sender, "&cPlease look at a button or lever while executing this command!")
         return True
+
+    if location_str(target) in inputs:
+        changing_input = True # this input already has a timeout
+    # test if player is allowed to build here
+    test_event = BlockBreakEvent(target, sender)
+    server.getPluginManager().callEvent(test_event)
+    changing_input = False
+    if test_event.isCancelled():
+        msg(sender, "&cYou are not allowed to modify this %s" % str(target.getType()).lower())
+        return True
+
+    # add block to inputs
+    add_input(sender, target, timeout_off, timeout_on)
+    save_inputs()
+    msg(sender, "&aSuccessfully set a timeout for this %s." % ttype.lower().replace("_", " "))
+    return True
 
 
 @hook.event("block.BlockBreakEvent", "normal")
