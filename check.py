@@ -40,7 +40,7 @@ def get_website_data(player):
     curs.close()
     conn.close()
     if len(results) == 1:
-    	if len(results[0]) == 2:
+        if len(results[0]) == 2:
             return {
                 "link": "http://redstoner.com/users/%s" % results[0][0],
                 "email": results[0][1]
