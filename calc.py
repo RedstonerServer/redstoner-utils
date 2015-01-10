@@ -41,7 +41,7 @@ def on_calc_chat(event):
     if not event.isCancelled() and uid(sender) in calc_users and sender.hasPermission(calc_perm):
         output = calc(message)
         if type(output)in [int, float, long, complex]:
-            msg(sender, "&2=== Calc: &e" + output[0] + " &2= &c" + output[1])
+            msg(sender, "&2=== Calc: &e" + output[0] + " &2= &c" + str(output[1]).replace("420", "blazeit"))
 
 
 @hook.command("calc", description="Toggles chat calculations")
