@@ -40,7 +40,7 @@ def on_calc_chat(event):
     message = event.getMessage()
     if not event.isCancelled() and uid(sender) in calc_users and sender.hasPermission(calc_perm):
         output = calc(message)
-        if output:
+        if type(output)in [int, float, long, complex]:
             msg(sender, "&2=== Calc: &e" + output[0] + " &2= &c" + output[1])
 
 
