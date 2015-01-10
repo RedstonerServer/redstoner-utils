@@ -39,16 +39,7 @@ def get_website_data(player):
     results = curs.fetchall()
     curs.close()
     conn.close()
-    if len(results) == 1:
-        if len(results[0]) == 2:
-            return {
-                "link": "http://redstoner.com/users/%s" % results[0][0],
-                "email": results[0][1]
-            }
-        else:
-            return {}
-    else:
-        return {}
+    return ("http://redstoner.com/users/%s" % results[0][0], results[0][1]) if results else (None, None)
 
 
 # receive country based on the user's IP
@@ -75,8 +66,8 @@ def get_all_data(sender, player):
         msg(sender, "&6>  First joined: &7(y-m-d h:m:s) &e%s" % get_first_join(player))
         msg(sender, "&6>  Last seen: &7(y-m-d h:m:s) &e%s" % get_last_seen(player))
         website = get_website_data(player)
-        msg(sender, "&6>  Website account: &e%s" % website.get("link"))
-        msg(sender, "&6>    email: &e%s" % website.get("email"))
+        msg(sender, "&6>  Website account: &e%s" % website[0])
+        msg(sender, "&6>    email: &e%s" % website[1])
         msg(sender, "&7   -- Data provided by ipinfo.io")
         msg(sender, "&6>  Country: &e%s" % get_country(data))
         msg(sender, "&7   -- Data provided by Mojang")
