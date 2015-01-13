@@ -1,7 +1,7 @@
 from helpers import *
 
 calc_users        = open_json_file("calc", [])
-math_operators    = ["+", "-", "*", "/", "&", "|", ">", "<", "~", "%"]
+math_operators    = ["+", "-", "*", "/", "&", "|"]
 ignore_operators  = ["**", "&&", "||"] # ** may be too intensive, the others cause syntax errors
 calc_perm = "utils.calc"
 
@@ -12,7 +12,6 @@ def calc(text):
     returns (expression, result) or None
     """
     expression = ""
-    d_expression = ""
     should_calc = False
     for char in text:
         if char.isdigit() or (should_calc and char in [".", " "]):
@@ -21,19 +20,17 @@ def calc(text):
             # calculation must include at least 1 operator
             should_calc = True
             expression += char
-        elif char.isalpha():
+        elif should_calc and char.isalpha():
             # don't include any more text in the calculation
-            if should_calc:
-                d_expression = expression
-            expression = ""
-    if should_calc and not any(op in d_expression for op in ignore_operators):
+            break
+    if should_calc and not any(op in expression for op in ignore_operators):
         try:
-            result = str(eval(d_expression)) # pylint: disable = W0123
+            result = str(eval(expression)) # pylint: disable = W0123
         except: # pylint: disable = W0702
             # we can run into all kinds of errors here
             # most probably SyntaxError
             return None
-        return (d_expression, result)
+        return (expression, result)
     return None
 
 
@@ -43,8 +40,8 @@ def on_calc_chat(event):
     message = event.getMessage()
     if not event.isCancelled() and uid(sender) in calc_users and sender.hasPermission(calc_perm):
         output = calc(message)
-        if type(output)in [int, float, long, complex]:
-            msg(sender, "&2=== Calc: &e" + output[0] + " &2= &c" + str(output[1]).replace("420", "blazeit"))
+        if output:
+            msg(sender, "&2=== Calc: &e" + output[0] + " &2= &c" + output[1])
 
 
 @hook.command("calc", description="Toggles chat calculations")
