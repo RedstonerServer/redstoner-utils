@@ -12,6 +12,7 @@ def calc(text):
     returns (expression, result) or None
     """
     expression = ""
+    d_expression = ""
     should_calc = False
     for char in text:
         if char.isdigit() or (should_calc and char in [".", " "]):
@@ -22,15 +23,17 @@ def calc(text):
             expression += char
         elif char.isalpha():
             # don't include any more text in the calculation
+            if should_calc:
+                d_expression = expression
             expression = ""
-    if should_calc and not any(op in expression for op in ignore_operators):
+    if should_calc and not any(op in d_expression for op in ignore_operators):
         try:
-            result = str(eval(expression)) # pylint: disable = W0123
+            result = str(eval(d_expression)) # pylint: disable = W0123
         except: # pylint: disable = W0702
             # we can run into all kinds of errors here
             # most probably SyntaxError
             return None
-        return (expression, result)
+        return (d_expression, result)
     return None
 
 
