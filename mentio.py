@@ -52,7 +52,7 @@ def onChat(event):
                 except:
                     # list might not be mutable, ignoring. Receiver will get the message twice
                     pass
-                message = " ".join([sender.getDisplayName(), arrow] + rec_words)
+                message = " "+" ".join([sender.getDisplayName(), arrow] + rec_words)
                 msg(recipient, message, usecolor = False)
                 recipient.playSound(recipient.getLocation(), "mob.chicken.plop", 1, 2)
 
