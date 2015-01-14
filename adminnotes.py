@@ -6,8 +6,10 @@ an_permission      = "utils.an";
 notes              = open_json_file("adminnotes", [])
 continued_messages = {}
 
+
 def save_notes():
     save_json_file("adminnotes", notes)
+
 
 def r_ago(unit, i):
     # Return ago + plural
@@ -15,6 +17,7 @@ def r_ago(unit, i):
     if i != 1:
         unit +="s"
     return str(i)+" "+unit+" ago"
+
 
 def calc_diff(time_ago):
     current = time.time()
@@ -34,6 +37,7 @@ def calc_diff(time_ago):
         ago = r_ago("day", s/60/60/12)
     return ago
 
+
 def show_all_notes(sender):
     if len(notes) == 0:
         msg(sender, "&aNo open notes at the moment!")
@@ -47,6 +51,7 @@ def show_all_notes(sender):
 
         msg(sender, "&6#%s - &e%s&6, %s:" % (str(i+1), name, ago))
         msg(sender, "&7%s" % colorify(message))
+
 
 def show_an_help(sender):
     msg(sender, "&6AdminNotes Help:")
@@ -116,6 +121,7 @@ def adminnotes_command(sender, args):
             broadcast(an_permission, "&a%s just added a new note! &2Type /an")
     except:
         print(print_traceback())
+
 
 @hook.event("player.PlayerJoinEvent", "monitor")
 def on_an_join(event):
