@@ -100,7 +100,7 @@ def adminnotes_command(sender, args):
             # Deletes note by index
             del notes[note_id]
             save_notes()
-            msg(sender, "&aSuccessfully delete note #%s!" % str(note_id+1))
+            msg(sender, "&aSuccessfully deleted note #%s!" % str(note_id+1))
             return
 
         message = " ".join(args)
@@ -118,7 +118,7 @@ def adminnotes_command(sender, args):
             notes.append([name, message, time.time()])
             save_notes()
             msg(sender, "&eNew note:&6 "+message)
-            broadcast(an_permission, "&a%s just added a new note! &2Type /an")
+            broadcast(an_permission, "&a%s just added a new note! &2Type /an" % name)
     except:
         print(print_traceback())
 
