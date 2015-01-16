@@ -7,6 +7,7 @@ import org.bukkit.Location as Location
 import org.bukkit.entity.Player as Player
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause as TeleportCause
 import org.bukkit.block as bblock
+import org.bukkit.event.entity as entity
 
 
 shared = {} # this dict can be used to share stuff across modules

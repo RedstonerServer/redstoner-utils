@@ -10,7 +10,7 @@ Objective
 PlayersInQue
 """
 
-@hook.event("bukkit.event.entity.ProjectileHitEvent", "high")
+@hook.event("entity.ProjectileHitEvent", "high")
 def onHit(event):
     print "thrown"
     if event.getEntity().getType() != EntityType.SNOWBALL:
