@@ -99,7 +99,7 @@ def on_dammnspam_command(sender, args):
 
 @hook.event("block.BlockBreakEvent", "normal")
 def on_block_break(event):
-   / global removing_input
+    global removing_input
 
     if removing_input:
         return True
