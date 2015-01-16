@@ -69,7 +69,9 @@ shared["load_modules"] = [
     # Adds /imout, displays fake leave/join messages
     "adminnotes",
     # Adds /an, a command you can use to share thoughts/plans/news
-    "imout"
+    "imout",
+    #adds snowbrawl minigame
+    "snowbrawl.py"
     # NOTICE: If you add something here, please add a small descriptive comment above!
 ]
 shared["modules"] = {}
