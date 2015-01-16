@@ -10,7 +10,7 @@ Objective
 PlayersInQue
 """
 
-@hook.event("org.bukkit.event.entity.ProjectileHitEvent", "high")
+@hook.event("Entity.ProjectileHitEvent", "high")
 def onHit(event):
     print "thrown"
     if event.getEntity().getType() != EntityType.SNOWBALL:
@@ -24,8 +24,6 @@ def onHit(event):
 
         
 
-
-
 @hook.event("PlayerInteractEvent")
 def onClick(event):
     if (event.getAction() != Action.RIGHT_CLICK_BLOCK):
@@ -37,7 +35,7 @@ def onClick(event):
     lines      = bukkit.block.Sign.getLines(sign_state)
     
 
-
+"""
 class Queue(Object):
     
     queue = []
@@ -87,16 +85,15 @@ class Coordinate(Object):
         xd = location.getBlockX() - getX()
         zd = location.getBlockZ() - getZ()
         return xd >= 0 and xd <= range_ and zd >= 0 and zd <= range_
-"""
 class Match(Object):
 
     names = []
 
     def __init__(self, ):
-"""
 def getArena(location):
     for name in arenas:
         arena = arenas.get(name)
         if arena.getLocation().inRange(location, arena.getSize() - 1)
             return arena
     return None
+"""
