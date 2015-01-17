@@ -18,9 +18,9 @@ def onHit(event):
         print (event.getEntity().getName())
         return
     print "passed first if statement"
-    if event.getEntity().getWorld().getName() != "minigames":
+    """if event.getEntity().getWorld().getName() != "minigames":
         print "Not in minigames"
-        return
+        return"""
     print "all good."
     event.getEntity().getWorld().createExplosion(event.getEntity().getLocation().getX(), event.getEntity().getLocation().getY(),event.getEntity().getLocation().getZ(),float(5),False,True)
 

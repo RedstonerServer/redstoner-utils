@@ -1,7 +1,7 @@
 from helpers import *
 
 calc_users        = open_json_file("calc", [])
-math_operators    = ["+", "-", "*", "/", "&", "|",".",]
+math_operators    = ["+", "-", "*", "/", "&", "|"]
 ignore_operators  = ["**", "&&", "||"] # ** may be too intensive, the others cause syntax errors
 calc_perm = "utils.calc"
 
@@ -15,6 +15,8 @@ def calc(text):
     should_calc = False
     for char in text:
         if char.isdigit() or (should_calc and char in [".", " "]):
+            expression += char
+        elif expression and char == ".":
             expression += char
         elif char in math_operators:
             # calculation must include at least 1 operator
