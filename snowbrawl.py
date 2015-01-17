@@ -16,6 +16,7 @@ def onHit(event):
     if event.getEntity().getType() != EntityType.SNOWBALL:
         print "Not a snowball?"
         return
+    print "passed first if statement"
     if event.getEntity().getWorld().getName() != "minigames":
         print "Not in minigames"
         return
