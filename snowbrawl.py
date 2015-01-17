@@ -13,7 +13,7 @@ PlayersInQue
 @hook.event("entity.ProjectileHitEvent", "high")
 def onHit(event):
     print "thrown"
-    if str(event.getEntity().getTypeId()) != str(EntityType.SNOWBALL):
+    if event.getEntity().getName() != "SNOWBALL":
         print "Not a snowball?"
         return
     print "passed first if statement"
