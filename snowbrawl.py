@@ -13,8 +13,9 @@ PlayersInQue
 @hook.event("entity.ProjectileHitEvent", "high")
 def onHit(event):
     print "thrown"
-    if event.getEntity().getName() != "SNOWBALL":
+    if event.getEntity().getName() != "Snowball":
         print "Not a snowball?"
+        print (event.getEntity().getName())
         return
     print "passed first if statement"
     if event.getEntity().getWorld().getName() != "minigames":
