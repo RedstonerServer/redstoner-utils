@@ -22,7 +22,7 @@ def onHit(event):
         print "Not in minigames"
         return
     print "all good."
-    event.getEntity().getWorld().createExplosion(event.getEntity().getLocation(),5.0,True)
+    event.getEntity().getWorld().createExplosion(event.getEntity().getLocation(),5.0,True,True)
 
         
 
