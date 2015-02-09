@@ -86,7 +86,7 @@ def add_keyword(sender, args):
     if keywords:
         mentions[uid(sender)] = keywords
 
-    msg(sender, "&aYou are now listening for '&2%s'!" % new_word)
+    msg(sender, "&aYou are now listening for '&2%s&2'!" % new_word)
     saveMentions()
     return True
 
@@ -107,7 +107,7 @@ def del_keyword(sender, args):
         elif sender_id in mentions:
             del mentions[sender_id]
         saveMentions()
-        msg(sender, "&aYou are no longer listening for '&2%s&e'!" % del_word)
+        msg(sender, "&aYou are no longer listening for '&2%s&2'!" % del_word)
     else:
         msg(sender, "&cWe can't remove something that doesn't exist! Try &6/mentio list")
 
