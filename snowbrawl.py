@@ -7,7 +7,7 @@ arenas = {}
 ArenaName
 PlayersPerGame
 Objective
-PlayersInQue
+PlayersInQueue
 """
 
 @hook.event("entity.ProjectileHitEvent", "high")
@@ -22,8 +22,9 @@ def onHit(event):
         print "Not in minigames"
         return"""
     print "all good."
-    event.getEntity().getWorld().createExplosion(event.getEntity().getLocation().getX(), event.getEntity().getLocation().getY(),event.getEntity().getLocation().getZ(),float(5),False,True)
-
+    entity = event.getEntity()
+    location = entity.getLocation()
+    entity.getWorld().createExplosion(location.getX(), location.getY(), location.getZ(), float(5), False, True)
         
 
 @hook.event("Player.PlayerInteractEvent")
@@ -86,7 +87,8 @@ class Coordinate(Object):
     def inRange(location, range):
         xd = location.getBlockX() - getX()
         zd = location.getBlockZ() - getZ()
-        return xd >= 0 and xd <= range_ and zd >= 0 and zd <= range_
+        return xd >= 0 and xd <= range and zd >= 0 and zd <= range
+
 class Match(Object):
 
     names = []
