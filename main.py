@@ -66,9 +66,9 @@ shared["load_modules"] = [
     "damnspam",
     # Adds /check, useful to lookup details about a player
     "check",
-    # Adds /imout, displays fake leave/join messages
-    "adminnotes",
     # Adds /an, a command you can use to share thoughts/plans/news
+    #"adminnotes",
+    # Adds /imout, displays fake leave/join messages
     "imout",
     #adds snowbrawl minigame
     #"snowbrawl",
