@@ -42,6 +42,8 @@ def on_chat(event):
 
 @hook.event("player.PlayerQuitEvent", "normal")
 def on_quit(event):
+    if event.isCancelled()
+        return
     uuid = uid(event.getPlayer())
     if uuid in toggle_dict:
         del toggle_dict[uuid]
