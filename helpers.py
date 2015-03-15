@@ -112,7 +112,7 @@ def runas(player, cmd):
     run a command as player
     the cmd should no be prefixed with a /
     """
-    server.dispatchCommand(player, cmd)
+    player.chat("/" + cmd)
 
 
 def is_player(obj):
