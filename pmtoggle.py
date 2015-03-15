@@ -47,7 +47,7 @@ def on_quit(event):
     uuid = uid(event.getPlayer())
     if uuid in toggle_dict:
         del toggle_dict[uuid]
-    for pid in toggle_dict:
+    for pid in list(toggle_dict):
         if toggle_dict[pid] == uuid:
             del toggle_dict[pid]
             msg(Bukkit.getPlayer(juuid(pid)), "%s &cwent off so your Private Message Toggle has been disabled!" % Bukkit.getPlayer(juuid(uuid)).getDisplayName())
