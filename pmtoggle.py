@@ -1,4 +1,5 @@
 from helpers import *
+from traceback import format_exc as trace
 import org.bukkit.Bukkit as Bukkit
 from java.util.UUID import fromString as juuid
 
@@ -44,9 +45,12 @@ def on_chat(event):
 
 @hook.event("player.PlayerQuitEvent", "normal")
 def on_quit(event):
-    uuid = uid(event.getPlayer())
-    if uuid in toggle_dict:
-        del toggle_dict[uuid]
-    if toggle_dict.get(pid) == uuid:
-        del toggle_dict[pid]
-        msg(Bukkit.getPlayer(juuid(pid)), "%s &cwent off so your Private Message Toggle has been disabled!" % Bukkit.getPlayer(juuid(uuid)).getDisplayName())
+    try:
+        uuid = uid(event.getPlayer())
+        if uuid in toggle_dict:
+            del toggle_dict[uuid]
+        if toggle_dict.get(pid) == uuid:
+            del toggle_dict[pid]
+            msg(Bukkit.getPlayer(juuid(pid)), "%s &cwent off so your Private Message Toggle has been disabled!" % Bukkit.getPlayer(juuid(uuid)).getDisplayName())
+    except Exception, e:
+        print(trace())
