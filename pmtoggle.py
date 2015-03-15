@@ -1,13 +1,14 @@
 from helpers import *
 import org.bukkit.Bukkit as Bukkit
+from java.util.UUID import fromString as juuid
+from traceback import format_exc as print_traceback
 
-toggle_list = {}
+toggle_dict = {}
 permission = "utils.pmtoggle"
 
 @hook.command("tm")
 def on_toggle_message_command(sender, args):
-    name = sender.getName()
-    if not sender.hasPermission(permission) or name == "CONSOLE":
+    if not sender.hasPermission(permission) or not is_player(sender):
         noperm(sender)
         return True
     plugin_header(sender, "Private Message Toggle")
@@ -18,34 +19,38 @@ def on_toggle_message_command(sender, args):
             return True
         target = Bukkit.getPlayer(args[0])
         if target:
-            toggle_list[uuid] = uid(target)
+            toggle_dict[uuid] = uid(target)
             msg(sender, "&2Enabled toggle so that you're now sending only to %s &2by default" % target.getDisplayName())
         else:
             msg(sender, "&cThat player could not be found")
-    else if uuid in toggle_list:
-        del toggle_list[uuid]
+    elif uuid in toggle_dict:
+        del toggle_dict[uuid]
         msg(sender, "&2Disabled toggle successfully")
     else:
         msg(sender, "&cExpected a player as argument")
     return True
 
-@hook.event("Player.AsyncPlayerChatEvent", "normal")
+@hook.event("player.AsyncPlayerChatEvent", "normal")
 def on_chat(event):
     player = event.getPlayer()
     uuid = uid(player)
-    if uuid in toggle_list:
-        event.setCancelled(True)
-        target = Bukkit.getPlayer(toggle_list[uuid]).getName()
-        runas(player, "msg %s %s" % (target, event.getMessage()))
+    if uuid in toggle_dict:
+        try:
+            event.setCancelled(True)
+            target = Bukkit.getPlayer(juuid(toggle_dict[uuid])).getName()
+            runas(player, "msg %s %s" % (target, event.getMessage()))
+        except:
+            info(print_traceback())
 
 
-@hook.event("Player.PlayerQuitEvent", "normal")
+
+@hook.event("player.PlayerQuitEvent", "normal")
 def on_quit(event):
     uuid = uid(event.getPlayer())
-    if uuid in toggle_list:
-        del toggle_list[uuid]
-    for pid in toggle_list:
-        if toggle_list[pid] == uuid:
-            del toggle_list[pid]
+    if uuid in toggle_dict:
+        del toggle_dict[uuid]
+    for pid in toggle_dict:
+        if toggle_dict[pid] == uuid:
+            del toggle_dict[pid]
             msg(Bukkit.getPlayer(pid), "%s &cwent off so your Private Message Toggle has been disabled!" % Bukkit.getPlayer(uuid).getDisplayName())
 
