@@ -72,7 +72,7 @@ shared["load_modules"] = [
     "imout",
     #adds snowbrawl minigame
     #"snowbrawl",
-    # Adds /tm [player] for a messages to be sent to this player via /msg 
+    # Adds /tm [player] for a messages to be sent to this player via /msg
     "pmtoggle"
     # NOTICE: If you add something here, please add a small descriptive comment above!
 ]
