@@ -1,7 +1,6 @@
 from helpers import *
 import org.bukkit.Bukkit as Bukkit
 from java.util.UUID import fromString as juuid
-from traceback import format_exc as print_traceback
 
 toggle_dict = {}
 permission = "utils.pmtoggle"
@@ -30,18 +29,15 @@ def on_toggle_message_command(sender, args):
         msg(sender, "&cExpected a player as argument")
     return True
 
+
 @hook.event("player.AsyncPlayerChatEvent", "normal")
 def on_chat(event):
     player = event.getPlayer()
     uuid = uid(player)
     if uuid in toggle_dict:
-        try:
-            event.setCancelled(True)
-            target = Bukkit.getPlayer(juuid(toggle_dict[uuid])).getName()
-            runas(player, "msg %s %s" % (target, event.getMessage()))
-        except:
-            info(print_traceback())
-
+        event.setCancelled(True)
+        target = Bukkit.getPlayer(juuid(toggle_dict[uuid])).getName()
+        runas(player, "msg %s %s" % (target, event.getMessage()))
 
 
 @hook.event("player.PlayerQuitEvent", "normal")
