@@ -67,7 +67,9 @@ shared["load_modules"] = [
     # Adds /check, useful to lookup details about a player
     "check",
     # Adds /imout, displays fake leave/join messages
-    "imout"
+    "imout",
+    # Adds /tm [player] for a messages to be sent to this player via /msg
+    "pmtoggle"
     # NOTICE: If you add something here, please add a small descriptive comment above!
 ]
 shared["modules"] = {}
