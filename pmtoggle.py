@@ -32,6 +32,8 @@ def on_toggle_message_command(sender, args):
 
 @hook.event("player.AsyncPlayerChatEvent", "normal")
 def on_chat(event):
+    if event.isCancelled():
+        return
     player = event.getPlayer()
     uuid = uid(player)
     if uuid in toggle_dict:
@@ -42,8 +44,6 @@ def on_chat(event):
 
 @hook.event("player.PlayerQuitEvent", "normal")
 def on_quit(event):
-    if event.isCancelled()
-        return
     uuid = uid(event.getPlayer())
     if uuid in toggle_dict:
         del toggle_dict[uuid]
