@@ -43,28 +43,23 @@ def on_sudo_command(sender, args):
     execute command/chat *as* a player/console
     """
     if sender.hasPermission("utils.sudo"):
-        plugin_header(sender, "Sudo")
         if not checkargs(sender, args, 2, -1):
             return True
         target = args[0]
-
-        cmd =  " ".join(args[1:])
-        msg(sender, "Running '&e%s&r' as &3%s" % (cmd, target))
-        if cmd[0] == "/":
-            cmd = cmd[1:]
-            if target.lower() == "server" or target.lower() == "console":
-                runas(server.getConsoleSender(), cmd)
-            elif server.getPlayer(target):
-                runas(server.getPlayer(target), cmd)
-            else:
-                msg(sender, "&cPlayer %s not found!" % target)
+        cmd    =  " ".join(args[1:])
+        msg(sender, "&2[SUDO] &rRunning '&e%s&r' as &3%s" % (cmd, target))
+        is_cmd     = cmd[0] == "/"
+        is_console = target.lower() == "server" or target.lower() == "console"
+        if is_console:
+            if is_cmd:
+                cmd = cmd[1:]
+            server.dispatchCommand(server.getConsoleSender(), cmd)
+            return True
+        target_player = server.getPlayer(target)
+        if target_player:
+            target_player.chat(cmd)
         else:
-            if target.lower() == "server" or target.lower() == "console":
-                runas(server.getConsoleSender(), "say %s" % cmd)
-            elif server.getPlayer(target):
-                server.getPlayer(target).chat(cmd)
-            else:
-                msg(sender, "&cPlayer %s not found!" % target)
+            msg(sender, "&cPlayer %s not found!" % target)
     else:
         noperm(sender)
     return True

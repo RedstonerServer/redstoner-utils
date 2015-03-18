@@ -8,6 +8,7 @@ import org.bukkit.entity.Player as Player
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause as TeleportCause
 import org.bukkit.block as bblock
 import org.bukkit.event.entity as entity
+import org.bukkit.command.ConsoleCommandSender
 from org.bukkit.entity import *
 
 
@@ -110,10 +111,10 @@ def noperm(player):
 def runas(player, cmd):
     """
     run a command as player
-    the cmd should no be prefixed with a /
+    the cmd should NOT be prefixed with a /
     """
     player.chat("/" + cmd)
-
+    
 
 def is_player(obj):
     """
