@@ -6,7 +6,6 @@ import thread
 import org.bukkit.inventory.ItemStack as ItemStack
 import org.bukkit.Bukkit as Bukkit
 import org.bukkit.event.player.PlayerChatEvent as PlayerChatEvent
-from traceback import format_exc as trace
 
 
 @hook.event("player.PlayerJoinEvent", "monitor")
@@ -78,16 +77,13 @@ def on_me_command(sender, args):
     sender = server.getPlayer(sender.getName())
     if not checkargs(sender, args, 1, -1):
         return True
-    try:
-        msg = " ".join(args)
-        event = PlayerChatEvent(sender, msg)
-        server.getPluginManager().callEvent(event)
-        if not event.isCancelled():
-            msg = " %s %s7%s %s" % (sender.getDisplayName(), u"\u00A7", u"\u21E6", msg)
-            for player in list(Bukkit.getOnlinePlayers()):
-                player.sendMessage(msg)
-    except Exception, e:
-        error(trace())
+    msg = " ".join(args)
+    event = PlayerChatEvent(sender, msg)
+    server.getPluginManager().callEvent(event)
+    if not event.isCancelled():
+        msg = " %s %s7%s %s" % (sender.getDisplayName(), u"\u00A7", u"\u21E6", msg)
+        for player in list(Bukkit.getOnlinePlayers()):
+            player.sendMessage(msg)
     return True
 
 
