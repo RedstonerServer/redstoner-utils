@@ -4,6 +4,9 @@ from time import time as now
 from sys import exc_info
 import thread
 import org.bukkit.inventory.ItemStack as ItemStack
+import org.bukkit.Bukkit as Bukkit
+import org.bukkit.event.player.PlayerChatEvent as PlayerChatEvent
+from traceback import format_exc as trace
 
 
 @hook.event("player.PlayerJoinEvent", "monitor")
@@ -62,6 +65,29 @@ def on_sudo_command(sender, args):
             msg(sender, "&cPlayer %s not found!" % target)
     else:
         noperm(sender)
+    return True
+
+#Temporary solution for /me
+@hook.command("me")
+def on_me_command(sender, args):
+    if not sender.hasPermission("essentials.me"):
+        noperm(sender)
+        return True
+    if not is_player(sender):
+        return True
+    sender = server.getPlayer(sender.getName())
+    if not checkargs(sender, args, 1, -1):
+        return True
+    try:
+        msg = " ".join(args)
+        event = PlayerChatEvent(sender, msg)
+        server.getPluginManager().callEvent(event)
+        if not event.isCancelled():
+            msg = " %s %s7%s %s" % (sender.getDisplayName(), u"\u00A7", u"\u21E6", msg)
+            for player in list(Bukkit.getOnlinePlayers()):
+                player.sendMessage(msg)
+    except Exception, e:
+        error(trace())
     return True
 
 
