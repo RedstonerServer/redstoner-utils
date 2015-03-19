@@ -109,7 +109,6 @@ def on_block_break(event):
     if str(block.getType()) in accepted_inputs and not event.isCancelled():
         pos_str = location_str(block)
         if inputs.get(pos_str):
-            plugin_header(sender, "DamnSpam")
             if sender.isSneaking():
                 # test if player is allowed to build here
                 removing_input = True
