@@ -48,8 +48,9 @@ def on_chat(event):
     msg = event.getMessage()
     if sender.hasPermission(ac_permission) and not event.isCancelled():
         if msg[:len(ac_key)] == ac_key:
-            adminchat(sender, msg[1:])
+            #This solution to log any AC isn't very optimised as it will check for permission twice. Any fix for this?
+            runas(sender, "ac " + msg[1:])
             event.setCancelled(True)
         elif sender.getName() in ac_toggle_list:
-            adminchat(sender, msg)
+            runas(sender, "ac " + msg)
             event.setCancelled(True)
