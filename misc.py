@@ -81,9 +81,7 @@ def on_me_command(sender, args):
     event = PlayerChatEvent(sender, msg)
     server.getPluginManager().callEvent(event)
     if not event.isCancelled():
-        msg = " %s %s7%s %s" % (sender.getDisplayName(), u"\u00A7", u"\u21E6", msg)
-        for player in list(Bukkit.getOnlinePlayers()):
-            player.sendMessage(msg)
+        broadcast("essentials.me", "&7- %s &7%s %s" % (sender.getDisplayName(), u"\u21E6", msg))
     return True
 
 
