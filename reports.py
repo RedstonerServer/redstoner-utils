@@ -22,13 +22,16 @@ def print_help(sender):
 
 def print_list(sender, closed):
     try: # new thread, anything can happen.
-        targeted_reports = enumerate(reports)
-        for i, report in targeted_reports:
+        targeted_reports = dict(enumerate(reports))
+        info(str(targeted_reports))
+        for i in dict(targeted_reports):
+            report = targeted_reports[i]
             if report["closed"] != closed:
-                targeted_reports.pop(report)
+                targeted_reports.pop(i)
 
         msg(sender, "&a%s %s reports:" % (len(targeted_reports), "closed" if closed else "open"))
-        for i, report in targeted_reports:
+        for i in targeted_reports:
+            report = targeted_reports[i]
             name = retrieve_player(report["uuid"]).getName()
             msg(sender, "&8[&e%s &c%s&8] &3%s&f: &a%s" % (i, report["time"], name, report["msg"]))
     except:
@@ -65,7 +68,7 @@ def delete_report(sender, rep_id):
         return
     if len(reports) > rep_id >= 0:
         report = reports[rep_id]
-        del reports[report]
+        reports.remove(report)
         save_reports()
         msg(sender, "&aReport #%s deleted." % rep_id)
         reporter = server.getOfflinePlayer(juuid(report["uuid"]))
