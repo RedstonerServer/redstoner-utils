@@ -23,8 +23,7 @@ def print_help(sender):
 def print_list(sender, closed):
     try: # new thread, anything can happen.
         targeted_reports = dict(enumerate(reports))
-        info(str(targeted_reports))
-        for i in dict(targeted_reports):
+        for i in list(targeted_reports):
             report = targeted_reports[i]
             if report["closed"] != closed:
                 targeted_reports.pop(i)
