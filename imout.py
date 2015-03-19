@@ -5,7 +5,7 @@ from adminchat import *
 imout_toggle_list = []
 
 @hook.command("imout")
-def on_imout_command(sender, args):
+def on_imout_command(sender, command, label, args):
     if sender.hasPermission("utils.imout"):
         name = sender.getName()
         symbol = "&a&l+"

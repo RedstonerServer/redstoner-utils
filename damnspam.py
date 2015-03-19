@@ -27,7 +27,7 @@ def add_input(creator, block, timeout_off, timeout_on):
 
 
 @hook.command("damnspam")
-def on_dammnspam_command(sender, args):
+def on_dammnspam_command(sender, command, label, args):
     global changing_input
 
     plugin_header(sender, "DamnSpam")

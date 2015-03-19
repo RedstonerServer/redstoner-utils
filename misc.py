@@ -39,7 +39,7 @@ def on_join(event):
 
 
 @hook.command("sudo")
-def on_sudo_command(sender, args):
+def on_sudo_command(sender, command, label, args):
     """
     /sudo
     execute command/chat *as* a player/console
@@ -68,7 +68,7 @@ def on_sudo_command(sender, args):
 
 #Temporary solution for /me
 @hook.command("me")
-def on_me_command(sender, args):
+def on_me_command(sender, command, label, args):
     if not sender.hasPermission("essentials.me"):
         noperm(sender)
         return True
@@ -133,7 +133,7 @@ def on_player_entity_interact(event):
 
 
 @hook.command("pluginversions")
-def on_pluginversions_command(sender, args):
+def on_pluginversions_command(sender, command, label, args):
     """
     /pluginversions
     print all plugins + versions; useful when updating plugins
@@ -148,7 +148,7 @@ def on_pluginversions_command(sender, args):
 
 
 @hook.command("echo")
-def on_echo_command(sender, args):
+def on_echo_command(sender, command, label, args):
     """
     /echo
     essentials echo sucks and prints mail alerts sometimes
@@ -175,7 +175,7 @@ def eval_thread(sender, code):
 
 
 @hook.command("pyeval")
-def on_pyeval_command(sender, args):
+def on_pyeval_command(sender, command, label, args):
     """
     /pyeval
     run python code ingame
@@ -191,7 +191,7 @@ def on_pyeval_command(sender, args):
 
 
 @hook.command("modules")
-def on_modules_command(sender, args):
+def on_modules_command(sender, command, label, args):
     """
     /modules
     list all modules, unloaded modules in red

@@ -45,7 +45,7 @@ def on_calc_chat(event):
 
 
 @hook.command("calc", description="Toggles chat calculations")
-def on_calc_command(sender, args):
+def on_calc_command(sender, command, label, args):
     plugin_header(sender, "Chat Calculator")
     if not sender.hasPermission(calc_perm):
         noperm(sender)

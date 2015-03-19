@@ -79,7 +79,7 @@ def get_all_data(sender, player):
 
 
 @hook.command("check", description="Displays useful stuff about a user", usage="/check <player>")
-def on_hook_command(sender, args):
+def on_hook_command(sender, command, label, args):
     if sender.hasPermission("utils.check"):
         if not checkargs(sender, args, 1, 1):
             return True

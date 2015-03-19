@@ -37,7 +37,7 @@ def tp_chunk(sender, id):
 
 
 @hook.command("lagchunks")
-def on_lagchunks_command(sender, args):
+def on_lagchunks_command(sender, command, label, args):
     if sender.hasPermission("utils.lagchunks"):
         plugin_header(sender, "Lagchunks")
         global lagchunks

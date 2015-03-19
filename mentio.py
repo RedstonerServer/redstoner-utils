@@ -119,7 +119,7 @@ def show_help(player):
 
 
 @hook.command("mentio")
-def onListenCommand(sender, args):
+def onListenCommand(sender, command, label, args):
     plugin_header(sender, "Mentio")
 
     argnum = len(args)

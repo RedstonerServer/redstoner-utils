@@ -5,13 +5,13 @@ default_motd = colorify(server.getMotd())
 motd         = default_motd
 
 @hook.command("getmotd")
-def on_getmotd_command(sender, args):
+def on_getmotd_command(sender, command, label, args):
     plugin_header(sender, "MOTD")
     msg(sender, motd, usecolor = False)
 
 
 @hook.command("setmotd")
-def on_setmotd_command(sender, args):
+def on_setmotd_command(sender, command, label, args):
     global motd
     if sender.hasPermission("utils.setmotd"):
         if not checkargs(sender, args, 1, -1):

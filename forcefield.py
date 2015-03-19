@@ -17,7 +17,7 @@ whitelists = {} # {ff_owner_id: [white, listed, ids]} (Adding file usage later, 
 
 
 @hook.command("forcefield")
-def on_forcefield_command(sender, args):
+def on_forcefield_command(sender, command, label, args):
     if not is_player(sender) or not sender.hasPermission(ff_perm):
         noperm(sender)
         return True

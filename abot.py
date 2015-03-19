@@ -27,7 +27,7 @@ def list_answers(sender):
 
 
 @hook.command("abot")
-def on_abot_command(sender, args):
+def on_abot_command(sender, command, label, args):
     plugin_header(sender, "AnswerBot")
     if sender.hasPermission("utils.abot.admin"):
         if not args:

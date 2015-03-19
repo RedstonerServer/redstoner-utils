@@ -68,7 +68,7 @@ def show_an_help(sender):
 
 
 @hook.command("an", aliases=["adminnotes", "adminnote"])
-def adminnotes_command(sender, args):
+def adminnotes_command(sender, command, label, args):
     if not sender.hasPermission(an_permission):
         noperm(sender)
         return

@@ -125,7 +125,7 @@ def fhelp(sender):
 
 
 @hook.command("friends")
-def on_friend_command(sender, args):
+def on_friend_command(sender, command, label, args):
     if not is_player(sender):
         friendmessage(sender, "&c&lYou can't have friends!")
         return True

@@ -99,13 +99,13 @@ def tokengen_command(sender, args):
 
 
 @hook.command("token")
-def on_token_command(sender, args):
+def on_token_command(sender, command, label, args):
     thread.start_new_thread(token_command, (sender,))
     return True
 
 
 @hook.command("gettoken")
-def on_gettoken_command(sender, args):
+def on_gettoken_command(sender, command, label, args):
     thread.start_new_thread(tokengen_command, (sender, args))
     return True
 

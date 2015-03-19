@@ -38,7 +38,7 @@ def spawn(dispname, sender, x, y, z):
 
 
 @hook.command("spawnplayer")
-def on_spawnplayer_command(sender, args):
+def on_spawnplayer_command(sender, command, label, args):
     global amount, row, ground, goup
 
     # X and Z position

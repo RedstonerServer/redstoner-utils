@@ -86,7 +86,7 @@ def del_badge(sender, target, badge):
 
 
 @hook.command("badge", aliases=["badges", "rewards"])
-def on_badge_command(sender, args):
+def on_badge_command(sender, command, label, args):
     argnum = int(len(args))
 
     # No arguments

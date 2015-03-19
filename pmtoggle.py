@@ -6,7 +6,7 @@ toggle_dict = {}
 permission = "utils.pmtoggle"
 
 @hook.command("tm")
-def on_toggle_message_command(sender, args):
+def on_toggle_message_command(sender, command, label, args):
     if not sender.hasPermission(permission) or not is_player(sender):
         noperm(sender)
         return True

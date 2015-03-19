@@ -2,6 +2,7 @@ from helpers import *
 from java.util.UUID import fromString as juuid
 import time
 import thread
+from traceback import format_exc as trace
 
 
 time_format   = "%Y.%m.%d %H:%M"
@@ -13,19 +14,26 @@ rp_permission = "utils.rp"
 
 def print_help(sender):
     msg(sender, " &2/report <text> &eReport something")
-    msg(sender, " &2/rp list          &eList unresolved reports (id, player, text)")
+    msg(sender, " &2/rp open|closed &eList open/closed reports (id, player, text)")
     msg(sender, " &2/rp tp <id>      &eTeleport to report's location & show details")
-    msg(sender, " &2/rp del <id>     &eResolve a report")
+    msg(sender, " &2/rp close <id>    &eResolve a report")
+    msg(sender, " &2/rp del <id>     &eDelete a report (admin only)")
 
 
-def print_list(sender):
+def print_list(sender, closed):
     try: # new thread, anything can happen.
-        msg(sender, "&a" + str(len(reports)) + " reports:")
-        for i, report in enumerate(reports):
+        targeted_reports = enumerate(reports)
+        for i, report in targeted_reports:
+            if report["closed"] != closed:
+                targeted_reports.pop(report)
+
+        msg(sender, "&a%s %s reports:" % (len(targeted_reports), "closed" if closed else "open"))
+        for i, report in targeted_reports:
             name = retrieve_player(report["uuid"]).getName()
             msg(sender, "&8[&e%s &c%s&8] &3%s&f: &a%s" % (i, report["time"], name, report["msg"]))
     except:
         warn("Failed to complete report's print_list() thread")
+        error(trace())
 
 
 def tp_report(sender, rep_id):
@@ -35,18 +43,34 @@ def tp_report(sender, rep_id):
     else:
         report = reports[rep_id]
         safetp(sender, server.getWorld(report["world"]), report["x"], report["y"], report["z"], report["yaw"], report["pitch"])
-        msg(sender, "&aTeleported to report #%s" % rep_id )
+        msg(sender, "&aTeleported to %s&areport #%s" % ("&cclosed " if report["closed"] else "", rep_id))
+
+
+def solve_report(sender, rep_id):
+    if len(reports) > rep_id >= 0:
+        report = reports[rep_id]
+        report["closed"] = True
+        save_reports()
+        msg(sender, "&aReport #%s solved." % rep_id)
+        reporter = server.getOfflinePlayer(juuid(report["uuid"]))
+        plugin_header(reporter, "Report")
+        msg(reporter, "&aReport '&e%s&a' was resolved by %s." % (report["msg"], sender.getName()))
+    else:
+        msg(sender, "&cThat report does not exist!")
 
 
 def delete_report(sender, rep_id):
+    if not sender.hasPermission(rp_permission + ".del"):
+        noperm(sender)
+        return
     if len(reports) > rep_id >= 0:
         report = reports[rep_id]
-        reports.pop(rep_id)
+        del reports[report]
         save_reports()
         msg(sender, "&aReport #%s deleted." % rep_id)
         reporter = server.getOfflinePlayer(juuid(report["uuid"]))
         plugin_header(reporter, "Report")
-        msg(reporter, "&aReport '&e%s&a' was resolved by %s." % (report["msg"], sender.getName()))
+        msg(reporter, "&aReport '&e%s&a' was &cdeleted &aby %s." % (report["msg"], sender.getName()))
     else:
         msg(sender, "&cThat report does not exist!")
 
@@ -56,13 +80,15 @@ def save_reports():
 
 
 @hook.command("rp")
-def on_rp_command(sender, args):
+def on_rp_command(sender, command, label, args):
     if sender.hasPermission(rp_permission):
         plugin_header(sender, "Reports")
         if len(args) > 0:
-            if args[0] == "list":
+            if args[0] == "closed":
                 # needs to run in seperate thread because of getOfflinePlayer
-                thread.start_new_thread(print_list, (sender,))
+                thread.start_new_thread(print_list, (sender, True,))
+            elif args[0] == "open":
+                thread.start_new_thread(print_list, (sender, False,))
             else:
                 if not checkargs(sender, args, 2, 2):
                     return True
@@ -77,6 +103,8 @@ def on_rp_command(sender, args):
                         msg(sender, "&conly players can do this")
                         return True
                     tp_report(sender, repid)
+                elif args[0] == "close":
+                    solve_report(sender, repid)
                 elif args[0] == "del":
                     delete_report(sender, repid)
                 else:
@@ -89,7 +117,7 @@ def on_rp_command(sender, args):
 
 
 @hook.command("report")
-def on_report_command(sender, args):
+def on_report_command(sender, command, label, args):
     plugin_header(sender, "Report")
     if not is_player(sender):
         msg(sender, "&conly players can do this")
@@ -109,7 +137,8 @@ def on_report_command(sender, args):
         "yaw": int(loc.yaw),
         "pitch": int(loc.pitch),
         "world": loc.getWorld().name,
-        "time": time.strftime(time_format)
+        "time": time.strftime(time_format),
+        "closed": False
     }
     reports.append(report)
     save_reports()
@@ -125,15 +154,22 @@ def reports_reminder(): # needs 2 args for unknown reason
             if not check_reports:
                 info("Reports reminder thread killed.")
                 thread.exit()
-        if len(reports) > 0:
-            broadcast(rp_permission, "&2--=[ Reports ]=--")
-            broadcast(rp_permission, "&aThere are %s pending reports!" % len(reports))
+        targeted_reports = get_reports(False)
+        if len(targeted_reports) > 0:
+            broadcast(rp_permission, "&2--=[ Reports ]=--\n&aThere are %s open reports!" % len(targeted_reports))
 
 
 def stop_reporting():
     global check_reports
     info("Ending reports reminder thread")
     check_reports = False
+
+def get_reports(closed):
+    targeted_reports = []
+    for report in reports:
+        if report["closed"] == closed:
+            targeted_reports.add(report)
+    return targeted_reports
 
 
 thread.start_new_thread(reports_reminder, ())

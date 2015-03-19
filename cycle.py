@@ -4,7 +4,7 @@ no_cyclers = open_json_file("cycle", [])
 
 
 @hook.command("cycle")
-def on_cycler_command(sender, args):
+def on_cycler_command(sender, command, label, args):
     plugin_header(sender, "Cycle")
     if not is_player(sender):
         msg(sender, "&conly players can do this")

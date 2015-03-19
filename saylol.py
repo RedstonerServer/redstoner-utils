@@ -48,7 +48,7 @@ def search_lols(sender, keyword):
 
 
 @hook.command("lol")
-def on_lol_command(sender, args):
+def on_lol_command(sender, command, label, args):
     plugin_header(sender, "SayLol")
 
     cmd = args[0] if len(args) > 0 else None

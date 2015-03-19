@@ -9,7 +9,7 @@ cg_toggle_list = []
 
 
 @hook.command("chatgroup")
-def on_chatgroup_command(sender, args):
+def on_chatgroup_command(sender, command, label, args):
     plugin_header(sender, "ChatGroups")
     sender_id = uid(sender)
     if len(args) == 1 and args[0] == "leave":
@@ -47,7 +47,7 @@ def on_chatgroup_command(sender, args):
 
 
 @hook.command("cgt")
-def on_cgt_command(sender, args):
+def on_cgt_command(sender, command, label, args):
     p = uid(sender)
     if p in cg_toggle_list:
         cg_toggle_list.remove(p)
