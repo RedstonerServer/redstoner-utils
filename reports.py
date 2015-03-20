@@ -88,7 +88,7 @@ def message_reporter(sender, report, action):
     message = "&aReport '&e%s&a' was %s &aby %s." % (report["msg"], action, sender.getName())
     if reporter.isOnline():
         plugin_header(reporter, "Reports")
-        msg(reporter, "&aReport '&e%s&a' was %s &aby %s." % (report["msg"], action, sender.getName()))
+        msg(reporter, message)
     else:
         server.dispatchCommand(sender, "mail send %s %s" % (reporter.getName(), message))
 
