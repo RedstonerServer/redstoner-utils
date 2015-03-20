@@ -13,11 +13,13 @@ rp_permission = "utils.rp"
 
 
 def print_help(sender):
-    msg(sender, " &2/report <text> &eReport something")
-    msg(sender, " &2/rp open|closed &eList open/closed reports (id, player, text)")
-    msg(sender, " &2/rp tp <id>      &eTeleport to report's location & show details")
-    msg(sender, " &2/rp close <id>    &eResolve a report")
-    msg(sender, " &2/rp del <id>     &eDelete a report (admin only)")
+    msg(sender, " &2/report <text>     &eReport something")
+    msg(sender, " &2/rp open            &eList open reports (id, player, text)")
+    msg(sender, " &2/rp closed         &eList closed reports (id, player, text)")
+    msg(sender, " &2/rp tp <id>         &eTeleport to report's location & show details")
+    msg(sender, " &2/rp close <id>     &eResolve an open report")
+    msg(sender, " &2/rp reopen <id>   &eReopen a resolved report")
+    msg(sender, " &2/rp del <id>        &eDelete a report (admin only)")
 
 
 def print_list(sender, closed):
@@ -41,40 +43,54 @@ def print_list(sender, closed):
 def tp_report(sender, rep_id):
     if rep_id >= len(reports) or rep_id < 0:
         msg(sender, "&cReport &3#" + str(rep_id) + "&c does not exist!")
-        return True
     else:
         report = reports[rep_id]
         safetp(sender, server.getWorld(report["world"]), report["x"], report["y"], report["z"], report["yaw"], report["pitch"])
         msg(sender, "&aTeleported to %s&areport #%s" % ("&cclosed " if report["closed"] else "", rep_id))
 
 
-def solve_report(sender, rep_id):
-    if len(reports) > rep_id >= 0:
-        report = reports[rep_id]
-        report["closed"] = True
-        save_reports()
-        msg(sender, "&aReport #%s solved." % rep_id)
-        reporter = server.getOfflinePlayer(juuid(report["uuid"]))
-        plugin_header(reporter, "Report")
-        msg(reporter, "&aReport '&e%s&a' was resolved by %s." % (report["msg"], sender.getName()))
-    else:
-        msg(sender, "&cThat report does not exist!")
+# resolve == True: You're resolving, False: reopening
+def resolve_reopen_report(sender, rep_id, resolve):
+    action = "resolved" if resolve else "reopened"
+    report = edit_report(sender, rep_id)
+    if report != None:
+        if report["closed"] == resolve:
+            msg(sender, "&cReport &3#%s&c was already %s!" % (rep_id, action))
+        else:
+            report["closed"] = resolve
+            save_reports()
+            msg(sender, "&aReport #%s %s" % (rep_id, action))
+            message_reporter(sender, report, action)
 
 
 def delete_report(sender, rep_id):
     if not sender.hasPermission(rp_permission + ".del"):
         noperm(sender)
         return
-    if len(reports) > rep_id >= 0:
-        report = reports[rep_id]
+    action = "&cdeleted"
+    report = edit_report(sender, rep_id)
+    if report != None:
         reports.remove(report)
         save_reports()
-        msg(sender, "&aReport #%s deleted." % rep_id)
-        reporter = server.getOfflinePlayer(juuid(report["uuid"]))
-        plugin_header(reporter, "Report")
-        msg(reporter, "&aReport '&e%s&a' was &cdeleted &aby %s." % (report["msg"], sender.getName()))
+        msg(sender, "&aReport #%s %s" % (rep_id, action))
+        message_reporter(sender, report, action)
+
+
+def edit_report(sender, rep_id):
+    if len(reports) > rep_id >= 0:
+        return reports[rep_id]
+    msg(sender, "&cThat report does not exist!")
+    return None
+
+
+def message_reporter(sender, report, action):
+    reporter = get_reporter(report)
+    message = "&aReport '&e%s&a' was %s &aby %s." % (report["msg"], action, sender.getName())
+    if reporter.isOnline():
+        plugin_header(reporter, "Reports")
+        msg(reporter, "&aReport '&e%s&a' was %s &aby %s." % (report["msg"], action, sender.getName()))
     else:
-        msg(sender, "&cThat report does not exist!")
+        server.dispatchCommand(sender, "mail send %s %s" % (reporter.getName(), message))
 
 
 def save_reports():
@@ -106,9 +122,11 @@ def on_rp_command(sender, command, label, args):
                         return True
                     tp_report(sender, repid)
                 elif args[0] == "close":
-                    solve_report(sender, repid)
+                    resolve_reopen_report(sender, repid, True)
                 elif args[0] == "del":
                     delete_report(sender, repid)
+                elif args[0] == "reopen":
+                    resolve_reopen_report(sender, repid, False)
                 else:
                     print_help(sender)
         else:
@@ -166,6 +184,7 @@ def stop_reporting():
     info("Ending reports reminder thread")
     check_reports = False
 
+
 def get_reports(closed):
     targeted_reports = []
     for report in reports:
@@ -173,5 +192,8 @@ def get_reports(closed):
             targeted_reports.add(report)
     return targeted_reports
 
+
+def get_reporter(report):
+    return server.getOfflinePlayer(juuid(report["uuid"]))
 
 thread.start_new_thread(reports_reminder, ())
