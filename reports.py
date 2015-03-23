@@ -189,7 +189,7 @@ def get_reports(closed):
     targeted_reports = []
     for report in reports:
         if report["closed"] == closed:
-            targeted_reports.add(report)
+            targeted_reports.append(report)
     return targeted_reports
 
 
