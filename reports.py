@@ -176,7 +176,7 @@ def reports_reminder(): # needs 2 args for unknown reason
                 thread.exit()
         targeted_reports = get_reports(False)
         if len(targeted_reports) > 0:
-            broadcast(rp_permission, "&2--=[ Reports ]=--\n&aThere are %s open reports!" % len(targeted_reports))
+            broadcast(rp_permission, "&aThere are %s open reports!" % len(targeted_reports))
 
 
 def stop_reporting():

@@ -239,10 +239,13 @@ Information about some arguments:
 - sender_limit:     Defines what sendertype can use the command. Leave blank for console & player, 0 for player only, 1 for console only.
 - min_args:         The least arguments for the command.
 - max_args:         You guessed it right. Defaults to infinity (-1).
+- help_noargs:      Whether to send help if no arguments are given
+- help_subcmd:      Whether to send help upon '/<cmd> help'
 
 *** DISCLAIMER ***
 
-Your command function must take four arguments: sender, command, label, args.
+Your command function must take four arguments: sender, command, label, args and help_msg.
+help_msg is a function which can be called like 'return help_msg(sender)' to send them information about the command.
 
 Your function must also not return a boolean like before, but a String instead. The string returned will be sent to the player (&-codes supported).
 Use None or "" for no message.
@@ -252,12 +255,10 @@ Feel free to edit or give suggestions (but don't break existing commands)
 See below for an example command.
 """
 
-def simplecommand(cmd_name, aliases = [], permission = None, usage = None, description = None, sender_limit = -1, min_args = 0, max_args = -1):
+def simplecommand(cmd_name, aliases = [], permission = None, usage = "[args...]", description = None, sender_limit = -1, min_args = 0, max_args = -1, help_noargs = False, help_subcmd = False):
     cmd_name = cmd_name.lower()
     if not permission:
         permission = "utils." + cmd_name
-    if not usage:
-        usage = "[args...]"
     if not description:
         description = "Handles " + cmd_name
 
@@ -278,9 +279,11 @@ def simplecommand(cmd_name, aliases = [], permission = None, usage = None, descr
                 return "&cThis command can only be run from the console" if isplayer else "&cThis command can only be run by players"
             if not sender.hasPermission(permission):
                 return "&cYou do not have permission to use this command"
+            if ((not args) and help_noargs) or (help_subcmd and args and args[0].lower() == "help"):
+                return help_message(sender)
             if not checkargs(sender, args, min_args, max_args):
                 return None
-            return help_message(sender) if args and args[0].lower() == "help" else function(sender, command, label, args)
+            return function(sender, command, label, args, help_message)
 
         return __call_func__
 
@@ -298,7 +301,7 @@ def simplecommand(cmd_name, aliases = [], permission = None, usage = None, descr
         """
         try:
             help_msg  = "&aInformation about command /%s:\n    &9%s" % (cmd_name, description.replace("\n", "\n    "))
-            help_msg += "\n\n&aSyntax: &o/%s %s" % (cmd_name, usage)
+            help_msg += "\n \n&aSyntax: /%s %s" % (cmd_name, usage)
             if aliases:
                 help_msg += ("\n&6Aliases: " + "".join([(alias + ", ") for alias in aliases]))[:-2]
             return help_msg

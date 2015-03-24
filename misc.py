@@ -37,13 +37,13 @@ def on_join(event):
         msg(player, "&6You can use /back if you &nreally&6 want to go back")
         player.teleport(player.getWorld().getSpawnLocation())
 
-
+"""
 @hook.command("sudo")
 def on_sudo_command(sender, command, label, args):
-    """
+    "
     /sudo
     execute command/chat *as* a player/console
-    """
+    "
     if sender.hasPermission("utils.sudo"):
         if not checkargs(sender, args, 2, -1):
             return True
@@ -65,24 +65,38 @@ def on_sudo_command(sender, command, label, args):
     else:
         noperm(sender)
     return True
+"""
 
-#Temporary solution for /me
-@hook.command("me")
-def on_me_command(sender, command, label, args):
-    if not sender.hasPermission("essentials.me"):
-        noperm(sender)
-        return True
-    if not is_player(sender):
-        return True
-    sender = server.getPlayer(sender.getName())
-    if not checkargs(sender, args, 1, -1):
-        return True
-    msg = " ".join(args)
-    event = PlayerChatEvent(sender, msg)
-    server.getPluginManager().callEvent(event)
-    if not event.isCancelled():
-        broadcast("essentials.me", "&7- %s &7%s %s" % (sender.getDisplayName(), u"\u21E6", msg))
-    return True
+@simplecommand("sudo",
+    permission   = "utils.sudo",
+    usage        = "<player> [cmd..]",
+    description  = "Makes <player> write [cmd..] in chat",
+    min_args     = 2,
+    help_noargs  = True)
+def on_sudo_command(sender, command, label, args, help_msg):
+    target = args[0]
+    cmd    =  " ".join(args[1:])
+    msg(sender, "&2[SUDO] &rRunning '&e%s&r' as &3%s" % (cmd, target))
+    is_cmd     = cmd[0] == "/"
+    is_console = target.lower() == "server" or target.lower() == "console"
+    if is_console:
+        server.dispatchCommand(server.getConsoleSender(), cmd[1:] if is_cmd else cmd)
+        return None
+    target_player = server.getPlayer(target)
+    if target_player:
+        target_player.chat(cmd)
+        return None
+    return "&cPlayer %s not found!" % target
+
+
+@simplecommand("me", 
+    permission   = "utils.me", 
+    usage        = "[message..]", 
+    description  = "Sends a message in third person", 
+    help_noargs  = True)
+def on_me_command(sender, command, label, args, help_msg):
+    broadcast("utils.me", "&7- %s &7%s %s" % (sender.getDisplayName() if isinstance(sender, Player) else "&9CONSOLE", u"\u21E6", " ".join(args)))
+    return None
 
 
 #@hook.command("gm")
