@@ -37,35 +37,6 @@ def on_join(event):
         msg(player, "&6You can use /back if you &nreally&6 want to go back")
         player.teleport(player.getWorld().getSpawnLocation())
 
-"""
-@hook.command("sudo")
-def on_sudo_command(sender, command, label, args):
-    "
-    /sudo
-    execute command/chat *as* a player/console
-    "
-    if sender.hasPermission("utils.sudo"):
-        if not checkargs(sender, args, 2, -1):
-            return True
-        target = args[0]
-        cmd    =  " ".join(args[1:])
-        msg(sender, "&2[SUDO] &rRunning '&e%s&r' as &3%s" % (cmd, target))
-        is_cmd     = cmd[0] == "/"
-        is_console = target.lower() == "server" or target.lower() == "console"
-        if is_console:
-            if is_cmd:
-                cmd = cmd[1:]
-            server.dispatchCommand(server.getConsoleSender(), cmd)
-            return True
-        target_player = server.getPlayer(target)
-        if target_player:
-            target_player.chat(cmd)
-        else:
-            msg(sender, "&cPlayer %s not found!" % target)
-    else:
-        noperm(sender)
-    return True
-"""
 
 @simplecommand("sudo",
     permission   = "utils.sudo",
@@ -188,12 +159,13 @@ def eval_thread(sender, code):
     thread.exit()
 
 
+"""
 @hook.command("pyeval")
 def on_pyeval_command(sender, command, label, args):
-    """
+    "
     /pyeval
     run python code ingame
-    """
+    "
     if sender.hasPermission("utils.pyeval"):
         if not checkargs(sender, args, 1, -1):
             return True
@@ -202,6 +174,17 @@ def on_pyeval_command(sender, command, label, args):
     else:
         noperm(sender)
     return True
+"""
+
+@simplecommand("pyeval",
+    permission  = "utils.pyeval",
+    usage       = "[code..]",
+    description = "Runs python [code..] and returns the result",
+    help_noargs = True)
+def on_pyeval_command(sender, command, label, args, help_msg):
+    msg(sender, " ".join(args), False, "e")
+    thread.start_new_thread(eval_thread, (sender, " ".join(args)))
+    return None
 
 
 @hook.command("modules")
