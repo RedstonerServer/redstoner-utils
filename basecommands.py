@@ -33,9 +33,9 @@ def simplecommand(cmd,
         def run(sender, command, label, args):
             isPlayer = is_player(sender)
             if not isSenderValid(senderLimit, isPlayer):
-                return "&cThis command can only be run from the console" if isplayer else "&cThis command can only be run by players"
+                return invalidSenderMsg(isPlayer)
             if not sender.hasPermission(permission):
-                return "&cYou do not have permission to use this command"
+                return "&cYou do not have permission to use that command"
             if ((not args) and helpNoargs) or (helpSubcmd and args and args[0].lower() == "help"):
                 return getHelp(sender)
             if not checkargs(sender, args, amin, amax):
@@ -96,7 +96,7 @@ def advancedcommand(cmd,
         if not isSenderValid(called.senderLimit, isPlayer):
             return invalidSenderMsg(isPlayer)
         if not sender.hasPermission(called.permission):
-            return "&cYou do not have permission to use this command"
+            return "&cYou do not have permission to use that command"
         if not checkargs(sender, args[1:], called.amin, called.amax):
             return None
         return called.call(sender, command, label, args)
