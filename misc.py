@@ -6,6 +6,7 @@ import thread
 import org.bukkit.inventory.ItemStack as ItemStack
 import org.bukkit.Bukkit as Bukkit
 import org.bukkit.event.player.PlayerChatEvent as PlayerChatEvent
+from basecommands import simplecommand
 
 
 @hook.event("player.PlayerJoinEvent", "monitor")
@@ -32,19 +33,18 @@ def on_join(event):
     # teleport to spawn when spawning inside portal
     loginloc = player.getLocation().getBlock().getType()
     headloc = player.getEyeLocation().getBlock().getType()
-    if str(loginloc) == "PORTAL" or str(headloc) == "PORTAL":
+    if "PORTAL" in [str(headloc), str(loginloc)]:
         msg(player, "&4Looks like you spawned in a portal... Let me help you out")
         msg(player, "&6You can use /back if you &nreally&6 want to go back")
         player.teleport(player.getWorld().getSpawnLocation())
 
 
 @simplecommand("sudo",
-    permission   = "utils.sudo",
     usage        = "<player> [cmd..]",
     description  = "Makes <player> write [cmd..] in chat",
-    min_args     = 2,
-    help_noargs  = True)
-def on_sudo_command(sender, command, label, args, help_msg):
+    amin         = 2,
+    helpNoargs   = True)
+def on_sudo_command(sender, command, label, args):
     target = args[0]
     cmd    =  " ".join(args[1:])
     msg(sender, "&2[SUDO] &rRunning '&e%s&r' as &3%s" % (cmd, target))
@@ -61,11 +61,10 @@ def on_sudo_command(sender, command, label, args, help_msg):
 
 
 @simplecommand("me", 
-    permission   = "utils.me", 
     usage        = "[message..]", 
     description  = "Sends a message in third person", 
-    help_noargs  = True)
-def on_me_command(sender, command, label, args, help_msg):
+    helpNoargs   = True)
+def on_me_command(sender, command, label, args):
     broadcast("utils.me", "&7- %s &7%s %s" % (sender.getDisplayName() if isinstance(sender, Player) else "&9CONSOLE", u"\u21E6", " ".join(args)))
     return None
 
@@ -158,30 +157,11 @@ def eval_thread(sender, code):
         msg(sender, ">>> %s: %s" % (eclass.__name__, e) + "\n ", False, "c")
     thread.exit()
 
-
-"""
-@hook.command("pyeval")
-def on_pyeval_command(sender, command, label, args):
-    "
-    /pyeval
-    run python code ingame
-    "
-    if sender.hasPermission("utils.pyeval"):
-        if not checkargs(sender, args, 1, -1):
-            return True
-        msg(sender, "%s" % " ".join(args), False, "e")
-        thread.start_new_thread(eval_thread, (sender, " ".join(args)))
-    else:
-        noperm(sender)
-    return True
-"""
-
 @simplecommand("pyeval",
-    permission  = "utils.pyeval",
     usage       = "[code..]",
     description = "Runs python [code..] and returns the result",
-    help_noargs = True)
-def on_pyeval_command(sender, command, label, args, help_msg):
+    helpNoargs  = True)
+def on_pyeval_command(sender, command, label, args):
     msg(sender, " ".join(args), False, "e")
     thread.start_new_thread(eval_thread, (sender, " ".join(args)))
     return None
