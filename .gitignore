@@ -1,8 +1,9 @@
 *.pyc
 *.class
 *sublime*
-
+*.bat*
 secrets.py
+excluded.txt
 
 # these are player/ingame specific
 files/

@@ -8,6 +8,24 @@ import org.bukkit.Bukkit as Bukkit
 import org.bukkit.event.player.PlayerChatEvent as PlayerChatEvent
 from basecommands import simplecommand
 
+"""
+@advancedcommand("hi", aliases = ["hu"], description = "Says hi!", subCommands = [
+    subcommand("server", aliases = ["serv"], amin = 1, amax = 4, usage = "[msg..]", senderLimit = 0),
+    subcommand("me", aliases = ["meu"], amin = 2, amax = 5, usage = "[MESSAGE]")
+    ])
+def on_hi_command():
+
+    def server(sender, command, label, args):
+        server.dispatchCommand(server.getConsoleSender(), "say " + " ".join(args[1:]))
+        return "Success!"
+    def me(sender, command, label, args):
+        target = server.getPlayer(args[1])
+        if target:
+            target.chat(" ".join(args[2:]))
+            return None
+        return "No target found"
+"""
+
 
 @hook.event("player.PlayerJoinEvent", "monitor")
 def on_join(event):

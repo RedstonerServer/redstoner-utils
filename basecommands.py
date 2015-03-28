@@ -1,4 +1,5 @@
 from helpers import *
+import inspect, new
 
 to_see_permission = "utils.showpermission" # See cmd permission in help
 
@@ -15,6 +16,8 @@ def simplecommand(cmd,
     permission = "utils." + cmd
     if not description:
         description = "Handles " + cmd
+    if not usage:
+        usage = "/%s <subcmd>" % cmd
 
     def getHelp(sender):
         return helpMsg(sender, cmd, description, usage, aliases, permission)
@@ -45,12 +48,11 @@ def simplecommand(cmd,
     return decorator
 
 
-
-
-
+"""
 def advancedcommand(cmd,
                     aliases = [],
                     description = None,
+                    usage = None,
                     senderLimit = -1, 
                     subCommands = []):
     cmd = cmd.lower()
@@ -102,9 +104,7 @@ def advancedcommand(cmd,
         return called.call(sender, command, label, args)
 
     def decorator(function):
-
-        functions = [func for func in function.__dict__.itervalues() if inspect.isfunction(func)]
-
+        functions = [new.function(c, globals()) for c in function.func_code.co_consts if inspect.iscode(c)] 
         for sub in subCommands:
             sub.setParent(cmd)
             for func in functions:
@@ -118,7 +118,13 @@ def advancedcommand(cmd,
 
 class subcommand():
 
-    def __init__(self, cmd, aliases = [], amin = 0, amax = -1, description = None, usage = "[args...]", senderLimit = -1):
+    def __init__(self, cmd, 
+            aliases = [], 
+            amin = 0, 
+            amax = -1, 
+            description = None, 
+            usage = "[args...]", 
+            senderLimit = -1):
         cmd = cmd.lower()
         self.description = description
         self.cmd         = cmd
@@ -132,24 +138,24 @@ class subcommand():
     def getHelp(sender):
         return helpMsg(sender, "%s %s" % (parent, cmd), description, usage, aliases, permission)
 
-    def setParent(parent):
+    def setParent(self, parent):
         self.parent = parent
-        self.permission  = "utils.%s.%s" % (parent, cmd)
-        self.description = description if description else "Handles /" + parent
+        self.permission  = "utils.%s.%s" % (parent, self.cmd)
+        self.description = self.description if self.description else "Handles /" + parent
 
-    def setCalledFunction(function):
+    def setCalledFunction(self, function):
         self.call = function
 
-    def isCalled(subcmd):
-        alias = cmd
+    def isCalled(self, subcmd):
+        alias = self.cmd
         i = 0
-        while (i <= len(aliases)):
+        while (i <= len(self.aliases)):
             if alias == subcmd:
                 return True
-            alias = aliases[i]
+            alias = self.aliases[i]
             i += 1
         return False
-
+"""
 
 def isSenderValid(senderLimit, isPlayer):
     return True if senderLimit == -1 else senderLimit != isPlayer

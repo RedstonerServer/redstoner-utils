@@ -45,10 +45,8 @@ def on_abot_command(sender, command, label, args):
     return True
 
 
-@hook.event("player.AsyncPlayerChatEvent", "low")
-def on_chat(event):
+def check_msg(event, message):
     sender  = event.getPlayer()
-    message = event.getMessage().lower()
     for answer in answers:
         for regex in answer["regex"]:
             if regex.search(message):
@@ -59,5 +57,17 @@ def on_chat(event):
                     info("(hidden) %s: '%s'" % (sender.getName(), message))
                     break
 
+
+@hook.event("player.AsyncPlayerChatEvent", "low")
+def on_chat(event):
+    check_msg(event, event.getMessage().lower())
+
+@hook.event("player.PlayerCommandPreprocessEvent", "low")
+def on_any_cmd(event):
+    words = event.getMessage().lower().split(" ")
+    cmd = words[0][1:]
+    if cmd in ["msg", "m", "t", "pm", "mail", "r", "reply"]:
+        info(" ".join(words[1:]))
+        check_msg(event, " ".join(words[1:]))
 
 load_answers()
