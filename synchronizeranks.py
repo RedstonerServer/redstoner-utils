@@ -17,40 +17,34 @@ ranks = {
 @hook.event("player.PlayerJoinEvent", "normal")
 def on_player_join(event):
     user = event.getPlayer()
-    uuid = uid(player)
+    uuid = uid(player).replace("-", "")
     role = get_role(uuid)
     if role in [1, 2, 6]: #Disabled/Banned/Superadmin
         return
-    if role != None:
+    if role:
         for rank in ranks:
             if user.hasPermission("group." + rank):
-                set_role(uuid, ranks[rank])
+                if role != ranks[rank]:
+                    set_role(uuid, ranks[rank])
         return
     if not user.hasPlayedBefore():
         return
     if role == None:
         msg(user, "&cYou haven't registed yet! Make sure to do so on redstoner.com")
-    elif not is_email_confirmed(uuid):
-        msg(user, "&cWe noticed that you haven't confirmed your website email! Don't forget to do so!")
 
 
 
 def get_role(uuid):
-    return execute_query("SELECT `role_id` FROM users WHERE `uuid` = ? LIMIT 1")[0][17]
+    return execute_query("SELECT `role_id` FROM users WHERE `uuid` = ? LIMIT 1", uuid)[0][17]
 
 
 def set_role(uuid, role_id):
-    execute_query("UPDATE users SET `role_id` = %d WHERE `uuid` = ?" % role_id)
-
-
-def is_email_confirmed(uuid):
-    return execute_query("SELECT `confirmed` FROM users WHERE `uuid` = ? LIMIT 1")[0][15]
+    execute_update("UPDATE users SET `role_id` = %d WHERE `uuid` = ?" % role_id, uuid)
 
 
 def execute_query(query, uuid):
     conn    = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs    = conn.cursor()
-    uuid    = uid(player).replace("-", "")
     curs.execute(query, (uuid,))
     results = curs.fetchall()
     curs.close()
@@ -58,4 +52,9 @@ def execute_query(query, uuid):
     return results
 
 
-
+def execute_update(update, uuid):
+    conn    = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
+    curs    = conn.cursor()
+    curs.execute(update, (uuid,))
+    curs.close()
+    conn.close()

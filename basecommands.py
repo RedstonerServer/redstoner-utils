@@ -104,7 +104,8 @@ def advancedcommand(cmd,
         return called.call(sender, command, label, args)
 
     def decorator(function):
-        functions = [new.function(c, globals()) for c in function.func_code.co_consts if inspect.iscode(c)] 
+        #functions = [new.function(c, globals()) for c in function.func_code.co_consts if inspect.iscode(c)]
+        functions = function()
         for sub in subCommands:
             sub.setParent(cmd)
             for func in functions:
@@ -149,7 +150,7 @@ class subcommand():
     def isCalled(self, subcmd):
         alias = self.cmd
         i = 0
-        while (i <= len(self.aliases)):
+        while i <= len(self.aliases):
             if alias == subcmd:
                 return True
             alias = self.aliases[i]
