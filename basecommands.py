@@ -342,8 +342,9 @@ def forcefield_command():
 
     @maincommand
     def other(sender, command, label, args):
-        ...Execute command if no sub commands were found
+        ...Execute command if no sub commands were called
 
 @command("simplestuff")
 def simplestuff_command(sender, command, label, args):
     msg(sender, "hi, I do not use subcommands!")
+"""
