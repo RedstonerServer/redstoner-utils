@@ -46,7 +46,7 @@ def on_abot_command(sender, command, label, args):
 
 
 def check_msg(event, message):
-    sender  = event.getPlayer()
+    sender = event.getPlayer()
     for answer in answers:
         for regex in answer["regex"]:
             if regex.search(message):
@@ -67,7 +67,6 @@ def on_any_cmd(event):
     words = event.getMessage().lower().split(" ")
     cmd = words[0][1:]
     if cmd in ["msg", "m", "t", "pm", "mail", "r", "reply"]:
-        info(" ".join(words[1:]))
         check_msg(event, " ".join(words[1:]))
 
 load_answers()
