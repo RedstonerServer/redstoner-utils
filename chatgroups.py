@@ -1,11 +1,17 @@
 #pylint: disable = F0401
 from helpers import *
+from basecommands import simplecommand
 from java.util.UUID import fromString as juuid
+from traceback import format_exc as trace
 
 groups         = open_json_file("chatgroups", {})
-cg_key         = ":"
+cg_defaultkey  = ":"
+cg_keys        = open_json_file("chatgroup_keys", {})
 cg_toggle_list = []
 
+def get_key(uuid):
+    key = cg_keys.get(uuid)
+    return key if key != None else cg_defaultkey
 
 
 @hook.command("chatgroup")
@@ -39,11 +45,14 @@ def on_chatgroup_command(sender, command, label, args):
         groupchat(sender, "joined the group", True)
         save_groups()
         msg(sender, "&aYour chatgroup is set to '%s'" % args[1])
-        msg(sender, "&aUse chat like '&e%s<message>' to send messages to this group." % cg_key)
+        msg(sender, "&aUse chat like '&e%s<message>' to send messages to this group." % get_key(sender_id))
+    elif len(args) == 1 and args[0] == "key":
+        msg(sender, "&aYour chatgroup key is currently: '&c%s&a'" % get_key(sender_id))
     else:
         msg(sender, "&e/chatgroup join <name>")
         msg(sender, "&e/chatgroup leave")
         msg(sender, "&e/chatgroup info")
+        msg(sender, "&e/chatgroup key")
 
 
 @hook.command("cgt")
@@ -84,9 +93,33 @@ def on_chat(event):
     msge = event.getMessage()
     if not event.isCancelled():
         sender_id = uid(sender)
-        if msge[:len(cg_key)] == cg_key and sender_id in groups.keys():
-            groupchat(sender, msge[1:])
+        key = get_key(sender_id)
+        keylen = len(key)
+        if msge[:keylen] == key and sender_id in groups.keys():
+            groupchat(sender, msge[keylen:])
             event.setCancelled(True)
         elif sender_id in cg_toggle_list:
             groupchat(sender, msge)
             event.setCancelled(True)
+
+@simplecommand("chatgroupkey", 
+        aliases = ["cgkey"], 
+        senderLimit = 0, 
+        amax = 1, 
+        helpNoargs = True, 
+        helpSubcmd = True, 
+        description = "Sets a key character for chatting to your chatgroup", 
+        usage = "<key>")
+def chatgroupkey_command(sender, command, label, args):
+    key = args[0]
+    uuid = uid(sender)
+    if key.lower() == "default" or key == cg_defaultkey:
+        del cg_keys[uuid]
+        save_keys()
+        return "&aYour chatgroup key was set to the default character: '&c%s&a'" % cg_defaultkey
+    cg_keys[uid(sender)] = key
+    save_keys()
+    return "&aYour chatgroup key was set to: '&c%s&a'" % key
+
+def save_keys():
+    save_json_file("chatgroup_keys", cg_keys)
