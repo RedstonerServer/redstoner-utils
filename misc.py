@@ -6,7 +6,6 @@ import thread
 import org.bukkit.inventory.ItemStack as ItemStack
 import org.bukkit.Bukkit as Bukkit
 import org.bukkit.event.player.PlayerChatEvent as PlayerChatEvent
-import basecommands
 from basecommands import simplecommand
 
 """
@@ -87,18 +86,6 @@ def on_me_command(sender, command, label, args):
     broadcast("utils.me", "&7- %s &7%s %s" % (sender.getDisplayName() if isinstance(sender, Player) else "&9CONSOLE", u"\u21E6", " ".join(args)))
     return None
 
-"""
-@basecommands.command("damnyou", aliases = ["dam"])
-def damnyou_command():
-
-	@basecommands.subcommand("me")
-	def me(sender, command, label, args):
-		info("me ran")
-
-	@basecommands.maincommand
-	def main(sender, command, label, args):
-		info("main ran")
-"""
 
 #@hook.command("gm")
 #def on_gm_command(sender, args):
@@ -205,7 +192,9 @@ def on_modules_command(sender, command, label, args):
     list all modules, unloaded modules in red
     """
     plugin_header(sender, "Modules")
-    msg(sender, ", ".join([(("&a" if mod in shared["modules"] else "&c") + mod) for mod in shared["load_modules"]]))
+    for mod in shared["load_modules"]:
+        color = "a" if mod in shared["modules"] else "c"
+        msg(sender, "&" + color + mod)
 
 
 @hook.event("player.PlayerTeleportEvent")

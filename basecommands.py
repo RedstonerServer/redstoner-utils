@@ -7,6 +7,7 @@ current_main = None
 to_see_permission = "utils.showpermission" # See cmd permission in help
 
 def maincommand(function):
+    global current_main
     current_main = function
     return function
 
@@ -36,6 +37,7 @@ class subcommand():
         self.call        = None
 
     def __call__(self, f):
+        global current_subs
         def call_sub(sender, command, label, args):
             isPlayer = is_player(sender)
             if not isSenderValid(senderLimit, isPlayer):
@@ -83,6 +85,7 @@ def command(cmd,
 
     cmd = cmd.lower()
 
+    global curent_subs
     subcommands = []
     for subcmd in current_subs:
         subcmd.setParent(cmd)
@@ -90,6 +93,7 @@ def command(cmd,
     info(subcommands)
     current_subs = []
 
+    global current_main
     main_function = current_main
     current_main = None
     if main_function == None and len(subcommands) != 0:
