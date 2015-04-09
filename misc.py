@@ -213,13 +213,13 @@ def on_player_teleport(event):
 def on_chat(event):
     user = event.getPlayer()
     if user.hasPermission("utils.pyeval"):
-        thread.start_new_thread(event)
+        thread.start_new_thread(eval_argument_thread, (event,))
 
 @hook.event("player.PlayerCommandPreprocessEvent", "lowest")
 def on_cmd(event):
     user = event.getPlayer()
     if user.hasPermission("utils.pyeval"):
-        thread.start_new_thread(event)
+        thread.start_new_thread(eval_argument_thread, (event,))
 
 def is_pyeval_call(string):
     return len(string) > 5 and string[:5] == "EVAL:"
