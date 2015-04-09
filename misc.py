@@ -157,6 +157,27 @@ def eval_thread(sender, code):
         msg(sender, ">>> %s: %s" % (eclass.__name__, e) + "\n ", False, "c")
     thread.exit()
 
+def eval_argument_thread(event):
+    words = event.getMessage()[5:].split(" ")
+    for i in range(len(words)):
+        word = words[i]
+        if is_pyeval_call(word):
+            code = word[5:]
+            try:
+                result = unicode(eval(code))
+            except:
+                e = exc_info()[1]
+                try:
+                    eclass = e.__class__
+                except AttributeError:
+                    eclass = type(e)
+                msg(event.getPlayer(), ">>> %s: %s" % (eclass.__name__, e) + "\n ", False, "c")
+                result = code
+            words[i] = result
+    event.setMessage(" ".join(words))
+    thread.exit()
+
+
 @simplecommand("pyeval",
     usage       = "[code..]",
     description = "Runs python [code..] and returns the result",
@@ -186,3 +207,19 @@ def on_player_teleport(event):
     if not event.isCancelled() and str(event.getCause()) == "SPECTATE" and not player.hasPermission("utils.tp.spectate"):
         event.setCancelled(True)
         msg(event.getPlayer(), "&cSpectator teleportation is disabled")
+
+
+@hook.event("player.AsyncPlayerChatEvent", "lowest")
+def on_chat(event):
+    user = event.getPlayer()
+    if user.hasPermission("utils.pyeval"):
+        thread.start_new_thread(event)
+
+@hook.event("player.PlayerCommandPreprocessEvent", "lowest")
+def on_cmd(event):
+    user = event.getPlayer()
+    if user.hasPermission("utils.pyeval"):
+        thread.start_new_thread(event)
+
+def is_pyeval_call(string):
+    return len(string) > 5 and string[:5] == "EVAL:"
