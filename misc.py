@@ -9,24 +9,6 @@ import org.bukkit.event.player.PlayerChatEvent as PlayerChatEvent
 import basecommands
 from basecommands import simplecommand
 
-"""
-@advancedcommand("hi", aliases = ["hu"], description = "Says hi!", subCommands = [
-    subcommand("server", aliases = ["serv"], amin = 1, amax = 4, usage = "[msg..]", senderLimit = 0),
-    subcommand("me", aliases = ["meu"], amin = 2, amax = 5, usage = "[MESSAGE]")
-    ])
-def on_hi_command():
-
-    def server(sender, command, label, args):
-        server.dispatchCommand(server.getConsoleSender(), "say " + " ".join(args[1:]))
-        return "Success!"
-    def me(sender, command, label, args):
-        target = server.getPlayer(args[1])
-        if target:
-            target.chat(" ".join(args[2:]))
-            return None
-        return "No target found"
-"""
-
 
 @hook.event("player.PlayerJoinEvent", "monitor")
 def on_join(event):
@@ -86,19 +68,6 @@ def on_sudo_command(sender, command, label, args):
 def on_me_command(sender, command, label, args):
     broadcast("utils.me", "&7- %s &7%s %s" % (sender.getDisplayName() if isinstance(sender, Player) else "&9CONSOLE", u"\u21E6", " ".join(args)))
     return None
-
-"""
-@basecommands.command("damnyou", aliases = ["dam"])
-def damnyou_command():
-
-	@basecommands.subcommand("me")
-	def me(sender, command, label, args):
-		info("me ran")
-
-	@basecommands.maincommand
-	def main(sender, command, label, args):
-		info("main ran")
-"""
 
 #@hook.command("gm")
 #def on_gm_command(sender, args):

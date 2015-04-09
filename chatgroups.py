@@ -100,13 +100,12 @@ def on_chat(event):
 @simplecommand("chatgroupkey", 
         aliases = ["cgkey"], 
         senderLimit = 0, 
-        amax = 1, 
         helpNoargs = True, 
         helpSubcmd = True, 
         description = "Sets a key character for chatting to your chatgroup", 
         usage = "<key>")
 def chatgroupkey_command(sender, command, label, args):
-    key = args[0]
+    key = " ".join(args)
     uuid = uid(sender)
     if key.lower() == "default" or key == cg_defaultkey:
         del cg_keys[uuid]
