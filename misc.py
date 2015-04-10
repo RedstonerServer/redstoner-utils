@@ -5,8 +5,6 @@ from sys import exc_info
 import thread
 import org.bukkit.inventory.ItemStack as ItemStack
 import org.bukkit.Bukkit as Bukkit
-import org.bukkit.event.player.PlayerChatEvent as PlayerChatEvent
-import basecommands
 from basecommands import simplecommand
 
 
@@ -41,16 +39,16 @@ def on_join(event):
 
 
 @simplecommand("sudo",
-    usage        = "<player> [cmd..]",
-    description  = "Makes <player> write [cmd..] in chat",
-    amin         = 2,
-    helpNoargs   = True)
+        usage        = "<player> [cmd..]",
+        description  = "Makes <player> write [cmd..] in chat",
+        amin         = 2,
+        helpNoargs   = True)
 def on_sudo_command(sender, command, label, args):
     target = args[0]
     cmd    =  " ".join(args[1:])
     msg(sender, "&2[SUDO] &rRunning '&e%s&r' as &3%s" % (cmd, target))
     is_cmd     = cmd[0] == "/"
-    is_console = target.lower() == "server" or target.lower() == "console"
+    is_console = target.lower() in ("server", "console")
     if is_console:
         server.dispatchCommand(server.getConsoleSender(), cmd[1:] if is_cmd else cmd)
         return None
@@ -62,13 +60,14 @@ def on_sudo_command(sender, command, label, args):
 
 
 @simplecommand("me", 
-    usage        = "[message..]", 
-    description  = "Sends a message in third person", 
-    helpNoargs   = True)
+        usage        = "[message..]",
+        description  = "Sends a message in third person",
+        helpNoargs   = True)
 def on_me_command(sender, command, label, args):
     broadcast("utils.me", "&7- %s &7%s %s" % (sender.getDisplayName() if isinstance(sender, Player) else "&9CONSOLE", u"\u21E6", " ".join(args)))
     return None
 
+#
 #@hook.command("gm")
 #def on_gm_command(sender, args):
 #  """
@@ -115,20 +114,25 @@ def on_player_entity_interact(event):
                     entity.getWorld().dropItemNaturally(entity.getLocation(), ItemStack(bukkit.Material.getMaterial("WOOL")))
                 sender.playSound(entity.getLocation(), "mob.cow.say", 1, 1)
 
-
+"""
 @hook.command("pluginversions")
 def on_pluginversions_command(sender, command, label, args):
-    """
+    ""
     /pluginversions
     print all plugins + versions; useful when updating plugins
-    """
-    plugin_header(sender, "Plugin versions")
-    plugins = list(server.getPluginManager().getPlugins())
-    plugins.sort(key = lambda pl: pl.getDescription().getName())
-    msg(sender, "&3Listing all " + str(len(plugins)) + " plugins and their version:")
-    for plugin in plugins:
-        msg(sender, "&6" + plugin.getDescription().getName() + "&r: &e" + plugin.getDescription().getVersion())
-    return True
+    ""
+    try:
+        plugin_header(sender, "Plugin versions")
+        plugins = [pl.getDescription() for pl in list(ArrayList(java_array_to_list(server.getPluginManager().getPlugins())))]
+        info(type(plugins[0]).__name__)
+        plugins.sort(key = lambda pl: pl.getDescription().getName())
+        msg(sender, "&3Listing all " + str(len(plugins)) + " plugins and their version:")
+        for plugin in plugins:
+            msg(sender, "&6" + pl.getDescription().getName() + "&r: &e" + pl.getDescription().getVersion())
+        return True
+    except:
+        error(trace())
+"""
 
 
 @hook.command("echo")
@@ -157,6 +161,7 @@ def eval_thread(sender, code):
         msg(sender, ">>> %s: %s" % (eclass.__name__, e) + "\n ", False, "c")
     thread.exit()
 
+"""
 def eval_argument_thread(event):
     words = event.getMessage()[5:].split(" ")
     for i in range(len(words)):
@@ -176,7 +181,7 @@ def eval_argument_thread(event):
             words[i] = result
     event.setMessage(" ".join(words))
     thread.exit()
-
+"""
 
 @simplecommand("pyeval",
     usage       = "[code..]",
@@ -208,7 +213,7 @@ def on_player_teleport(event):
         event.setCancelled(True)
         msg(event.getPlayer(), "&cSpectator teleportation is disabled")
 
-
+"""
 @hook.event("player.AsyncPlayerChatEvent", "lowest")
 def on_chat(event):
     user = event.getPlayer()
@@ -223,3 +228,4 @@ def on_cmd(event):
 
 def is_pyeval_call(string):
     return len(string) > 5 and string[:5] == "EVAL:"
+"""

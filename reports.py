@@ -90,7 +90,7 @@ def message_reporter(sender, report, action):
         plugin_header(reporter, "Reports")
         msg(reporter, message)
     else:
-        server.dispatchCommand(sender, "mail send %s %s" % (reporter.getName(), message))
+        server.dispatchCommand(sender, "mail send %s %s" % (reporter.getName(), colorify(message)))
 
 
 def save_reports():

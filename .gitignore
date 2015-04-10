@@ -4,6 +4,7 @@
 *.bat*
 secrets.py
 excluded.txt
+.idea
 
 # these are player/ingame specific
 files/
