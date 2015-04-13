@@ -39,7 +39,6 @@ def error(text):
     """
     server.getLogger().severe("[RedstonerUtils] %s" % text)
 
-
 def msg(player, text, usecolor = True, basecolor = None):
     """
     send a message to player
@@ -47,7 +46,7 @@ def msg(player, text, usecolor = True, basecolor = None):
     unless usecolor is False, &-codes are translated to real color codes
     for that case, basecolor can be useful. basecolor accepts a single character as color code
     """
-    if player and (player == server.getConsoleSender() or player.getPlayer()): # getPlayer() returns None when offline
+    if player and (player == server.getConsoleSender() or player.isOnline()): # getPlayer() returns None when offline
         if basecolor:
             if usecolor:
                 text = colorify(text)
@@ -56,15 +55,16 @@ def msg(player, text, usecolor = True, basecolor = None):
             player.sendMessage(colorify(text) if usecolor else text)
 
 
-def broadcast(perm, text):
+def broadcast(perm, text, usecolor = True):
     """
     better than bukkit's broadcast.
     bukkit only works with permissibles that are subscribed to perm
     """
-    text = colorify(text)
+    if usecolor:
+        text = colorify(text)
     for recipient in list(server.getOnlinePlayers()) + [server.getConsoleSender()]:
         if not perm or recipient.hasPermission(perm):
-            msg(recipient, text)
+            msg(recipient, text, usecolor = False)
 
 
 def colorify(text):
@@ -115,7 +115,10 @@ def runas(player, cmd):
     run a command as player
     the cmd should NOT be prefixed with a /
     """
-    player.chat("/" + cmd)
+    if is_player(player):
+        player.chat("/" + cmd)
+    else:
+        server.dispatchCommand(player, cmd)
     
 
 def is_player(obj):

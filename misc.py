@@ -17,9 +17,7 @@ def on_join(event):
 
     # send welcome broadcast
     if not player.hasPlayedBefore():
-        broadcast("utils.greet_new", "")
-        broadcast("utils.greet_new", "&a&lPlease welcome &f" + player.getDisplayName() + " &a&lto Redstoner!")
-        broadcast("utils.greet_new", "")
+        broadcast("utils.greet_new", "\n&a&lPlease welcome &f" + player.getDisplayName() + " &a&lto Redstoner!\n")
 
         # clear out some eventual crap before
         msg(player, " \n \n \n \n \n \n \n \n \n \n \n \n ")
@@ -64,7 +62,8 @@ def on_sudo_command(sender, command, label, args):
         description  = "Sends a message in third person",
         helpNoargs   = True)
 def on_me_command(sender, command, label, args):
-    broadcast("utils.me", "&7- %s &7%s %s" % (sender.getDisplayName() if isinstance(sender, Player) else "&9CONSOLE", u"\u21E6", " ".join(args)))
+    text = colorify("&7- %s &7%s " % (sender.getDisplayName() if isinstance(sender, Player) else "&9CONSOLE", u"\u21E6"))
+    broadcast("utils.me", text + " ".join(args), usecolor = sender.hasPermission("essentials.chat.color"))
     return None
 
 #
