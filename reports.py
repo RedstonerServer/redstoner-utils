@@ -102,7 +102,7 @@ def on_rp_command(sender, command, label, args):
     if sender.hasPermission(rp_permission):
         plugin_header(sender, "Reports")
         if len(args) > 0:
-            subcmd = args[0].lower
+            subcmd = args[0].lower()
             if subcmd == "closed":
                 # needs to run in seperate thread because of getOfflinePlayer
                 thread.start_new_thread(print_list, (sender, True,))
