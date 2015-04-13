@@ -46,7 +46,7 @@ def on_sudo_command(sender, command, label, args):
     cmd    =  " ".join(args[1:])
     msg(sender, "&2[SUDO] &rRunning '&e%s&r' as &3%s" % (cmd, target))
     is_cmd     = cmd[0] == "/"
-    is_console = target.lower() in ("server", "console")
+    is_console = target.lower() in ["server", "console"]
     if is_console:
         server.dispatchCommand(server.getConsoleSender(), cmd[1:] if is_cmd else cmd)
         return None
