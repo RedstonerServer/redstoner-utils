@@ -102,10 +102,11 @@ def on_rp_command(sender, command, label, args):
     if sender.hasPermission(rp_permission):
         plugin_header(sender, "Reports")
         if len(args) > 0:
-            if args[0] == "closed":
+            subcmd = args[0].lower
+            if subcmd == "closed":
                 # needs to run in seperate thread because of getOfflinePlayer
                 thread.start_new_thread(print_list, (sender, True,))
-            elif args[0] == "open":
+            elif subcmd in ["open", "list"]:
                 thread.start_new_thread(print_list, (sender, False,))
             else:
                 if not checkargs(sender, args, 2, 2):
@@ -116,16 +117,16 @@ def on_rp_command(sender, command, label, args):
                     msg(sender, "&cDoesn't look like &3" + args[1] + "&c is a valid number!")
                     print_help(sender)
                     return True
-                if args[0] == "tp":
+                if subcmd == "tp":
                     if not is_player(sender):
                         msg(sender, "&conly players can do this")
                         return True
                     tp_report(sender, repid)
-                elif args[0] == "close":
+                elif subcmd == "close":
                     resolve_reopen_report(sender, repid, True)
-                elif args[0] == "del":
+                elif subcmd == "del":
                     delete_report(sender, repid)
-                elif args[0] == "reopen":
+                elif subcmd == "reopen":
                     resolve_reopen_report(sender, repid, False)
                 else:
                     print_help(sender)
