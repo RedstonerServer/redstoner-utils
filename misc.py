@@ -212,6 +212,25 @@ def on_player_teleport(event):
         event.setCancelled(True)
         msg(event.getPlayer(), "&cSpectator teleportation is disabled")
 
+@hook.event("block.BlockFromToEvent", "highest")
+def on_flow(event):
+    if event.isCancelled():
+        return
+    block = event.getToBlock()
+    if block.getWorld().getName() == "Creative" and rs_material_broken_by_flow(str(block.getType())):
+        event.setCancelled(True)
+
+def rs_material_broken_by_flow(material):
+    if material in ("REDSTONE", "LEVER", "TRIPWIRE"):
+        return True
+    parts = material.split("_")
+    length = len(parts)
+    return length > 1 and (parts[0] == "DIODE" or parts[1] in ("TORCH", "WIRE", "BUTTON", "HOOK") or (length == 3 and parts[1] == "COMPARATOR"))
+
+
+
+
+
 """
 @hook.event("player.AsyncPlayerChatEvent", "lowest")
 def on_chat(event):
