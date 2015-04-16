@@ -13,10 +13,9 @@ def save_notes():
 
 def r_ago(unit, i):
     # Return ago + plural
-    i = i
     if i != 1:
-        unit +="s"
-    return str(i)+" "+unit+" ago"
+        unit += "s"
+    return "%s %s ago" % (i, unit)
 
 
 def calc_diff(time_ago):
@@ -41,6 +40,7 @@ def calc_diff(time_ago):
 def show_all_notes(sender):
     if len(notes) == 0:
         msg(sender, "&aNo open notes at the moment!")
+        return
     for i in range(0, len(notes)):
         arr = notes[i]
         name      = arr[0]
@@ -76,17 +76,18 @@ def adminnotes_command(sender, command, label, args):
         arglen = len(args)
 
         # arg length not valid
-        if arglen < 1:
+        if arglen == 0:
             show_all_notes(sender)
             return
 
         # Shows note help
-        if args[0].lower() == "help":
+        subcmd = args[0].lower()
+        if subcmd == "help":
             show_an_help(sender)
             return
 
         # Delete note
-        if args[0].lower() == "del":
+        if subcmd == "del":
             if arglen != 2:
                 show_an_help(sender)
                 return
@@ -106,29 +107,29 @@ def adminnotes_command(sender, command, label, args):
         message = " ".join(args)
         name = sender.getName()
         if name in continued_messages:
-            message = continued_messages[name] + message
+            message = continued_messages[name] + " " + message
+            del continued_messages[name]
 
         if message[-2:] == "++":
             message = message[:-2]
-            if message[-1:] != " ":
-                message += " "
             continued_messages[name] = message
             msg(sender, "&6You can continue writing by using &e/an <text ...>")
         else:
             notes.append([name, message, time.time()])
             save_notes()
-            msg(sender, "&eNew note:&6 "+message)
+            msg(sender, "&eNew note:&6 " + message)
             broadcast(an_permission, "&a%s just added a new note! &2Type /an" % name)
     except:
-        print(print_traceback())
+        error(print_traceback())
 
 
 @hook.event("player.PlayerJoinEvent", "monitor")
-def on_an_join(event):	
-    if not event.getPlayer().hasPermission(an_permission):
-        noperm(event.getPlayer())
+def on_an_join(event):
+    player = event.getPlayer()
+    if not player.hasPermission(an_permission):
+        noperm(player)
         return
     if len(notes) > 0:
-        msg(event.getPlayer(), "&cThere are currently %s open notes!" % len(notes))
+        msg(player, "&cThere are currently %s open notes!" % len(notes))
     elif len(notes) == 0:
-        msg(event.getPlayer(), "&aThere are currently no open notes!")
+        msg(player, "&aThere are currently no open notes!")
