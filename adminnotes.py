@@ -125,7 +125,7 @@ def adminnotes_command(sender, command, label, args):
 
 @hook.event("player.PlayerJoinEvent", "monitor")
 def on_an_join(event):
-	if not sender.hasPermission(an_permission):
+    if not sender.hasPermission(an_permission):
         noperm(sender)
         return
     if len(notes) > 0:
