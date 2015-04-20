@@ -11,7 +11,7 @@ from helpers import *
 # receive info based on the user's IP. information provided by ipinfo.io
 def ip_info(player):
     if player.isOnline():
-        return json.load(urllib2.urlopen("http://ipinfo.io%s/json" % str(player.getAddress().getAddress())))
+        return json.load(urllib2.urlopen("https://ipinfo.io%s/json" % str(player.getAddress().getAddress())))
     else:
       return {}
 
