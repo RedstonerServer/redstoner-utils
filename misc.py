@@ -182,6 +182,7 @@ def eval_argument_thread(event):
     thread.exit()
 """
 
+
 @simplecommand("pyeval",
     usage       = "[code..]",
     description = "Runs python [code..] and returns the result",
@@ -190,6 +191,33 @@ def on_pyeval_command(sender, command, label, args):
     msg(sender, " ".join(args), False, "e")
     thread.start_new_thread(eval_thread, (sender, " ".join(args)))
     return None
+
+
+@simplecommand("tempadd",
+    usage       = "<user> <group> [duration]",
+    description = "Temporarily adds <user> to <group> for \n[duration] minutes. Defaults to 1 week.",
+    helpNoargs  = True,
+    helpSubcmd  = True,
+    amin        = 2,
+    amax        = 3)
+def tempadd_command(sender, command, label, args):
+    if not sender.hasPermission("permissions.manage.membership." + args[1]):
+        return "&cYou do not have permission to manage that group!"
+    if len(args) == 3:
+        if not args[2].isdigit():
+            return "&cThats not a number!"
+        duration = int(args[2]) * 60
+    else:
+        duration = 604800
+    if duration <= 0:
+        return "&cThats too short!"
+    cmd = "pex user %s group add %s * %s" % (args[0], args[1], duration)
+    runas(sender, cmd)
+
+    m, s = divmod(duration, 60)
+    h, m = divmod(m, 60)
+    d, h = divmod(h, 24)
+    return "&aAdded to group for %dd%dh%dm" % (d, h, m)
 
 
 @hook.command("modules")
