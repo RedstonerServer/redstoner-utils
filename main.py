@@ -38,6 +38,8 @@ shared["load_modules"] = [
     "adminchat",
     # Adds /badge, allows to give players achievements
     "badges",
+   	# Adds a few block placement corrections/mods
+   	"blockplacemods",
     # Adds /calc, toggles automatic solving of Math expressions in chat
     "calc",
     # Plugin to locate laggy chunks. /lc <n> lists chunks with more than n entities
@@ -73,7 +75,9 @@ shared["load_modules"] = [
     #adds snowbrawl minigame
     #"snowbrawl",
     # Adds /tm [player] for a messages to be sent to this player via /msg
-    "pmtoggle"
+    "pmtoggle",
+    # Replacement for LoginSecurity
+    "loginsecurity"
     # NOTICE: If you add something here, please add a small descriptive comment above!
 ]
 shared["modules"] = {}
