@@ -127,7 +127,6 @@ def adminnotes_command(sender, command, label, args):
 def on_an_join(event):
     player = event.getPlayer()
     if not player.hasPermission(an_permission):
-        noperm(player)
         return
     if len(notes) > 0:
         msg(player, "&cThere are currently %s open notes!" % len(notes))
