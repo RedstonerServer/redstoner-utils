@@ -184,9 +184,9 @@ def eval_argument_thread(event):
 
 
 @simplecommand("pyeval",
-    usage       = "[code..]",
-    description = "Runs python [code..] and returns the result",
-    helpNoargs  = True)
+        usage       = "[code..]",
+        description = "Runs python [code..] and returns the result",
+        helpNoargs  = True)
 def on_pyeval_command(sender, command, label, args):
     msg(sender, " ".join(args), False, "e")
     thread.start_new_thread(eval_thread, (sender, " ".join(args)))
@@ -194,12 +194,12 @@ def on_pyeval_command(sender, command, label, args):
 
 
 @simplecommand("tempadd",
-    usage       = "<user> <group> [duration]",
-    description = "Temporarily adds <user> to <group> for \n[duration] minutes. Defaults to 1 week.",
-    helpNoargs  = True,
-    helpSubcmd  = True,
-    amin        = 2,
-    amax        = 3)
+        usage       = "<user> <group> [duration]",
+        description = "Temporarily adds <user> to <group> for \n[duration] minutes. Defaults to 1 week.",
+        helpNoargs  = True,
+        helpSubcmd  = True,
+        amin        = 2,
+        amax        = 3)
 def tempadd_command(sender, command, label, args):
     if not sender.hasPermission("permissions.manage.membership." + args[1]):
         return "&cYou do not have permission to manage that group!"
@@ -254,9 +254,6 @@ def rs_material_broken_by_flow(material):
     parts = material.split("_")
     length = len(parts)
     return length > 1 and (parts[0] == "DIODE" or parts[1] in ("TORCH", "WIRE", "BUTTON", "HOOK") or (length == 3 and parts[1] == "COMPARATOR"))
-
-
-
 
 
 """
