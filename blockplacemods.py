@@ -112,5 +112,9 @@ def on_interact(event):
     block = event.getClickedBlock()
     event2 = BlockBreakEvent(block, player)
     server.getPluginManager().callEvent(event2)
-    if not event2.isCancelled() and str(block.getType()) == "CAULDRON" and block.getData() > 0:
-        block.setData(block.getData() - 1) #Lower water level by one
+    data = block.getData()
+    if not event2.isCancelled() and str(block.getType()) == "CAULDRON":
+        if data > 0:
+            block.setData(data - 1) #Lower water level by one
+        else:
+            block.setData(3) #Set water level back to 3
