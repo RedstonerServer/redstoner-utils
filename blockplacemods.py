@@ -1,5 +1,6 @@
 from helpers import *
 from basecommands import simplecommand
+import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
 
 denyslabcorrection = open_json_file("denyslabcorrection", []) #Players that don't want slabs corrected
 denyautofill       = open_json_file("denyautocauldronfill", [])
@@ -109,10 +110,7 @@ def on_interact(event):
     if event.hasItem() and not str(event.getItem().getType()) == "REDSTONE":
         return
     block = event.getClickedBlock()
-    if str(block.getType()) == "CAULDRON" and block.getData() > 0:
+    event2 = BlockBreakEvent(block, player)
+    server.getPluginManager().callEvent(event2)
+    if not event2.isCancelled() and str(block.getType()) == "CAULDRON" and block.getData() > 0:
         block.setData(block.getData() - 1) #Lower water level by one
-
-
-
-
-
