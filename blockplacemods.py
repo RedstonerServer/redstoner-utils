@@ -1,6 +1,9 @@
 from helpers import *
 from basecommands import simplecommand
 import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
+import org.bukkit.block.Furnace as Furnace
+import org.bukkit.inventory.ItemStack as ItemStack
+import org.bukkit.Material as Material
 
 denyslabcorrection = open_json_file("denyslabcorrection", []) #Players that don't want slabs corrected
 denyautofill       = open_json_file("denyautocauldronfill", [])
@@ -94,11 +97,15 @@ def on_block_place(event):
         return
     uuid = uid(player)
     block = event.getBlockPlaced()
-    if uuid not in denyslabcorrection and str(block.getType()) in ("WOOD_STEP", "STEP") and block.getData() < 8:
+    material = str(block.getType())
+    if uuid not in denyslabcorrection and material in ("WOOD_STEP", "STEP") and block.getData() < 8:
         block.setData(block.getData() + 8) # Flip upside down
-    elif uuid not in denyautofill and str(block.getType()) == "CAULDRON":
+    elif uuid not in denyautofill and material == "CAULDRON":
         block.setData(3) #3 layers of water, 3 signal strength
-
+    elif material == "FURNACE":
+        state = block.getState()
+        state.getInventory().setSmelting(ItemStack(Material.REDSTONE))
+        state.update()
 
 @hook.event("player.PlayerInteractEvent", "monitor")
 def on_interact(event):
@@ -114,7 +121,4 @@ def on_interact(event):
     server.getPluginManager().callEvent(event2)
     data = block.getData()
     if not event2.isCancelled() and str(block.getType()) == "CAULDRON":
-        if data > 0:
-            block.setData(data - 1) #Lower water level by one
-        else:
-            block.setData(3) #Set water level back to 3
+        block.setData(data - 1 if data > 0 else 3)
