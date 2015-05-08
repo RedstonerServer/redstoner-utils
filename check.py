@@ -11,7 +11,7 @@ from helpers import *
 # receive info based on the user's IP. information provided by ipinfo.io
 def ip_info(player):
     if player.isOnline():
-        return json.load(urllib2.urlopen("https://ipinfo.io%s/json" % str(player.getAddress().getAddress())))
+        return json.load(urllib2.urlopen("http://ipinfo.io%s/json" % str(player.getAddress().getAddress())))
     else:
       return {}
 
@@ -42,6 +42,11 @@ def get_website_data(player):
     return ("http://redstoner.com/users/%s" % results[0][0], results[0][1]) if results else (None, None)
 
 
+# receive country based on the user's IP
+def get_country(data):
+    return str(data.get("country"))
+
+
 def get_all_names(player):
     uuid = str(uid(player)).replace("-", "")
     names = json.load(urllib2.urlopen("https://api.mojang.com/user/profiles/%s/names" % uuid))
@@ -64,8 +69,7 @@ def get_all_data(sender, player):
         msg(sender, "&6>  Website account: &e%s" % website[0])
         msg(sender, "&6>    email: &e%s" % website[1])
         msg(sender, "&7   -- Data provided by ipinfo.io")
-        msg(sender, "&6>  Country: &e%s" % str(data.get("country")))
-        msg(sender, "&6>  Network: &e%s" % str(data.get("org")))
+        msg(sender, "&6>  Country: &e%s" % get_country(data))
         msg(sender, "&7   -- Data provided by Mojang")
         msg(sender, "&6>  All ingame names used so far: &e%s" % get_all_names(player))
     except:
