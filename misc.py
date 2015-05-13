@@ -272,3 +272,22 @@ def on_cmd(event):
 def is_pyeval_call(string):
     return len(string) > 5 and string[:5] == "EVAL:"
 """
+
+
+
+
+
+@hook.event("player.PlayerGameModeChangeEvent", "low")
+def on_gamemode(event):
+    user = event.getPlayer()
+    if str(event.getNewGameMode()) != "SPECTATOR" and user.getWorld().getName() == "Trusted" and not user.hasPermission("mv.bypass.gamemode." + trusted_world):
+        event.setCancelled(True)
+
+@hook.event("player.PlayerBedEnterEvent")
+def on_bed_enter(event):
+    if event.getPlayer().getWorld().getName() in ("Survival_1", "TrustedSurvival_1"):
+        event.getPlayer().setSleepingIgnored(True)
+
+@hook.event("player.PlayerBedLeaveEvent")
+def on_bed_leave(event):
+    event.getPlayer().setSleepingIgnored(False)
