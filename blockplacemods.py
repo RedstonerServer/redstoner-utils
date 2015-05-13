@@ -117,8 +117,10 @@ def on_interact(event):
     if event.hasItem() and not str(event.getItem().getType()) == "REDSTONE":
         return
     block = event.getClickedBlock()
+    if str(block.getType()) != "CAULDRON":
+        return
     event2 = BlockBreakEvent(block, player)
     server.getPluginManager().callEvent(event2)
-    data = block.getData()
-    if not event2.isCancelled() and str(block.getType()) == "CAULDRON":
+    if not event2.isCancelled():
+        data = block.getData()
         block.setData(data - 1 if data > 0 else 3)
