@@ -36,6 +36,48 @@ def on_join(event):
         player.teleport(player.getWorld().getSpawnLocation())
 
 
+@hook.event("player.PlayerGameModeChangeEvent", "low")
+def on_gamemode(event):
+    user = event.getPlayer()
+    if str(event.getNewGameMode()) != "SPECTATOR" and user.getWorld().getName() == "Trusted" and not user.hasPermission("mv.bypass.gamemode.Trusted"):
+        event.setCancelled(True)
+
+
+@hook.event("player.PlayerBedEnterEvent")
+def on_bed_enter(event):
+    if event.getPlayer().getWorld().getName() in ("Survival_1", "TrustedSurvival_1"):
+        event.getPlayer().setSleepingIgnored(True)
+
+
+@hook.event("player.PlayerBedLeaveEvent")
+def on_bed_leave(event):
+    event.getPlayer().setSleepingIgnored(False)
+
+
+@hook.event("player.PlayerTeleportEvent")
+def on_player_teleport(event):
+    """
+    Disable spectator teleportation
+    """
+    player = event.getPlayer()
+    if not event.isCancelled() and str(event.getCause()) == "SPECTATE" and not player.hasPermission("utils.tp.spectate"):
+        event.setCancelled(True)
+        msg(event.getPlayer(), "&cSpectator teleportation is disabled")
+
+
+@hook.event("block.BlockFromToEvent", "highest")
+def on_flow(event):
+    if event.isCancelled():
+        return
+    block = event.getToBlock()
+    if block.getWorld().getName() == "Creative" and rs_material_broken_by_flow(str(block.getType())):
+        event.setCancelled(True)
+
+
+
+
+
+
 @simplecommand("sudo",
         usage        = "<player> [cmd..]",
         description  = "Makes <player> write [cmd..] in chat",
@@ -57,6 +99,7 @@ def on_sudo_command(sender, command, label, args):
     return "&cPlayer %s not found!" % target
 
 
+
 @simplecommand("me", 
         usage        = "[message..]",
         description  = "Sends a message in third person",
@@ -66,54 +109,8 @@ def on_me_command(sender, command, label, args):
     broadcast("utils.me", text + " ".join(args), usecolor = sender.hasPermission("essentials.chat.color"))
     return None
 
-#
-#@hook.command("gm")
-#def on_gm_command(sender, args):
-#  """
-#  /gm - custom gamemode command with extra perms for greater control
-#  """
-#  if not is_player(sender):
-#    msg(sender, "&cDerp! Can't run that from console!")
-#    return True
-#  if not checkargs(sender, args, 1, 2):
-#    return True
-#  mode = args[0]
-#  target = args[1]
-#  if target and not sender.hasPermission("utils.gm.other"):
-#    msg(sender, "&cYou cannot change the gamemode of another player!")
-#  else:
-#    target = sender
-#  if mode < 0 or mode > 3:
-#    msg(sender, "&cThat gamemode does not exist!")
-#  elif sender.hasPermission("utils.gm." % mode):
-#    runas(server.getConsoleSender(), "gamemode " % mode % " " % target)
-#  else:
-#    msg(sender, "&cYou cannot access that gamemode!")
-#  return True
 
 
-last_shear = 0.0
-
-@hook.event("player.PlayerInteractEntityEvent")
-def on_player_entity_interact(event):
-    """
-    Clicking redstone_sheep with shears will drop redstone + wool
-    also makes a moo sound for the shearer
-    """
-    global last_shear
-    if not event.isCancelled():
-        shear_time = now()
-        if last_shear + 0.4 < shear_time:
-            last_shear = shear_time
-            sender = event.getPlayer()
-            entity = event.getRightClicked()
-            if is_player(entity) and uid(entity) == "ae795aa8-6327-408e-92ab-25c8a59f3ba1" and str(sender.getItemInHand().getType()) == "SHEARS" and is_creative(sender):
-                for _ in range(5):
-                    entity.getWorld().dropItemNaturally(entity.getLocation(), ItemStack(bukkit.Material.getMaterial("REDSTONE")))
-                    entity.getWorld().dropItemNaturally(entity.getLocation(), ItemStack(bukkit.Material.getMaterial("WOOL")))
-                sender.playSound(entity.getLocation(), "mob.cow.say", 1, 1)
-
-"""
 @hook.command("pluginversions")
 def on_pluginversions_command(sender, command, label, args):
     ""
@@ -131,7 +128,6 @@ def on_pluginversions_command(sender, command, label, args):
         return True
     except:
         error(trace())
-"""
 
 
 @hook.command("echo")
@@ -141,6 +137,7 @@ def on_echo_command(sender, command, label, args):
     essentials echo sucks and prints mail alerts sometimes
     """
     msg(sender, " ".join(args).replace("\\n", "\n"))
+
 
 
 def eval_thread(sender, code):
@@ -160,29 +157,6 @@ def eval_thread(sender, code):
         msg(sender, ">>> %s: %s" % (eclass.__name__, e) + "\n ", False, "c")
     thread.exit()
 
-"""
-def eval_argument_thread(event):
-    words = event.getMessage()[5:].split(" ")
-    for i in range(len(words)):
-        word = words[i]
-        if is_pyeval_call(word):
-            code = word[5:]
-            try:
-                result = unicode(eval(code))
-            except:
-                e = exc_info()[1]
-                try:
-                    eclass = e.__class__
-                except AttributeError:
-                    eclass = type(e)
-                msg(event.getPlayer(), ">>> %s: %s" % (eclass.__name__, e) + "\n ", False, "c")
-                result = code
-            words[i] = result
-    event.setMessage(" ".join(words))
-    thread.exit()
-"""
-
-
 @simplecommand("pyeval",
         usage       = "[code..]",
         description = "Runs python [code..] and returns the result",
@@ -191,6 +165,7 @@ def on_pyeval_command(sender, command, label, args):
     msg(sender, " ".join(args), False, "e")
     thread.start_new_thread(eval_thread, (sender, " ".join(args)))
     return None
+
 
 
 @simplecommand("tempadd",
@@ -220,6 +195,7 @@ def tempadd_command(sender, command, label, args):
     return "&aAdded to group for %dd%dh%dm" % (d, h, m)
 
 
+
 @hook.command("modules")
 def on_modules_command(sender, command, label, args):
     """
@@ -229,65 +205,9 @@ def on_modules_command(sender, command, label, args):
     plugin_header(sender, "Modules")
     msg(sender, ", ".join([(("&a" if mod in shared["modules"] else "&c") + mod) for mod in shared["load_modules"]]))
 
-
-@hook.event("player.PlayerTeleportEvent")
-def on_player_teleport(event):
-    """
-    Disable spectator teleportation
-    """
-    player = event.getPlayer()
-    if not event.isCancelled() and str(event.getCause()) == "SPECTATE" and not player.hasPermission("utils.tp.spectate"):
-        event.setCancelled(True)
-        msg(event.getPlayer(), "&cSpectator teleportation is disabled")
-
-@hook.event("block.BlockFromToEvent", "highest")
-def on_flow(event):
-    if event.isCancelled():
-        return
-    block = event.getToBlock()
-    if block.getWorld().getName() == "Creative" and rs_material_broken_by_flow(str(block.getType())):
-        event.setCancelled(True)
-
 def rs_material_broken_by_flow(material):
     if material in ("REDSTONE", "LEVER", "TRIPWIRE"):
         return True
     parts = material.split("_")
     length = len(parts)
     return length > 1 and (parts[0] == "DIODE" or parts[1] in ("TORCH", "WIRE", "BUTTON", "HOOK") or (length == 3 and parts[1] == "COMPARATOR"))
-
-
-"""
-@hook.event("player.AsyncPlayerChatEvent", "lowest")
-def on_chat(event):
-    user = event.getPlayer()
-    if user.hasPermission("utils.pyeval"):
-        thread.start_new_thread(eval_argument_thread, (event,))
-
-@hook.event("player.PlayerCommandPreprocessEvent", "lowest")
-def on_cmd(event):
-    user = event.getPlayer()
-    if user.hasPermission("utils.pyeval"):
-        thread.start_new_thread(eval_argument_thread, (event,))
-
-def is_pyeval_call(string):
-    return len(string) > 5 and string[:5] == "EVAL:"
-"""
-
-
-
-
-
-@hook.event("player.PlayerGameModeChangeEvent", "low")
-def on_gamemode(event):
-    user = event.getPlayer()
-    if str(event.getNewGameMode()) != "SPECTATOR" and user.getWorld().getName() == "Trusted" and not user.hasPermission("mv.bypass.gamemode." + trusted_world):
-        event.setCancelled(True)
-
-@hook.event("player.PlayerBedEnterEvent")
-def on_bed_enter(event):
-    if event.getPlayer().getWorld().getName() in ("Survival_1", "TrustedSurvival_1"):
-        event.getPlayer().setSleepingIgnored(True)
-
-@hook.event("player.PlayerBedLeaveEvent")
-def on_bed_leave(event):
-    event.getPlayer().setSleepingIgnored(False)
