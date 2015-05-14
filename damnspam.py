@@ -102,7 +102,7 @@ def on_block_break(event):
     global removing_input
 
     if removing_input:
-        return True
+        return
     sender = event.getPlayer()
     block  = event.getBlock()
     btype  = str(block.getType()).lower()
