@@ -19,7 +19,6 @@ def helpMsg(sender, cmd, description, usage, aliases, permission):
     return help_msg
 
 
-
 def simplecommand(cmd,
                 aliases     = [], 
                 usage       = "[args...]", 
@@ -60,6 +59,52 @@ def simplecommand(cmd,
                 return getHelp(sender)
             if not checkargs(sender, args, amin, amax):
                 return None
-            return function(sender, command, label, args)
+
+            try:
+                return function(sender, command, label, args)
+            except CommandException, e:
+                return e.message
+            except Exception, e:
+                error(e.message, trace())
+                return "&cAn internal error occurred while attempting to perform this command"
+
         return call
     return decorator
+
+
+class CommandException(Exception):
+    pass
+
+
+class Validate():
+    @staticmethod
+    def notNone(obj, msg):
+        if obj == null:
+            raise Exception(msg)
+
+    @staticmethod
+    def isPlayer(sender):
+        if not is_player(sender):
+            raise CommandException("&cThat command can only be run by players")
+
+    @staticmethod
+    def isConsole(sender):
+        if is_player(sender):
+            raise CommandException("&cThat command can only be run from the console")
+
+    @staticmethod
+    def isAuthorized(sender, permission):
+        if not sender.hasPermission(permission):
+            raise CommandException("&cYou do not have permission to use that command")
+
+    @staticmethod
+    def isTrue(obj, msg):
+        if obj != True:
+            raise CommandException(msg)
+
+    @staticmethod
+    def checkArgs(sender, args, amin, amax):
+        if not checkargs(sender, args, amin, amax):
+            raise CommandException("")
+
+    
