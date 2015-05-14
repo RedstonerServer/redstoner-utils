@@ -143,11 +143,9 @@ def on_interact(event):
             checktime = data["timeout_on"] if powered else data["timeout_off"]
             if checktime == -1:
                 event.setCancelled(True)
-                plugin_header(sender, "DamnSpam")
-                msg(sender, "&cThis %s is locked permanently." % (btype))
+                msg(sender, "&cThis %s is locked permanently by /damnspam." % (btype))
             elif data["last_time"] + checktime > now():
                 event.setCancelled(True)
-                plugin_header(sender, "DamnSpam")
-                msg(sender, "&cThis %s has a timeout of %ss." % (btype, checktime))
+                msg(sender, "&cThis %s has a damnspam timeout of %ss." % (btype, checktime))
             else:
                 inputs[pos_str]["last_time"] = round(now(), 2)
