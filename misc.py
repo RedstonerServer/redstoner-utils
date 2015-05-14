@@ -1,6 +1,7 @@
 #pylint: disable = F0401
 from helpers import *
 from time import time as now
+from time import sleep
 from sys import exc_info
 import thread
 import org.bukkit.inventory.ItemStack as ItemStack
@@ -45,13 +46,10 @@ def on_gamemode(event):
 
 @hook.event("player.PlayerBedEnterEvent")
 def on_bed_enter(event):
-    if event.getPlayer().getWorld().getName() in ("Survival_1", "TrustedSurvival_1"):
-        event.getPlayer().setSleepingIgnored(True)
-
-
-@hook.event("player.PlayerBedLeaveEvent")
-def on_bed_leave(event):
-    event.getPlayer().setSleepingIgnored(False)
+    world = event.getPlayer().getWorld()
+    if world.getName() in ("Survival_1", "TrustedSurvival_1"):
+        for player in world.getPlayers():
+            player.setSleepingIgnored(True)
 
 
 @hook.event("player.PlayerTeleportEvent")
