@@ -63,8 +63,3 @@ def simplecommand(cmd,
             return function(sender, command, label, args)
         return call
     return decorator
-
-
-
-
-

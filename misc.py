@@ -73,7 +73,12 @@ def on_flow(event):
     if block.getWorld().getName() == "Creative" and rs_material_broken_by_flow(str(block.getType())):
         event.setCancelled(True)
 
-
+def rs_material_broken_by_flow(material):
+    if material in ("REDSTONE", "LEVER", "TRIPWIRE"):
+        return True
+    parts = material.split("_")
+    length = len(parts)
+    return length > 1 and (parts[0] == "DIODE" or parts[1] in ("TORCH", "WIRE", "BUTTON", "HOOK") or (length == 3 and parts[1] == "COMPARATOR"))
 
 
 
@@ -113,10 +118,10 @@ def on_me_command(sender, command, label, args):
 
 @hook.command("pluginversions")
 def on_pluginversions_command(sender, command, label, args):
-    ""
+    """
     /pluginversions
     print all plugins + versions; useful when updating plugins
-    ""
+    """
     try:
         plugin_header(sender, "Plugin versions")
         plugins = [pl.getDescription() for pl in list(ArrayList(java_array_to_list(server.getPluginManager().getPlugins())))]
@@ -205,9 +210,3 @@ def on_modules_command(sender, command, label, args):
     plugin_header(sender, "Modules")
     msg(sender, ", ".join([(("&a" if mod in shared["modules"] else "&c") + mod) for mod in shared["load_modules"]]))
 
-def rs_material_broken_by_flow(material):
-    if material in ("REDSTONE", "LEVER", "TRIPWIRE"):
-        return True
-    parts = material.split("_")
-    length = len(parts)
-    return length > 1 and (parts[0] == "DIODE" or parts[1] in ("TORCH", "WIRE", "BUTTON", "HOOK") or (length == 3 and parts[1] == "COMPARATOR"))
