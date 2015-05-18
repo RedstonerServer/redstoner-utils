@@ -180,24 +180,23 @@ def known_player(player):
     return player.hasPlayedBefore()
 
 
-def open_json_file(filename, default):
+def open_json_file(filename, default = None):
     """
     opens the given json file and returns an object or returns None on error
-    filename is the path + name of the file.
+    filename is only the name of the file without .json appended.
     """
-    data = None
     try:
         with open("plugins/redstoner-utils.py.dir/files/%s.json" % filename) as obj:
-            data = json_loads(obj.read())
+            default = json_loads(obj.read())
     except Exception, e:
         error("Failed to read from %s: %s" % (filename, e))
-    return (default if data is None else data)
+    return default
 
 
 def save_json_file(filename, obj):
     """
     saves the given object as json into filename
-    filename is the path + name of the file.
+    filename is only the name of the file without .json appended.
     """
     try:
         with open("plugins/redstoner-utils.py.dir/files/%s.json" % filename, "w") as f:
