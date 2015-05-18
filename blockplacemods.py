@@ -254,7 +254,8 @@ def on_block_place(event):
 
 
         elif ((material == Material.FURNACE and player.hasPermission("utils.toggle.furnace"))
-            or (material == Material.DROPPER and player.hasPermission("utils.toggle.dropper")) 
+            or (material == Material.DROPPER and player.hasPermission("utils.toggle.dropper"))
+            or (material == Material.HOPPER and player.hasPermission("utils.toggle.hopper")) 
             ):
             stacks = get(str(material).lower()).get(uuid)
             if stacks != None: # Enabled
