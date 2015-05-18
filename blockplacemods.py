@@ -150,7 +150,7 @@ def toggle_command(sender, command, label, args):
 
             slot = int(arg2) if arg2.isdigit() else 0 
             if not (0 <= slot <= details[4]):
-                return " &cSlot number must be between 1 and %s!" % details[4]
+                return " &cSlot number must be more than or equal to 0 and less than or equal to %s!" % details[4]
 
             item = fromStack(player.getItemInHand())
             if item[0] == 0 or item[1] <= 0:
@@ -173,7 +173,7 @@ def toggle_command(sender, command, label, args):
                 values[uuid] = {}
             values[uuid][slot] = item
             saveSettings()
-            return ((" &aEnabled setting %s, S" % setting) if len(values[uuid]) == 1 else "&as") + "et itemstack in slot %s to item in hand" % (slot)
+            return ((" &aEnabled setting %s, S" % setting) if len(values[uuid]) == 1 else " &aS") + "et itemstack in slot %s to item in hand" % (slot)
 
         return None #This shouldn't happen
     except CommandException, e:
