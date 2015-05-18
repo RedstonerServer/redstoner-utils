@@ -79,8 +79,8 @@ class CommandException(Exception):
 class Validate():
     @staticmethod
     def notNone(obj, msg):
-        if obj == null:
-            raise Exception(msg)
+        if obj == None:
+            raise CommandException(msg)
 
     @staticmethod
     def isPlayer(sender):
@@ -93,9 +93,9 @@ class Validate():
             raise CommandException("&cThat command can only be run from the console")
 
     @staticmethod
-    def isAuthorized(sender, permission):
+    def isAuthorized(sender, permission, msg = "that command"):
         if not sender.hasPermission(permission):
-            raise CommandException("&cYou do not have permission to use that command")
+            raise CommandException("&cYou do not have permission to use " + msg)
 
     @staticmethod
     def isTrue(obj, msg):
