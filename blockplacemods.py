@@ -50,9 +50,9 @@ settingInformation = dict( #[setting type, identifying description, detailed des
 )
 
 defaults = {
-    0: [], 
-    1: {},
-    2: []
+    0: list, 
+    1: dict,
+    2: list
 }
 
 faces = {
@@ -68,7 +68,7 @@ playerSettings = open_json_file("blockplacemods", {})
 
 for setting, details in settingInformation.iteritems():
     if playerSettings.get(setting) == None:
-        playerSettings[setting] = defaults[details[0]]
+        playerSettings[setting] = defaults[details[0]]()
 
 def get(setting):
     return playerSettings[setting]
