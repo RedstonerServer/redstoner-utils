@@ -36,13 +36,13 @@ def on_join(event):
         msg(player, "&6You can use /back if you &nreally&6 want to go back")
         player.teleport(player.getWorld().getSpawnLocation())
 
-"""
+
 # Prevent /up griefing. //up is blocked by PlotMe.
 @hook.event("player.PlayerCommandPreprocessEvent", "low")
 def on_command(event):
     if event.getMessage()[:4].lower() == "/up ":
         event.setMessage("/" + event.getMessage())
-"""
+
 
 """ Disabled while builder can't access Trusted
 @hook.event("player.PlayerGameModeChangeEvent", "low")
