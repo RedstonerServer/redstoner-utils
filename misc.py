@@ -42,7 +42,7 @@ def on_join(event):
 def on_command(event):
     if event.getMessage()[:4].lower() == "/up ":
         event.setCancelled(True)
-        runas(event.getPlayer(), "/" + event.getMessage())
+        runas(event.getPlayer(), event.getMessage()) # Adds / automatically.
 
 
 """ Disabled while builder can't access Trusted
