@@ -41,7 +41,8 @@ def on_join(event):
 @hook.event("player.PlayerCommandPreprocessEvent", "low")
 def on_command(event):
     if event.getMessage()[:4].lower() == "/up ":
-        event.setMessage("/" + event.getMessage())
+        event.setCancelled(True)
+        runas(event.getPlayer(), "/" + event.getMessage())
 
 
 """ Disabled while builder can't access Trusted
