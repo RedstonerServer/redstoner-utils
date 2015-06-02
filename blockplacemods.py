@@ -95,123 +95,83 @@ def getSettingDetails(arg):
         helpSubcmd = True,
         amax = 2)
 def toggle_command(sender, command, label, args):
-    try:
-        setting, details = getSettingDetails(args[0])
-        Validate.isAuthorized(sender, "utils.toggle." + setting, "that setting")
+    setting, details = getSettingDetails(args[0])
+    Validate.isAuthorized(sender, "utils.toggle." + setting, "that setting")
 
-        values = get(setting)
-        player = server.getPlayer(sender.getName())
-        uuid   = uid(player)
-        arglen = len(args)
+    values = get(setting)
+    player = server.getPlayer(sender.getName())
+    uuid   = uid(player)
+    arglen = len(args)
 
-        if details[0] in (0,2): # Toggle
-            default = details[0] == 0 # If True: toggle on if list doesn't contain the uuid
+    if details[0] in (0,2): # Toggle
+        default = details[0] == 0 # If True: toggle on if list doesn't contain the uuid
 
-            enabled = (uuid not in values) == default #Invert if details[0] == 2 (toggle disabled by default)
-            info("Enabled: " + str(enabled))
-            new     = None
-            if arglen == 1:
+        enabled = (uuid not in values) == default #Invert if details[0] == 2 (toggle disabled by default)
+        new     = None
+        if arglen == 1:
+            new = not enabled
+        else:
+            arg2 = args[1].lower()
+            if arg2 == "info":
+                return " &aSetting %s:\n &9%s\n &6Accepted arguments: [on|enable|off|disable|toggle|switch|info]\n &6Aliases: %s" % (setting, details[2], ", ".join(details[3]))
+            elif arg2 in ("toggle", "switch"):
                 new = not enabled
+            elif arg2 in ("on", "enable"):
+                new = not default
+            elif arg2 in ("off", "disable"):
+                new = default
             else:
-                arg2 = args[1].lower()
-                if arg2 == "info":
-                    return " &aSetting %s:\n &9%s\n &6Accepted arguments: [on|enable|off|disable|toggle|switch|info]\n &6Aliases: %s" % (setting, details[2], ", ".join(details[3]))
-                elif arg2 in ("toggle", "switch"):
-                    new = not enabled
-                elif arg2 in ("on", "enable"):
-                    new = True == default
-                    info("New: " + str(new))
-                elif arg2 in ("off", "disable"):
-                    new = False == default
-                    info("New: " + str(new))
-                else:
-                    return " &cArgument '%s' was not recognized. \n Use &o/toggle %s info &cfor more information" % (arg2, setting)
-            if enabled == new:
-                return " &cAlready %s: &a%s" % ("enabled" if enabled else "disabled", details[1])
-            if new == default:
-                values.remove(uuid)
-            else:
-                values.append(uuid)
-            saveSettings()
-            return (" &aEnabled " if new else " &aDisabled ") + details[1]
+                return " &cArgument '%s' was not recognized. \n Use &o/toggle %s info &cfor more information" % (arg2, setting)
+        if enabled == new:
+            return " &cAlready %s: &a%s" % ("enabled" if enabled else "disabled", details[1])
+        if new == default:
+            values.remove(uuid)
+        else:
+            values.append(uuid)
+        saveSettings()
+        return (" &aEnabled " if new else " &aDisabled ") + details[1]
 
 
-        elif details[0] == 1: # Save ItemStack in hand
-            arg2 = args[1].lower() if arglen > 1 else ""
-            enabled = uuid in values
+    elif details[0] == 1: # Save ItemStack in hand
+        arg2 = args[1].lower() if arglen > 1 else ""
+        enabled = uuid in values
 
-            if arg2 == "clear":
-                if enabled:
-                    del values[uuid]
-                return " &aDisabled " + details[1]
+        if arg2 == "clear":
+            if enabled:
+                del values[uuid]
+            return " &aDisabled " + details[1]
 
-            if arg2 == "details":
-                return " &aSetting %s:\n &9%s \n&6Accepted arguments: [<slot>|clear|details]" % (setting, details[2])
+        if arg2 == "details":
+            return " &aSetting %s:\n &9%s \n&6Accepted arguments: [<slot>|clear|details]" % (setting, details[2])
 
-            slot = int(arg2) if arg2.isdigit() else 0 
-            if not (0 <= slot <= details[4]):
-                return " &cSlot number must be more than or equal to 0 and less than or equal to %s!" % details[4]
+        slot = int(arg2) if arg2.isdigit() else 0 
+        if not (0 <= slot <= details[4]):
+            return " &cSlot number must be more than or equal to 0 and less than or equal to %s!" % details[4]
 
-            item = fromStack(player.getItemInHand())
-            if item[0] == 0 or item[1] <= 0:
-                if enabled: 
-                    items = values[uuid]
-                    if slot in items:
-                        del items[slot]
-                        saveSettings()
-                        if len(items) == 0:
-                            del values[uuid]
-                            return " &aDisabled " + details[1]
-                        return " &aCleared slot %s of setting %s" % (slot, setting)
-                    return " &cSlot %s of setting %s was already cleared!" % (slot, setting)
-                return " &cAlready disabled: " + details[1]
+        item = fromStack(player.getItemInHand())
+        if item[0] == 0 or item[1] <= 0:
+            if enabled: 
+                items = values[uuid]
+                if slot in items:
+                    del items[slot]
+                    saveSettings()
+                    if len(items) == 0:
+                        del items
+                        return " &aDisabled " + details[1]
+                    return " &aCleared slot %s of setting %s" % (slot, setting)
+                return " &cSlot %s of setting %s was already cleared!" % (slot, setting)
+            return " &cAlready disabled: " + details[1]
 
-            if arglen == 2 and not arg2.isdigit():
-                return " &cArgument '%s' was not recognized. \nUse &o/toggle %s details &cfor more detailsrmation." % (arg2, setting)
+        if arglen == 2 and not arg2.isdigit():
+            return " &cArgument '%s' was not recognized. \nUse &o/toggle %s details &cfor more detailsrmation." % (arg2, setting)
 
-            if not enabled:
-                values[uuid] = {}
-            values[uuid][slot] = item
-            saveSettings()
-            return ((" &aEnabled setting %s, S" % setting) if len(values[uuid]) == 1 else " &aS") + "et itemstack in slot %s to item in hand" % (slot)
+        if not enabled:
+            values[uuid] = {}
+        values[uuid][slot] = item
+        saveSettings()
+        return ((" &aEnabled setting %s, S" % setting) if len(values[uuid]) == 1 else " &aS") + "et itemstack in slot %s to item in hand" % (slot)
 
-        return None #This shouldn't happen
-    except CommandException, e:
-        raise e
-    except:
-        error(trace())
-
-"""
-        if info[0] in (0,2): # Toggle
-            default = info[0] == 0
-
-            enabled = (uuid not in values) == default #Invert if info[0] == 2 (toggle disabled by default)
-            info("Enabled": True)
-            new     = None
-            if arglen == 1:
-                new = not enabled
-            else:
-                arg2 = args[1].lower()
-                if arg2 == "info":
-                    return " &aSetting %s:\n &9%s\n &6Accepted arguments: [on|enable|off|disable|toggle|switch]\n &6Aliases: %s" % (setting, info[2], ", ".join(info[3]))
-                elif arg2 in ("toggle", "switch"):
-                    new = not enabled
-                elif arg2 in ("on", "enable"):
-                    new = True == default
-                elif arg2 in ("off", "disable"):
-                    new = False == default
-                else:
-                    return " &cArgument '%s' was not recognized. \nUse &o/toggle %s info &cfor more information" % (arg2, setting)
-            if enabled == new:
-                return " &cAlready %s: &a%s" % ("enabled" if enabled else "disabled", info[1])
-            if new:
-                values.remove(uuid)
-            else:
-                values.append(uuid)
-            saveSettings()
-            return (" &aEnabled " if new else " &aDisabled ") + info[1]
-"""
-
+    return None #This shouldn't happen
 
 
 def fromStack(itemStack):
@@ -226,62 +186,59 @@ def isEnabled(toggleSetting, uuid):
 
 @hook.event("block.BlockPlaceEvent", "monitor")
 def on_block_place(event):
-    try:
-        if event.isCancelled():
-            return
-        player = event.getPlayer()
-        if not is_creative(player):
-            return
+    if event.isCancelled():
+        return
+    player = event.getPlayer()
+    if not is_creative(player):
+        return
 
-        uuid     = uid(player)
-        block    = event.getBlockPlaced()
-        material = block.getType()
-
-
-        if (material in (Material.WOOD_STEP, Material.STEP) 
-            and isEnabled("slab", uuid) 
-            and player.hasPermission("utils.toggle.slab") 
-            and block.getData() < 8
-            ):
-            block.setData(block.getData() + 8) # Flip upside down
+    uuid     = uid(player)
+    block    = event.getBlockPlaced()
+    material = block.getType()
 
 
-        elif (material == Material.CAULDRON 
-            and isEnabled("cauldron", uuid) 
-            and player.hasPermission("utils.toggle.cauldron")
-            ):
-            block.setData(3) #3 layers of water, 3 signal strength
+    if (material in (Material.WOOD_STEP, Material.STEP) 
+        and isEnabled("slab", uuid) 
+        and player.hasPermission("utils.toggle.slab") 
+        and block.getData() < 8
+        ):
+        block.setData(block.getData() + 8) # Flip upside down
 
 
-        elif ((material == Material.FURNACE and player.hasPermission("utils.toggle.furnace"))
-            or (material == Material.DROPPER and player.hasPermission("utils.toggle.dropper"))
-            or (material == Material.HOPPER and player.hasPermission("utils.toggle.hopper")) 
-            ):
-            stacks = get(str(material).lower()).get(uuid)
-            if stacks != None: # Enabled
-                state = block.getState()
-                inv = state.getInventory()
-                for slot, stack in stacks.iteritems():
-                    inv.setItem(int(slot), toStack(stack))
-                state.update()
-
-        """
-        elif (material == Material.REDSTONE_TORCH_ON
-            and event.getBlockAgainst().getType() == Material.REDSTONE_BLOCK
-            and isEnabled("torch", uuid) 
-            and player.hasPermission("utils.toggle.torch")
-            ):
-            torches_to_break.append(block)
-        """
+    elif (material == Material.CAULDRON 
+        and isEnabled("cauldron", uuid) 
+        and player.hasPermission("utils.toggle.cauldron")
+        ):
+        block.setData(3) #3 layers of water, 3 signal strength
 
 
-        if (material in (Material.PISTON_BASE, Material.PISTON_STICKY_BASE) #Not elif because for droppers it can do 2 things
-            and isEnabled("piston", uuid)
-            and player.hasPermission("utils.toggle.piston")
-            ):
-            block.setData(faces[block.getFace(event.getBlockAgainst())])
-    except:
-        error(trace())
+    elif ((material == Material.FURNACE and player.hasPermission("utils.toggle.furnace"))
+        or (material == Material.DROPPER and player.hasPermission("utils.toggle.dropper"))
+        or (material == Material.HOPPER and player.hasPermission("utils.toggle.hopper")) 
+        ):
+        stacks = get(str(material).lower()).get(uuid)
+        if stacks != None: # Enabled
+            state = block.getState()
+            inv = state.getInventory()
+            for slot, stack in stacks.iteritems():
+                inv.setItem(int(slot), toStack(stack))
+            state.update()
+
+    """
+    elif (material == Material.REDSTONE_TORCH_ON
+        and event.getBlockAgainst().getType() == Material.REDSTONE_BLOCK
+        and isEnabled("torch", uuid) 
+        and player.hasPermission("utils.toggle.torch")
+        ):
+        torches_to_break.append(block)
+    """
+
+
+    if (material in (Material.PISTON_BASE, Material.PISTON_STICKY_BASE)
+        and isEnabled("piston", uuid)
+        and player.hasPermission("utils.toggle.piston")
+        ):
+        block.setData(faces[block.getFace(event.getBlockAgainst())])
 
 
 @hook.event("player.PlayerInteractEvent", "monitor")

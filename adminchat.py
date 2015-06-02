@@ -1,8 +1,12 @@
 #pylint: disable = F0401
 from helpers import *
+from basecommands import simplecommand
 
 ac_permission  = "utils.ac"
-ac_key         = ","
+
+ac_defaultkey  = ","
+ac_keys        = open_json_file("adminchat_keys", {})
+
 ac_toggle_list = []
 ac_prefix      = "&8[&cAC&8]"
 
@@ -13,6 +17,7 @@ def adminchat(sender, msg):
     except AttributeError:
         name = sender.getName()
     broadcast(ac_permission, "%s &9%s&8: &b%s" % (ac_prefix, name, msg))
+    # Needs something here like fine(message) to show up in the logs when you use ackey, but fine doesnt work for some reason. It did on the server with /pyeval (not show up on console, but show up in logs nevertheless)
 
 
 # ac toggle
@@ -41,16 +46,41 @@ def on_ac_command(sender, args):
         noperm(sender)
     return True
 
+def get_key(uuid):
+    key = ac_keys.get(uuid)
+    return key if key != None else ac_defaultkey
+
+@simplecommand("adminchatkey", 
+        aliases = ["ackey"], 
+        senderLimit = 0, 
+        helpNoargs = True, 
+        helpSubcmd = True, 
+        description = "Sets a key character for adminchat", 
+        usage = "<key>")
+def adminchatkey_command(sender, command, label, args):
+    key = " ".join(args)
+    uuid = uid(sender)
+    if key.lower() == "default" or key == ac_defaultkey:
+        del ac_keys[uuid]
+        save_keys()
+        return "&aYour adminchat key was set to the default character: '&c%s&a'" % ac_defaultkey
+    ac_keys[uid(sender)] = key
+    save_keys()
+    return "&aYour adminchat key was set to: '&c%s&a'" % key
+
+def save_keys():
+    save_json_file("adminchat_keys", ac_keys)
+
 
 @hook.event("player.AsyncPlayerChatEvent", "low")
 def on_chat(event):
     sender = event.getPlayer()
     msg = event.getMessage()
     if sender.hasPermission(ac_permission) and not event.isCancelled():
-        if msg[:len(ac_key)] == ac_key:
-            #This solution to log any AC isn't very optimised as it will check for permission twice. Any fix for this?
-            runas(sender, "ac " + msg[1:])
+        key = get_key(uid(sender))
+        if sender.getName() in ac_toggle_list:
+            adminchat(sender, msg)
             event.setCancelled(True)
-        elif sender.getName() in ac_toggle_list:
-            runas(sender, "ac " + msg)
+        if msg[:len(key)] == key:
+            adminchat(sender, msg[len(key):])
             event.setCancelled(True)

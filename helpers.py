@@ -39,6 +39,13 @@ def error(text):
     """
     server.getLogger().severe("[RedstonerUtils] %s" % text)
 
+
+def fine(text):
+    """
+    Log anything to the logs alone, not the console
+    """
+    server.getLogger().fine(text)
+
 def msg(player, text, usecolor = True, basecolor = None):
     """
     send a message to player
@@ -217,5 +224,3 @@ def toggle(player, ls, name = "Toggle", add = None):
     elif add != False:
         ls.append(pid)
         msg(player, "&a%s turned on!" % name)
-
-

@@ -37,11 +37,20 @@ def on_join(event):
         player.teleport(player.getWorld().getSpawnLocation())
 
 
+# Prevent /up griefing. //up is blocked by PlotMe.
+@hook.event("player.PlayerCommandPreprocessEvent", "low")
+def on_command(event):
+    if event.getMessage()[:4].lower() == "/up ":
+        event.setMessage("/" + event.getMessage())
+
+
+""" Disabled while builder can't access Trusted
 @hook.event("player.PlayerGameModeChangeEvent", "low")
 def on_gamemode(event):
     user = event.getPlayer()
     if str(event.getNewGameMode()) != "SPECTATOR" and user.getWorld().getName() == "Trusted" and not user.hasPermission("mv.bypass.gamemode.Trusted"):
         event.setCancelled(True)
+"""
 
 
 @hook.event("player.PlayerBedEnterEvent")
@@ -207,4 +216,20 @@ def on_modules_command(sender, command, label, args):
     """
     plugin_header(sender, "Modules")
     msg(sender, ", ".join([(("&a" if mod in shared["modules"] else "&c") + mod) for mod in shared["load_modules"]]))
+
+
+""" Something I'm planning for schematics
+@hook.event("player.PlayerCommandPreprocessEvent", "low")
+def on_command(event):
+    msg = " ".split(event.getMessage())
+    if len(msg) < 3:
+        return
+    if msg[0].lower() not in ("/schematic", "/schem"):
+        return
+    if msg[1].lower() not in ("save", "load"):
+        return
+    msg[2] = event.getPlayer().getName() + "/" + msg[2]
+"""
+
+
 

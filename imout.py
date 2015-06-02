@@ -1,4 +1,3 @@
-import thread
 from helpers import *
 from adminchat import *
 
