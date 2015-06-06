@@ -38,12 +38,13 @@ def on_join(event):
         player.teleport(player.getWorld().getSpawnLocation())
 
 
+"""
 @hook.event("player.PlayerCommandPreprocessEvent", "low")
 def cmd_event(event):
     args = event.getMessage().split(" ")
     if args[0].lower() in ("/up", "/worldedit:up"):
         event.setMessage("//up " + " ".join(args[1:]))
-
+"""
 
 """ Disabled while builder can't access Trusted
 @hook.event("player.PlayerGameModeChangeEvent", "low")
