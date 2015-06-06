@@ -9,6 +9,7 @@ import org.bukkit.Bukkit as Bukkit
 from basecommands import simplecommand
 
 
+
 @hook.event("player.PlayerJoinEvent", "monitor")
 def on_join(event):
     """
@@ -37,12 +38,11 @@ def on_join(event):
         player.teleport(player.getWorld().getSpawnLocation())
 
 
-# Prevent /up griefing. //up is blocked by PlotMe.
 @hook.event("player.PlayerCommandPreprocessEvent", "low")
-def on_command(event):
-    if event.getMessage()[:4].lower() == "/up ":
-        event.setCancelled(True)
-        runas(event.getPlayer(), event.getMessage()) # Adds / automatically.
+def cmd_event(event):
+    args = event.getMessage().split(" ")
+    if args[0].lower() in ("/up", "/worldedit:up"):
+        event.setMessage("//up " + " ".join(args[1:]))
 
 
 """ Disabled while builder can't access Trusted

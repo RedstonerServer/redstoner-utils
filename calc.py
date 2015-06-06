@@ -53,7 +53,7 @@ def on_calc_command(sender, command, label, args):
     if not checkargs(sender, args, 0, 1):
         return True
     if not is_player(sender):
-        msg(sender, "&cYou are not a player!" % sender)
+        msg(sender, "&cYou are not a player!")
         return True
 
     toggle(sender, calc_users, name = "Calc")
