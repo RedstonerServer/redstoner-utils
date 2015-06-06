@@ -37,14 +37,39 @@ def on_join(event):
         msg(player, "&6You can use /back if you &nreally&6 want to go back")
         player.teleport(player.getWorld().getSpawnLocation())
 
+"""
+This code fixes /up 0 destroying/replacing blocks in plots that are not yours.
+If you use //up, this is caught by plotme and cancelled if you are not allowed to build.
+However, if you use //up, WorldEdit does the following on "low" priority:
+* Change the command to /up with the same arguments
+* Run another event with /up but its cancelled (dunno why it does this)
+
+Keep in mind that, on "lowest" priority, PlotMe might cancel events.
+
 
 """
-@hook.event("player.PlayerCommandPreprocessEvent", "low")
+dup = 0 #Used to store when someone used //up
+
+@hook.event("player.PlayerCommandPreprocessEvent", "lowest")
 def cmd_event(event):
+    global dup
+    if event.getMessage().split(" ")[0] in ("//up", "/worldedit:/up"):
+        dup = True
+
+@hook.event("player.PlayerCommandPreprocessEvent", "normal")
+def cmd_event2(event):
+    global dup
     args = event.getMessage().split(" ")
     if args[0].lower() in ("/up", "/worldedit:up"):
-        event.setMessage("//up " + " ".join(args[1:]))
-"""
+        if dup: #If plotme cancelled this, it will not matter. This lets it through but PlotMe doesn't.
+            dup = False
+        elif not event.isCancelled():
+            event.setCancelled(True)
+            event.getPlayer().chat("//up " + " ".join(args[1:]))
+
+
+
+
 
 """ Disabled while builder can't access Trusted
 @hook.event("player.PlayerGameModeChangeEvent", "low")
