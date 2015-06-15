@@ -25,12 +25,11 @@ def on_enable():
 @hook.disable
 def on_disable():
     shared["modules"]["reports"].stop_reporting()
+    shared["modules"]["snowbrawl"].stop_match_end_thread()
     info("RedstonerUtils disabled!")
 
 
 info("Loading RedstonerUtils...")
-
-
 
 # Import all modules, in this order
 shared["load_modules"] = [
@@ -40,8 +39,8 @@ shared["load_modules"] = [
     "adminchat",
     # Adds /badge, allows to give players achievements
     "badges",
-    # Adds a few block placement corrections/mods
-    "blockplacemods",
+   	# Adds a few block placement corrections/mods
+   	"blockplacemods",
     # Adds /calc, toggles automatic solving of Math expressions in chat
     "calc",
     # Plugin to locate laggy chunks. /lc <n> lists chunks with more than n entities
@@ -75,14 +74,12 @@ shared["load_modules"] = [
     # Adds /imout, displays fake leave/join messages
     "imout",
     #adds snowbrawl minigame
-    #"snowbrawl",
+    "snowbrawl",
     # Adds /tm [player] for a messages to be sent to this player via /msg
     "pmtoggle"
     # Replacement for LoginSecurity
     #"loginsecurity"
-    # NOTICE: If you add something here, please add a small descriptive comment above!
 ]
-
 shared["modules"] = {}
 for module in shared["load_modules"]:
     try:
@@ -91,4 +88,3 @@ for module in shared["load_modules"]:
     except:
         error("Failed to import module %s:" % module)
         error(print_traceback())
-
