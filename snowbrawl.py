@@ -36,7 +36,7 @@ queue = []
 def get_best(players):
     highest = 2147483647
     player_out = players[0]
-	for player in players:
+    for player in players:
         if player["deaths"] < highest:
             highest = player["deaths"]
             player_out = player
