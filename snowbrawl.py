@@ -380,7 +380,7 @@ def onHit(event):
         return
     entity = event.getEntity()
     location = entity.getLocation()
-    entity.getWorld().createExplosion(location.getX(), location.getY(), location.getZ(), float(0.5), False, False)
+    entity.getWorld().createExplosion(location.getX(), location.getY(), location.getZ(), float(1), False, False)
 
 
 @hook.event("player.PlayerInteractEvent", "high")
