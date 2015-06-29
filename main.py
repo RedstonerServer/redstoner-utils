@@ -25,7 +25,6 @@ def on_enable():
 @hook.disable
 def on_disable():
     shared["modules"]["reports"].stop_reporting()
-    shared["modules"]["snowbrawl"].stop_match_end_thread()
     info("RedstonerUtils disabled!")
 
 
