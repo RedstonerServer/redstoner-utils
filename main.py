@@ -75,7 +75,7 @@ shared["load_modules"] = [
     # Adds /imout, displays fake leave/join messages
     "imout",
     #adds snowbrawl minigame
-    #"snowbrawl",
+    "snowbrawl",
     # Adds /tm [player] for a messages to be sent to this player via /msg
     "pmtoggle"
     # Replacement for LoginSecurity
