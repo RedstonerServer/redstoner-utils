@@ -380,7 +380,7 @@ class Arena(object):
         for subdata in data["clicks"]:
             self.sign_click.append(NamedCoords(None, None).load(subdata))
         self.name = data["name"]
-                return self
+        return self
 
 #coord = an instance of Coords class, adds a name to it.
 class NamedCoords(object):
@@ -416,14 +416,14 @@ class NamedCoords(object):
 class Coords(object):
 
     def __init__(self, world = None, x = None, y = None, z = None, yaw = None, pitch = None):
-                if world == None:
-                        self.world = None
-                        self.x = None
-                        self.y = None
-                        self.z = None
-                        self.yaw = None
-                        self.pitch = None
-                        return
+        if world == None:
+            self.world = None
+            self.x = None
+            self.y = None
+            self.z = None
+            self.yaw = None
+            self.pitch = None
+            return
         if not isinstance(world, Location):
             self.x = x
             self.y = y
@@ -497,10 +497,10 @@ class Queue(object):
         self.queue.remove(args)
 
     #Check if queue contains player
-        def contains(self, player):
-        if player in self.queue:
-            return True
-        return False
+    def contains(self, player):
+    if player in self.queue:
+        return True
+    return False
     
     def clear(self):
         self.queue = []
@@ -607,12 +607,6 @@ def onHit(event):
 
 @hook.event("player.PlayerInteractEvent", "high")
 def onClick(event):
-        try:
-                bleh(event)
-        except:
-                print trace()
-
-def bleh(event):
     if event.getPlayer().getWorld().getName() != "minigames":
         return
     if str(event.getAction()) != "RIGHT_CLICK_BLOCK":
@@ -626,6 +620,7 @@ def bleh(event):
                 inv.setItemInHand(ItemStack(Material.SNOW_BALL, arena.get_refill()))
                 event.getPlayer().updateInventory()
                 break
+
     elif isinstance(block, bukkit.block.Sign):
         line = str(block.getLine(1))
         if not event.getPlayer().hasPermission(join_perm):
