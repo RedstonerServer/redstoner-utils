@@ -159,10 +159,10 @@ class Arena(object):
             for i in range(self.player_limit):
                 player = self.queue.get()
                 self.players.put(player)
-        for player in self.players.read():
-            self.player_stats[player.getName() + "_deaths"] = 0
-            self.spawn_player(player)
-            msg(player, "&6The match has started!")
+            for player in self.players.read():
+                self.player_stats[player.getName() + "_deaths"] = 0
+                self.spawn_player(player)
+                msg(player, "&6The match has started!")
 
     def end_match(self):
         lowest1 = 2147483647
