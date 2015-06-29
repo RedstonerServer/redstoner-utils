@@ -498,9 +498,9 @@ class Queue(object):
 
     #Check if queue contains player
     def contains(self, player):
-    if player in self.queue:
-        return True
-    return False
+        if player in self.queue:
+            return True
+        return False
     
     def clear(self):
         self.queue = []
