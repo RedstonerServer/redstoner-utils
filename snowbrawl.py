@@ -702,7 +702,7 @@ def arena_info(sender, args):
 
 def quit_match(sender):
     for arena in arenas:
-        if arena.in_queue(sender.getName()):
+        if arena.in_queue(sender):
             arena.remove_player(sender)
             msg(sender, "&a-&e Quit arena")
             return
