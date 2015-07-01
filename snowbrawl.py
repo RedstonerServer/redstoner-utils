@@ -536,7 +536,11 @@ def timings():
                     current_time = time.time()
                     start_time = arena.start_time
                     if arena.start_time + arena.match_goal < current_time:
-                        arena.end_match()
+                        try:
+                            arena.end_match()
+                        except:
+                            pass
+        time.sleep(0.1)
 
     
 timingsThread = threading.Thread(target = timings)
@@ -698,8 +702,8 @@ def arena_info(sender, args):
 
 def quit_match(sender):
     for arena in arenas:
-        if arena.in_queue(sender.getName()):
-            arena.remove_player(sender.getName())
+        if arena.in_queue(sender):
+            arena.remove_player(sender)
             msg(sender, "&a-&e Quit arena")
             return
     msg(sender, "&a-&e You're not in a queue")
