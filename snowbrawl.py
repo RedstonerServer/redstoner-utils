@@ -358,7 +358,7 @@ class Arena(object):
         return data
 
     def load(self, data):
-        self.explosion_damage = int(data["explosion"])
+        self.explosion_damage = float(data["explosion"])
         self.player_limit = int(data["players"])
         self.refill = int(data["refill"])
         self.arena_type = str(data["type"])
@@ -843,12 +843,12 @@ def modify_arena(sender, args):
                 msg(sender, "&a-&e Set player limit to:&6 %s" % int(args[2]))
             elif args[1] == "explosion":
                 try:
-                    int(args[2])
+                    float(args[2])
                 except ValueError:
                     msg(sender, "&cLast parameter has to be a number")
                     return
-                arena.set_explosion_damage(int(args[2]))
-                msg(sender, "&a-&e Set explosion power to:&6 %s" % int(args[2]))
+                arena.set_explosion_damage(float(args[2]))
+                msg(sender, "&a-&e Set explosion power to:&6 %s" % float(args[2]))
             elif args[1] == "refill":
                 try:
                     int(args[2])
