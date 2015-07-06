@@ -10,6 +10,7 @@ from java.util.UUID import fromString as juuid
 from operator import __contains__
 from traceback import format_exc as trace
 import random
+from synchronize import make_synchronized
 
 #file names
 file = "snowbrawl"
@@ -35,6 +36,7 @@ modify_command = "modify"
 modify_command_alias = "m"
 quit_command = "quit"
 
+#sorting
 
 
 class Arena(object):
@@ -164,42 +166,35 @@ class Arena(object):
                 self.spawn_player(player)
                 msg(player, "&6The match has started!")
 
+    def bubbleSort(self, alist):
+        for passnum in range(len(alist)-1,0,-1):
+            for i in range(passnum):
+                if self.player_stats[alist[i].getName()+"_deaths"]>self.player_stats[alist[i+1].getName()+"_deaths"]:
+                    temp = alist[i]
+                    alist[i] = alist[i+1]
+                    alist[i+1] = temp
+        return alist
+    
+    @make_synchronized
     def end_match(self):
-        lowest1 = 2147483647
-        lowest2 = 2147483647
-        lowest3 = 2147483647
-        best1 = None
-        best2 = None
-        best3 = None
-        for player in self.players.read():
-            if self.player_stats[player.getName() + "_deaths"] < lowest1:
-                best1 = player
-                lowest1 = self.player_stats[player.getName() + "_deaths"]
-                break
-        if best1 != None:
-            for player in self.players.read():
-                if self.player_stats[player.getName() + "_deaths"] < lowest2 and player.getName() != best1.getName():
-                    best2 = player
-                    lowest2 = self.player_stats[player.getName() + "_deaths"]
-                    break
-        if best1 != None and best2 != None:
-            for player in self.players.read():
-                if self.player_stats[player.getName() + "_deaths"] < lowest3 and player.getName() != best1.getName() and player.getName() != best2.getName():
-                    best3 = player
-                    lowest3 = self.player_stats[player.getName() + "_deaths"]
-                    break
+        print "Ending match"
+        try:
+            sorted_list = self.bubbleSort(self.players.read())
+        except:
+            print trace()
+	print "done sorting"
         for player in self.players.read():
             if player.isOnline():
                 loc = self.sign_location[0].get_location().get_location()
                 safetp(player, loc.getWorld(), loc.x, loc.y, loc.z, loc.yaw, loc.pitch)
                 msg(player, "&6================= Match over =================")
                 msg(player, "&c&c")
-                if best1 != None:
-                    msg(player, "&e1. %s (%s)" % (best1.getName(), lowest1))
-                if best2 != None:
-                    msg(player, "&e2. %s (%s)" % (best2.getName(), lowest2))
-                if best3 != None:
-                    msg(player, "&e3. %s (%s)" % (best3.getName(), lowest3))
+                if not len(sorted_list) < 1:
+                    msg(player, "&e1. %s (%s)" % (sorted_list[0].getName(), self.player_stats[sorted_list[0].getName()+"_deaths"]))
+                if not len(sorted_list) < 2:
+                    msg(player, "&e2. %s (%s)" % (sorted_list[1].getName(), self.player_stats[sorted_list[1].getName()+"_deaths"]))
+                if not len(sorted_list) < 3:
+                    msg(player, "&e3. %s (%s)" % (sorted_list[2].getName(), self.player_stats[sorted_list[2].getName()+"_deaths"]))
                 msg(player, "&c&c")
                 msg(player, "&e Your deaths:&6 %s" % str(self.player_stats[player.getName() + "_deaths"]))
                 msg(player, "&c&c")
@@ -539,7 +534,7 @@ def timings():
                         try:
                             arena.end_match()
                         except:
-                            pass
+                            print "Except arena match"    
         time.sleep(0.1)
 
     
