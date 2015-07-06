@@ -1,7 +1,6 @@
 #Snowbrawl
 from helpers import *
 import time, threading, copy
-#from Queue import Queue
 import org.bukkit.inventory.ItemStack as ItemStack
 import org.bukkit.Material as Material
 import org.bukkit.potion.PotionEffect as PotionEffect
@@ -36,7 +35,6 @@ modify_command = "modify"
 modify_command_alias = "m"
 quit_command = "quit"
 
-#sorting
 
 
 class Arena(object):
@@ -63,6 +61,7 @@ class Arena(object):
         self.tpp = None # The top, positive x, positive z corner
         self.bnn = None # The bottom, negative x, negative z corner     
 
+    #set corners of arena
     def set_corner(self, sender, type):
         loc = sender.getLocation()
         if type == "1":
@@ -93,6 +92,7 @@ class Arena(object):
         self.tpp = Coords(corn1.getWorld(), pos_x, top, pos_z, 0, 0)
         self.bnn = Coords(corn2.getWorld(), neg_x, bottom, neg_z, 0, 0)
 
+    #add sign to sign list
     def add_sign(self, sender, name):
         mats = set()
         mats = None
@@ -101,6 +101,7 @@ class Arena(object):
             self.sign_click.append(NamedCoords(name, Coords(block.getLocation())))
             msg(sender, "&a-&e Arena tp sign %s created and set" % name)
 
+    #Delete a sign from the sign list
     def del_sign(self, sender, name):
         for sign in self.sign_click:
             if sign.get_name() == name:
@@ -124,6 +125,7 @@ class Arena(object):
             return True
         return False
 
+    #return true if loc is inside the arena boundries
     def in_arena(self, loc):
         if self.tpp == None or self.bnn == None:
             return False
@@ -148,11 +150,13 @@ class Arena(object):
         id = random.randint(0, len(self.respawn_location) - 1)
         return self.respawn_location[id]
 
+
     def spawn_player(self, player):
         id = random.randint(0, len(self.spawn_location) - 1)
         loc = self.spawn_location[id].get_location().get_location()
         safetp(player, loc.getWorld(), loc.x, loc.y, loc.z, loc.yaw, loc.pitch)
 
+    #Start match
     def start_match(self):
         if self.player_limit == None or self.match_goal == None or self.arena_type == None or len(self.spawn_location) == 0 or len(self.respawn_location) == 0 or len(self.sign_location) == 0:
             return
@@ -175,14 +179,11 @@ class Arena(object):
                     alist[i+1] = temp
         return alist
     
-    @make_synchronized
-    def end_match(self):
-        print "Ending match"
-        try:
-            sorted_list = self.bubbleSort(self.players.read())
-        except:
-            print trace()
-	print "done sorting"
+    @make_synchronized #Jython synchronized block
+    def end_match(self): #End match, sort the players and print the 3 players with least amount of deaths
+        
+        sorted_list = self.bubbleSort(self.players.read())
+        
         for player in self.players.read():
             if player.isOnline():
                 loc = self.sign_location[0].get_location().get_location()
@@ -497,6 +498,7 @@ class Queue(object):
             return True
         return False
     
+    #Clear the queue
     def clear(self):
         self.queue = []
 
@@ -523,6 +525,7 @@ arenas = load_snowbrawl()
 # Threads
 ##############################################################################################
 
+#timings thread to end arenas if their type is time
 def timings():
     while True:
         for arena in arenas:
@@ -531,15 +534,13 @@ def timings():
                     current_time = time.time()
                     start_time = arena.start_time
                     if arena.start_time + arena.match_goal < current_time:
-                        try:
-                            arena.end_match()
-                        except:
-                            print "Except arena match"    
+                        arena.end_match()
+   
         time.sleep(0.1)
 
     
 timingsThread = threading.Thread(target = timings)
-timingsThread.daemon = True
+timingsThread.daemon = True #Thread dies if main thread dies
 timingsThread.start()
 
 
