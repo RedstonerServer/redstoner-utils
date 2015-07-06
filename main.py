@@ -75,9 +75,9 @@ shared["load_modules"] = [
     #adds snowbrawl minigame
     "snowbrawl",
     # Adds /tm [player] for a messages to be sent to this player via /msg
-    "pmtoggle"
+    "pmtoggle",
     # Replacement for LoginSecurity
-    #"loginsecurity"
+    "loginsecurity"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:
