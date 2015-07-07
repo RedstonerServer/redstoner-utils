@@ -80,14 +80,12 @@ def register_command(sender, command, label, args):
     return "&cPassword set. Use /login <password> upon join."
 
 @simplecommand("rmpass",
-        usage       = "<password>",
         description = "Removes your password if the password matches",
         senderLimit = 0,
         helpNoargs  = True)
 def rmpass_command(sender, command, label, args):
     if not is_registered(uid(sender)):
         return "&cYou are not registered!"
-    password = " ".join(args)
     if not sender.getName() in logging_in:
         delete_pass(uid(sender))
         return "&aPassword removed successfully. You will not be prompted anymore."
