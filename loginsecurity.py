@@ -114,6 +114,8 @@ def change_pass(uuid, pw):
     conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs = conn.cursor()
     curs.execute("UPDATE secret SET 'pass' = ? WHERE 'uuid' = ?", (pw,), (uuid,))
+    curs.close()
+    conn.close()
 
 def get_pass(uuid):
     conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
@@ -127,7 +129,7 @@ def get_pass(uuid):
 def create_pass(uuid, pw):
     conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs = conn.cursor()
-    curs.execute("INSERT INTO secret VALUES (?)", (uuid,pw,))
+    curs.execute("INSERT INTO secret VALUES (?,?)", (uuid,pw,))
     curs.close()
     conn.close()
 
