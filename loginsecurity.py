@@ -6,11 +6,10 @@ import threading
 from secrets import *
 import mysqlhack
 from com.ziclix.python.sql import zxJDBC
+import subprocess
 
 
-
-
-wait_time = 60 #seconds
+wait_time = 5 #seconds
 admin_perm = "utils.loginsecurity.admin"
 min_pass_length = 8
 blocked_events = ["block.BlockBreakEvent", "block.BlockPlaceEvent", "player.PlayerMoveEvent"]
@@ -62,22 +61,12 @@ def register_command(sender, command, label, args):
     if len(args) > 1:
         return "&cPassword can only be one word!"
     uuid = str(uid(sender))
-    ######################### - delete after testing
-    """
-    conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
-    curs = conn.cursor()
-    curs.execute("SELECT EXISTS(SELECT * FROM secret WHERE 'uuid' = ?)",(uuid,)) 
-    results = curs.fetchall()
-    print results[0][0]
-    """
-    #########################
     if is_registered(uuid):
         return "&cYou are already registered!"
     password = args[0]
     if len(password) < min_pass_length:
         return "&cThe password has to be made up of at least %s characters!" % min_pass_length
-    hashed = crypt.encrypt(password, rounds=200000, salt_size=16)
-    create_pass(uuid, hashed)
+    create_pass(uuid, password)
     return "&cPassword set. Use /login <password> upon join."
 
 @simplecommand("rmpass",
@@ -106,83 +95,100 @@ def rmotherpass_command(sender, command, label, args):
     user = server.getOfflinePlayer(args[0])
     if is_registered(uid(user)):
         delete_pass(uid(user))
-        runas(server.getConsoleSender(), colorify("mail send %s &cYour password was reset by a staff member. Use &6/register&c to set a new one." % sender.getDisplayName()))
-        return "&sPassword of %s reset successfully" % user.getName()
+        runas(server.getConsoleSender(), colorify("mail send %s &cYour password was reset by a staff member. Use &6/register&c to set a new one." % sender.getName()))
+        return "&aPassword of %s reset successfully" % user.getName()
     return "&cThat player could not be found (or is not registered)"
 
 def change_pass(uuid, pw):
     conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs = conn.cursor()
-    curs.execute("UPDATE secret SET 'pass' = ? WHERE 'uuid' = ?", (pw,), (uuid,))
+    curs.execute("UPDATE secret SET pass = ? WHERE uuid = ?", (pw,uuid,))
+    conn.commit()
     curs.close()
     conn.close()
 
 def get_pass(uuid):
     conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs = conn.cursor()
-    curs.execute("SELECT pass FROM secret WHERE 'uuid' = ?", (uuid,))
+    curs.execute("SELECT pass FROM secret WHERE uuid = ?", (uuid,))
     results = curs.fetchall()
     curs.close()
     conn.close()
     return results[0][0]
 
-def create_pass(uuid, pw):
+def create_pass(uuid,pw):
+    thread = threading.Thread(target=create_pass_thread, args=(uuid,pw))
+    thread.start()
+
+def create_pass_thread(uuid, pw):
+    pw = crypt.encrypt(pw, rounds=200000, salt_size=16)
     conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs = conn.cursor()
     curs.execute("INSERT INTO secret VALUES (?,?)", (uuid,pw,))
+    conn.commit()
     curs.close()
     conn.close()
 
 def is_registered(uuid):
     conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs = conn.cursor()
-    curs.execute("SELECT EXISTS(SELECT * FROM secret WHERE 'uuid' = ?)", (uuid,))
+    curs.execute("SELECT EXISTS(SELECT * FROM secret WHERE uuid = ?)", (uuid,))
     results = curs.fetchall()
     curs.close()
     conn.close()
-    return results[0][0] == 1
+    if results[0][0] == 1:
+        return True
+    return False
 
 def delete_pass(uuid):
     conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs = conn.cursor()
-    curs.execute("DELETE FROM secret WHERE 'uuid' = ?", (uuid,))
+    curs.execute("DELETE FROM secret WHERE uuid = ?", (uuid,))
+    conn.commit()
     curs.close()
     conn.close()
 
 @hook.event("player.PlayerJoinEvent", "high")
 def on_join(event):
-    try:
-        thingy(event)
-    except:
-        print trace()
-
-
-def thingy(event):
     user = event.getPlayer()
     if is_registered(uid(user)):
+        msg(event.getPlayer(), "&6You will be disconnected after 60 seconds if you don't &alogin")
         logging_in[user.getName()] = time.time()
 
 
 @hook.event("player.PlayerQuitEvent", "high")
 def on_quit(event):
-    del logging_in[event.getPlayer().getName()]
-
+    if event.getPlayer().getName() in logging_in:
+        del logging_in[event.getPlayer().getName()]
+"""
 ##Threading start
 def kick_thread():
-    wait_time_millis = wait_time * 1000
     while True:
         time.sleep(1)
-        moment = time.time()
+        now = time.time()
         for name, jointime in logging_in.iteritems():
-            if moment - jointime > wait_time_millis:
-                server.getPlayer(name).kickPlayer(colorify("&cLogin timed out"))
+            if now - jointime > wait_time:
+                address = server.getPlayer(name).getAddress().toString()
+                address = list(address)
+                ip = ""
+                for char in address:
+                    if not char == ":":
+                        if not char == "/":
+                            ip += char
+                    else:
+                        break
+                subprocess.call("tcpkill host %s" % ip, shell = True)
+                if name in logging_in:
+                    del logging_in[name]
+                    break
+                
 
 
 thread = threading.Thread(target = kick_thread)
 thread.daemon = True
 thread.start()
 ##Threading end
-
+"""
 
 for blocked_event in blocked_events:
     @hook.event(blocked_event, "high")
