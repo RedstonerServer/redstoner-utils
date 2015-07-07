@@ -82,6 +82,7 @@ def register_command(sender, command, label, args):
 @simplecommand("rmpass",
         description = "Removes your password if the password matches",
         senderLimit = 0,
+        amax = 0,
         helpNoargs  = True)
 def rmpass_command(sender, command, label, args):
     if not is_registered(uid(sender)):
