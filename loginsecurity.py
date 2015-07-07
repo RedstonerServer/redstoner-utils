@@ -12,7 +12,7 @@ import subprocess
 wait_time = 5 #seconds
 admin_perm = "utils.loginsecurity.admin"
 min_pass_length = 8
-blocked_events = ["block.BlockBreakEvent", "block.BlockPlaceEvent", "player.PlayerMoveEvent","player.AsyncPlayerChatEvent","player.InteractEntityEvent"]
+blocked_events = ["block.BlockBreakEvent", "block.BlockPlaceEvent", "player.PlayerMoveEvent","player.AsyncPlayerChatEvent"]
 
 
 logging_in = {}
