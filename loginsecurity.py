@@ -12,15 +12,27 @@ import subprocess
 wait_time = 5 #seconds
 admin_perm = "utils.loginsecurity.admin"
 min_pass_length = 8
-blocked_events = ["block.BlockBreakEvent", "block.BlockPlaceEvent", "player.PlayerMoveEvent"]
+blocked_events = ["block.BlockBreakEvent", "block.BlockPlaceEvent", "player.PlayerMoveEvent","player.AsyncPlayerChatEvent","player.InteractEntityEvent"]
 
 
 logging_in = {}
 
 
-def matches(password, user):
+matches_bool = False
+
+def matches(password,user):
+    thread = threading.Thread(target=matches_thread, args = (password,user))
+    thread.start()
+
+
+def matches_thread(password, user):
     hashed = get_pass(uid(user))
-    return crypt.verify(password, hashed)
+    if crypt.verify(password, hashed):
+        del logging_in[user.getName()]
+        msg(user, "&aLogged in successfully!")
+    else:
+        msg(user, "&cInvalid password")
+
 
 @simplecommand("cgpass",
 	usage       = "<password> <new password>",
@@ -34,10 +46,8 @@ def change_pass_command(sender, command, label, args):
     new_password = args[1]
     uuid = uid(sender)
     if is_registered(uuid):
-        if matches(password, sender):
-            change_pass(uuid, crypt.encrypt(new_password, rounds=200000, salt_size=16))
-            return "&aPassword changed"
-        return "&cInvalid password!"
+        change_pass(uuid, crypt.encrypt(new_password, rounds=200000, salt_size=16))
+        return "&aPassword changed"
     return "&cYou are not registered"
 
 @simplecommand("login",
@@ -47,10 +57,10 @@ def change_pass_command(sender, command, label, args):
         helpNoargs  = True)
 def login_command(sender, command, label, args):
     password = args[0]
-    if matches(password, sender):
-        del logging_in[sender.getName()]
-        return "&aLogged in successfully!"
-    return "&cInvalid password"
+    matches(password, sender):
+        #del logging_in[sender.getName()]
+        #return "&aLogged in successfully!"
+    #return "&cInvalid password"
 
 @simplecommand("register",
         usage       = "<password>",
@@ -78,10 +88,10 @@ def rmpass_command(sender, command, label, args):
     if not is_registered(uid(sender)):
         return "&cYou are not registered!"
     password = " ".join(args)
-    if matches(password, sender):
+    if sender.getName() in logging_in:
         delete_pass(uid(sender))
         return "&aPassword removed successfully. You will not be prompted anymore."
-    return "&cInvalid password"
+    return "&cFailed to remove password, please contact a staff member"
 
 @simplecommand("rmotherpass",
         aliases     = ["lacrmpass"],
@@ -153,6 +163,7 @@ def on_join(event):
     user = event.getPlayer()
     if is_registered(uid(user)):
         msg(event.getPlayer(), "&6You will be disconnected after 60 seconds if you don't &alogin")
+        msg(user, "&cUse /login <password>")
         logging_in[user.getName()] = time.time()
 
 
@@ -196,4 +207,3 @@ for blocked_event in blocked_events:
         user = event.getPlayer()
         if user.getName() in logging_in:
             event.setCancelled(True)
-            msg(user, "&cYou have to log in first! Use /login <password>")
