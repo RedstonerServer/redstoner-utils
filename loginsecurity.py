@@ -57,7 +57,7 @@ def change_pass_command(sender, command, label, args):
         helpNoargs  = True)
 def login_command(sender, command, label, args):
     password = args[0]
-    matches(password, sender):
+    matches(password, sender)
         #del logging_in[sender.getName()]
         #return "&aLogged in successfully!"
     #return "&cInvalid password"
