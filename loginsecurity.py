@@ -63,11 +63,13 @@ def register_command(sender, command, label, args):
         return "&cPassword can only be one word!"
     uuid = str(uid(sender))
     ######################### - delete after testing
+    """
     conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs = conn.cursor()
     curs.execute("SELECT EXISTS(SELECT * FROM secret WHERE 'uuid' = ?)",(uuid,)) 
     results = curs.fetchall()
     print results[0][0]
+    """
     #########################
     if is_registered(uuid):
         return "&cYou are already registered!"
