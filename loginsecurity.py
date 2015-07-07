@@ -88,7 +88,7 @@ def rmpass_command(sender, command, label, args):
     if not is_registered(uid(sender)):
         return "&cYou are not registered!"
     password = " ".join(args)
-    if sender.getName() in logging_in:
+    if not sender.getName() in logging_in:
         delete_pass(uid(sender))
         return "&aPassword removed successfully. You will not be prompted anymore."
     return "&cFailed to remove password, please contact a staff member"
