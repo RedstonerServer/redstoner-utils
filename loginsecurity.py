@@ -3,7 +3,7 @@ from passlib.hash import pbkdf2_sha256 as crypt
 from basecommands import simplecommand
 import time
 import threading
-from secrets import *
+from login_secrets import * #Don't forget to make login_secrets aswell
 import mysqlhack
 from com.ziclix.python.sql import zxJDBC
 import subprocess
