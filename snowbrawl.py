@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack as ItemStack
 import org.bukkit.Material as Material
 import org.bukkit.potion.PotionEffect as PotionEffect
 import org.bukkit.potion.PotionEffectType as PotionEffectType
+from java.lang import Runnable
 from java.util.UUID import fromString as juuid
 from operator import __contains__
 from traceback import format_exc as trace
@@ -525,6 +526,14 @@ arenas = load_snowbrawl()
 # Threads
 ##############################################################################################
 
+class timings_runnable(Runnable):
+
+    def __init__(self, arena):
+        self.arena = arena
+
+    def run(self):
+        self.arena.end_match()        
+
 #timings thread to end arenas if their type is time
 def timings():
     while True:
@@ -534,7 +543,8 @@ def timings():
                     current_time = time.time()
                     start_time = arena.start_time
                     if arena.start_time + arena.match_goal < current_time:
-                        arena.end_match()
+                        timing = timings_runnable(arena)
+                        server.getScheduler().runTask(server.getPluginManager().getPlugin("RedstonerUtils"), timing)
    
         time.sleep(0.1)
 
