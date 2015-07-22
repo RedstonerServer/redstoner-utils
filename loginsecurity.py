@@ -6,8 +6,7 @@ import threading
 from login_secrets import * #Don't forget to make login_secrets aswell
 import mysqlhack
 from com.ziclix.python.sql import zxJDBC
-import subprocess
-
+from java.lang import Runnable
 
 wait_time = 5 #seconds
 admin_perm = "utils.loginsecurity.admin"
@@ -40,6 +39,8 @@ def matches_thread(password, user):
 	senderLimit = 0,
 	helpNoargs  = True)
 def change_pass_command(sender, command, label, args):
+    if sender.getName() in logging_in:
+        return "&cYou are not logged in"
     if not len(args) == 2:
         return "&cInvalid arguments"
     password = args[0]
@@ -85,6 +86,8 @@ def register_command(sender, command, label, args):
         amax = 0,
         helpNoargs  = False)
 def rmpass_command(sender, command, label, args):
+    if sender.getName() in logging_in:
+        return "&cYou are not logged in"
     if not is_registered(uid(sender)):
         return "&cYou are not registered!"
     if not sender.getName() in logging_in:
@@ -98,13 +101,15 @@ def rmpass_command(sender, command, label, args):
         description = "Removes password of <user> and sends them a notification",
         helpNoargs  = True)
 def rmotherpass_command(sender, command, label, args):
+    if sender.getName() in logging_in:
+        return "&cYou are not logged in"
     if not sender.hasPermission(admin_perm):
         noperm(sender)
         return
     user = server.getOfflinePlayer(args[0])
     if is_registered(uid(user)):
         delete_pass(uid(user))
-        runas(server.getConsoleSender(), colorify("mail send %s &cYour password was reset by a staff member. Use &6/register&c to set a new one." % sender.getName()))
+        runas(server.getConsoleSender(), colorify("mail send %s &cYour password was reset by a staff member. Use &6/register&c to set a new one." % user.getName()))
         return "&aPassword of %s reset successfully" % user.getName()
     return "&cThat player could not be found (or is not registered)"
 
@@ -170,24 +175,26 @@ def on_join(event):
 def on_quit(event):
     if event.getPlayer().getName() in logging_in:
         del logging_in[event.getPlayer().getName()]
-"""
+
 ##Threading start
+class kick_class(Runnable):
+
+    def __init__(self, player):
+        self.player = player
+
+    def run(self):
+        if player.isOnline():
+            self.player.kickPlayer(colorify("&aLogin timed out"))
+
 def kick_thread():
     while True:
         time.sleep(1)
         now = time.time()
         for name, jointime in logging_in.iteritems():
             if now - jointime > wait_time:
-                address = server.getPlayer(name).getAddress().toString()
-                address = list(address)
-                ip = ""
-                for char in address:
-                    if not char == ":":
-                        if not char == "/":
-                            ip += char
-                    else:
-                        break
-                subprocess.call("tcpkill host %s" % ip, shell = True)
+                player = server.getPlayer(name)
+                kick = kick_class(player)
+                server.getScheduler().runTask(server.getPluginManager().getPlugin("RedstonerUtils"), kick)
                 if name in logging_in:
                     del logging_in[name]
                     break
@@ -198,7 +205,6 @@ thread = threading.Thread(target = kick_thread)
 thread.daemon = True
 thread.start()
 ##Threading end
-"""
 
 for blocked_event in blocked_events:
     @hook.event(blocked_event, "high")
