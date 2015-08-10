@@ -58,7 +58,6 @@ def send_header(sender, name):
 
 def print_info(sender, player):
     send_header(sender, "general")
-    send(sender, "Nickname", player.get_display_name())
     send(sender, "Name", player.get_name())
     send(sender, "UUID", player.get_uuid())
     send(sender, "Logged in", player.logged_in())
