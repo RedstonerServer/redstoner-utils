@@ -77,7 +77,9 @@ shared["load_modules"] = [
     # Adds /tm [player] for a messages to be sent to this player via /msg
     "pmtoggle",
     # Replacement for LoginSecurity
-    "loginsecurity"
+    "loginsecurity",
+    # Centralized Player class
+    "playermanager"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:
