@@ -92,7 +92,7 @@ def print_into(sender, player):
 def on_command(sender, cmd, label, args):
     if sender.hasPermission(get_info_perm):
         if len(args) != 1:
-            msg(sender, "&e-&a /getinfo <name>"
+            msg(sender, "&e-&a /getinfo <name>")
         else:
             player = get_player(args[0])
             if player != None:
