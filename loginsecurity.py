@@ -183,7 +183,7 @@ class kick_class(Runnable):
         self.player = player
 
     def run(self):
-        if player.isOnline():
+        if self.player.isOnline():
             self.player.kickPlayer(colorify("&aLogin timed out"))
 
 def kick_thread():
