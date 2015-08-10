@@ -25,10 +25,12 @@ def matches(password,user):
 def matches_thread(password, user):
     hashed = get_pass(uid(user))
     if crypt.verify(password, hashed):
-        del logging_in[user.getName()]
-        msg(user, "&aLogged in successfully!")
+        if user.getName() in logging_in:
+            del logging_in[user.getName()]
+            msg(user, "&aLogged in successfully!")
     else:
-        msg(user, "&cInvalid password")
+        if user.getName() in logging_in:
+            msg(user, "&cInvalid password")
 
 
 @simplecommand("cgpass",
