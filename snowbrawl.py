@@ -881,17 +881,6 @@ def set_arena_sign(sender, args):
             elif args[1] == "del":
                 arena.del_sign(sender, args[2])
 
-@hook.command("sbm")
-def on_snowbrawl_command_modify(sender, command, label, args):
-    args_ = args
-    args_.insert(0, modify_command)
-    return on_snowbrawl_command(sender, command, label, args_)
-
-@hook.command("sb")
-def on_snowbrawl_command_short(sender, command, label, args):
-    return on_snowbrawl_command(sender, command, label, args)
-
-
 @hook.command("snowbrawl")
 def on_snowbrawl_command(sender, command, label, args):
     if len(args) == 0:
