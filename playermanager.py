@@ -12,7 +12,11 @@ import imout
 import mentio
 import pmtoggle
 
+
+get_info_perm = "utils.playermanager.info"
+
 players = []
+
 
 ###############################################################
 # Outside-accessible functions
@@ -36,6 +40,67 @@ def on_quit(event):
 @hook.event("player.PlayerJoinEvent", "highest")
 def on_join(event):
     players.append(Player(event.getPlayer()))
+
+#############################################################
+# Commands
+
+def send(sender, name, data):
+    if isinstance(data, bool):
+        if data == True:
+            msg(sender, "&e-&a %s&e:&a True" % name)
+        else:
+            msg(sender, "&e-&a %s&e:&c False" % name)
+    else:
+        msg(sender, "&e-&a %s&e:&6 %s" % (name, str(data)))
+
+def send_header(sender, name):
+    msg(sender, "&e- &a %s&e:" % name.upper())
+
+def print_into(sender, player):
+    send_header(sender, "general")
+    send(sender, "Nickname", player.get_display_name())
+    send(sender, "Name", player.get_name())
+    send(sender, "UUID:", player.get_uuid())
+    send(sender, "Logged in", player.logged_in())
+    send_header(sender, "snowbrawl")
+    send(sender, "In arena", player.in_sb_arena())
+    send(sender, "Arena", player.get_sb_arena())
+    send_header(sender, "place-mods")
+    send(sender, "Slab flip", player.has_autoflip_slab())
+    send(sender, "Cauldron fill", player.has_autofill_cauldron())
+    send(sender, "Piston face", player.has_autoface_piston())
+    send_header(sender, "chat groups")
+    send(sender, "In chatgroup", player.in_cg())
+    send(sender, "Chatgroup", player.get_cg())
+    send(sender, "Key", player.get_cg_key())
+    send(sender, "Toggle", player.has_cg_toggle())
+    send_header(sender, "Admin chat")
+    send(sender, "In adminchat", player.in_ac())
+    send(sender, "Key", player.get_ac_key())
+    send(sender, "Toggle", player.has_ac_toggle())
+    send_header(sender, "forcefield")
+    send(sender, "Whitelist", "&e, &6".join(player.get_ff_whitelist()))
+    send(sender, "Toggle", player.has_ff_toggle())
+    send_header(sender, "miscellaneous")
+    send(sender, "Calc", player.has_calc())
+    send(sender, "PM toggle", player.has_pm_toggle())
+    send(sender, "Cycle toggle", player.has_cycle())
+    send(sender, "Imout toggle", player.has_imout_toggle())
+    send(sender, "Mentio", "&e, &6".join(player.get_mentio_list()))
+
+@hook.command("getinfo")
+def on_command(sender, cmd, label, args):
+    if sender.hasPermission(get_info_perm):
+        if len(args) != 1:
+            msg(sender, "&e-&a /getinfo <name>"
+        else:
+            player = get_player(args[0])
+            if player != None:
+                print_info(sender, player)
+            else:
+                msg(sender, "&e-&c Player not online or does not exist")
+    else:
+        noperm(sender)
 
 #############################################################
 # Player class
