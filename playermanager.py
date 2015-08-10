@@ -34,7 +34,7 @@ def get_player(name):
 def on_quit(event):
     for i in range(len(players)):
         if players[i].get_uuid() == uid(event.getPlayer()):
-            players.remove(i)
+            players.remove(players[i])
             return
 
 @hook.event("player.PlayerJoinEvent", "highest")
@@ -54,7 +54,7 @@ def send(sender, name, data):
         msg(sender, "&e-&a %s&e:&6 %s" % (name, str(data)))
 
 def send_header(sender, name):
-    msg(sender, "&e- &a %s&e:" % name.upper())
+    msg(sender, "&e- &2 %s&e:" % name.upper())
 
 def print_info(sender, player):
     send_header(sender, "general")
@@ -154,7 +154,7 @@ class Player():
         return self.get_uuid() in cg.groups.keys()
 
     def get_cg(self):
-        if self.in_cg:
+        if self.in_cg():
             return cg.groups[self.get_uuid()]
         else:
             return None
