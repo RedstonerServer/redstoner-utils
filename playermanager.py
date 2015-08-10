@@ -56,11 +56,11 @@ def send(sender, name, data):
 def send_header(sender, name):
     msg(sender, "&e- &a %s&e:" % name.upper())
 
-def print_into(sender, player):
+def print_info(sender, player):
     send_header(sender, "general")
     send(sender, "Nickname", player.get_display_name())
     send(sender, "Name", player.get_name())
-    send(sender, "UUID:", player.get_uuid())
+    send(sender, "UUID", player.get_uuid())
     send(sender, "Logged in", player.logged_in())
     send_header(sender, "snowbrawl")
     send(sender, "In arena", player.in_sb_arena())
@@ -101,6 +101,7 @@ def on_command(sender, cmd, label, args):
                 msg(sender, "&e-&c Player not online or does not exist")
     else:
         noperm(sender)
+    return True
 
 #############################################################
 # Player class
@@ -137,7 +138,7 @@ class Player():
     def logged_in(self):
         return self.get_name() not in login.logging_in
 
-    def has_autoflip_slab_on(self):
+    def has_autoflip_slab(self):
         return blockmods.isEnabled("slab", self.get_uuid())
 
     def has_autofill_cauldron(self):
