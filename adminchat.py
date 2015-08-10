@@ -81,6 +81,6 @@ def on_chat(event):
         if sender.getName() in ac_toggle_list:
             adminchat(sender, msg)
             event.setCancelled(True)
-        if msg[:len(key)] == key:
+        elif msg[:len(key)] == key:
             adminchat(sender, msg[len(key):])
             event.setCancelled(True)
