@@ -17,8 +17,6 @@ blocked_events = ["block.BlockBreakEvent", "block.BlockPlaceEvent", "player.Play
 logging_in = {}
 
 
-matches_bool = False
-
 def matches(password,user):
     thread = threading.Thread(target=matches_thread, args = (password,user))
     thread.start()
@@ -59,9 +57,6 @@ def change_pass_command(sender, command, label, args):
 def login_command(sender, command, label, args):
     password = args[0]
     matches(password, sender)
-        #del logging_in[sender.getName()]
-        #return "&aLogged in successfully!"
-    #return "&cInvalid password"
 
 @simplecommand("register",
         usage       = "<password>",
@@ -71,7 +66,7 @@ def login_command(sender, command, label, args):
 def register_command(sender, command, label, args):
     if len(args) > 1:
         return "&cPassword can only be one word!"
-    uuid = str(uid(sender))
+    uuid = uid(sender)
     if is_registered(uuid):
         return "&cYou are already registered!"
     password = args[0]
