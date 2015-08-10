@@ -6,6 +6,11 @@ import loginsecurity as login
 import calc
 import chatgroups as cg
 import adminchat as ac
+import cycle
+import forcefield as ff
+import imout
+import mentio
+import pmtoggle
 
 players = []
 
@@ -103,4 +108,20 @@ class Player():
     def has_ac_toggle(self):
         return self.get_name() in ac.ac_toggle_list
 
+    def has_cycle(self):
+        return self.get_uuid() not in cycle.no_cyclers
 
+    def has_ff_toggle(self):
+        return self.get_uuid() in ff.ff_users
+
+    def get_ff_whitelist(self):
+        return ff.whitelists.get(self.get_uuid(), [])
+
+    def has_imout_toggle(self):
+        return self.get_name() in imout.imout_toggle_list
+
+    def get_mentio_list(self):
+        return mentio.get_keywords(self.get_java_player())
+
+    def has_pm_toggle(self):
+        return self.get_uuid() in pmtoggle.toggle_dict
