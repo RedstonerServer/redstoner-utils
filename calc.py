@@ -5,6 +5,7 @@ import time
 calc_users        = open_json_file("calc", [])
 math_operators    = ["+", "-", "*", "/", "%", ">", "<", "^", "&", "|"]
 allowed_strings   = ["0b", "0x", "(", ")", "hex(", "bin(", "abs(", "int(", "min(", "max(", "round(", "float("]
+allowed_alpha     = ["a", "b", "c", "d", "e", "f"]
 calc_perm = "utils.calc"
 calc_perm_power = "utils.calc.power"
 
@@ -41,7 +42,7 @@ def calc(sender, text):
             expression += text[i + 1]
             i += 1
             should_calc = True
-        elif char.isdigit() or (expression and char == ".") or (should_calc and char == " ") or (should_calc and char == ","):
+        elif char.isdigit() or char in allowed_alpha or (expression and char == ".") or (should_calc and char == " ") or (should_calc and char == ","):
             expression += char
             should_calc = True
         elif char in math_operators or char in ["(", ")"]:
