@@ -15,9 +15,6 @@ except:
     print("[RedstonerUtils] ERROR: Failed to import helpers:")
     print(print_traceback())
 
-def getDefaultWorldGenerator(world_name, ID):
-    return shared["modules"]["plotgen"].get_generator()
-
 @hook.enable
 def on_enable():
     info("RedstonerUtils enabled!")
@@ -81,8 +78,8 @@ shared["load_modules"] = [
     "loginsecurity",
     # Centralized Player class
     "playermanager",
-    # Plot generator
-    "plotgen"
+    # Plots
+    "plotter"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:
