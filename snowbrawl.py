@@ -359,11 +359,11 @@ class Arena(object):
         return data
 
     def load(self, data):
-        self.explosion_damage = float(data["explosion"])
-        self.player_limit = int(data["players"])
-        self.refill = int(data["refill"])
+        self.explosion_damage = None if str(data["explosion"]) == "None" else float(data["explosion"])
+        self.player_limit = None if str(data["players"]) == "None" else int(data["players"])
+        self.refill = None if str(data["refill"]) == "None" else int(data["refill"])
         self.arena_type = str(data["type"])
-        self.match_goal = int(data["goal"])
+        self.match_goal = None if str(data["goal"]) == "None" else int(data["goal"])
         self.corner1 = Coords(None).load(data["corners"][0]) if not data["corners"][0] == None else None
         self.corner2 = Coords(None).load(data["corners"][1]) if not data["corners"][1] == None else None
         self.tpp = Coords(None).load(data["corners"][2]) if not data["corners"][2] == None else None
