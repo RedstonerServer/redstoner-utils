@@ -75,6 +75,9 @@ mv -v "LogBlockQuestioner.jar" "logblockquestioner.jar."
 echo -e "\n> Pulling redstoner-utils ..."
 git clone -q "git@github.com:RedstonerServer/redstoner-utils.git" "redstoner-utils.py.dir" > /dev/null
 
+echo -e "\n> Installing dependencies"
+pip install passlib
+
 echo -e "\n> All plugins downloaded"
 
 cd "redstoner-utils.py.dir"
