@@ -8,20 +8,27 @@ on hold because the PlotMe developer continued to develop PlotMe
 from helpers import *
 from basecommands import simplecommand
 
-x_plot_size = 3
-z_plot_size = 3
-padding     = 1
+plot_size   = 20
+padding     = 3
+padded_size = plot_size + padding
 
 def base_coords(x, z):
     pid = plot_id(x, z)
-    return [pid[0] * (x_plot_size + padding), pid[1] * (z_plot_size + padding)]
+    return [pid[0] * padded_size, pid[1] * padded_size] if pid else None
 
 def bounds(x, z):
     base = base_coords(x, z)
-    return [base, [base[0] + x_plot_size, base[1] + z_plot_size]]
+    return [base, [base[0] + plot_size, base[1] + plot_size]] if base else None
+
+def is_border(x, z):
+    xborder = plot_size < x % padded_size < padded_size
+    zborder = plot_size < z % padded_size < padded_size
+    return xborder or zborder
 
 def plot_id(x, z):
-    return [x // (x_plot_size + padding), z // (z_plot_size + padding)]
+    idx = x // padded_size
+    idz = z // padded_size
+    return None if is_border(x, z) else [idx, idz]
 
 
 @simplecommand("plotter",
