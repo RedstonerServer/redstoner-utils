@@ -8,39 +8,46 @@ on hold because the PlotMe developer continued to develop PlotMe
 from helpers import *
 from basecommands import simplecommand
 
-plot_size   = 20
-padding     = 3
-padded_size = plot_size + padding
-
-def base_coords(x, z):
-    pid = plot_id(x, z)
-    return [pid[0] * padded_size, pid[1] * padded_size] if pid else None
-
-def bounds(x, z):
-    base = base_coords(x, z)
-    return [base, [base[0] + plot_size, base[1] + plot_size]] if base else None
-
-def is_border(x, z):
-    xborder = plot_size < x % padded_size < padded_size
-    zborder = plot_size < z % padded_size < padded_size
-    return xborder or zborder
-
-def plot_id(x, z):
-    idx = x // padded_size
-    idz = z // padded_size
-    return None if is_border(x, z) else [idx, idz]
-
 
 @simplecommand("plotter",
     aliases = ["pt"],
-    senderLimit = 0,
-    helpSubcmd = True,
-    description = "Plot commands",
-    usage = "")
+    description = "Plot commands")
 def plotter_command(sender, command, label, args):
     loc = sender.getLocation()
     x = loc.getX()
     z = loc.getZ()
-    msg(sender, "id: %s" % plot_id(x, z))
-    msg(sender, "base: %s" % base_coords(x, z))
-    msg(sender, "bounds: %s" % bounds(x, z))
+    plot = Plot.get(x, z)
+
+    if plot:
+        msg(sender, "id: %s" % [plot.idx, plot.idz])
+        msg(sender, "bottom: %s" % [plot.bottomx, plot.bottomz])
+        msg(sender, "top: %s" % [plot.topx, plot.topz])
+    else:
+        msg(sender, "&cThis is not a plot.")
+
+class Plot:
+    plot_size   = 20
+    padding     = 3
+    padded_size = plot_size + padding
+
+    def __init__(self, x, z):
+        x = int(x)
+        z = int(z)
+        self.idx     = x
+        self.idz     = z
+        self.bottomx = x * self.padded_size
+        self.bottomz = z * self.padded_size
+        self.topx    = self.bottomx + self.plot_size
+        self.topz    = self.bottomz + self.plot_size
+
+    @staticmethod
+    def is_border(x, z):
+        xborder = Plot.plot_size < x % Plot.padded_size < Plot.padded_size
+        zborder = Plot.plot_size < z % Plot.padded_size < Plot.padded_size
+        return xborder or zborder
+
+    @staticmethod
+    def get(x, z):
+        idx = x // Plot.padded_size
+        idz = z // Plot.padded_size
+        return None if Plot.is_border(x, z) else Plot(idx, idz)
