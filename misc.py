@@ -138,7 +138,7 @@ def on_sudo_command(sender, command, label, args):
 
 
 
-@simplecommand("me", 
+@simplecommand("me",
         usage        = "[message..]",
         description  = "Sends a message in third person",
         helpNoargs   = True)

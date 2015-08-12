@@ -50,12 +50,12 @@ def get_key(uuid):
     key = ac_keys.get(uuid)
     return key if key != None else ac_defaultkey
 
-@simplecommand("adminchatkey", 
-        aliases = ["ackey"], 
-        senderLimit = 0, 
-        helpNoargs = True, 
-        helpSubcmd = True, 
-        description = "Sets a key character for adminchat", 
+@simplecommand("adminchatkey",
+        aliases = ["ackey"],
+        senderLimit = 0,
+        helpNoargs = True,
+        helpSubcmd = True,
+        description = "Sets a key character for adminchat",
         usage = "<key>")
 def adminchatkey_command(sender, command, label, args):
     key = " ".join(args)

@@ -97,12 +97,12 @@ def on_chat(event):
             groupchat(sender, msge)
             event.setCancelled(True)
 
-@simplecommand("chatgroupkey", 
-        aliases = ["cgkey"], 
-        senderLimit = 0, 
-        helpNoargs = True, 
-        helpSubcmd = True, 
-        description = "Sets a key character for chatting to your chatgroup", 
+@simplecommand("chatgroupkey",
+        aliases = ["cgkey"],
+        senderLimit = 0,
+        helpNoargs = True,
+        helpSubcmd = True,
+        description = "Sets a key character for chatting to your chatgroup",
         usage = "<key>")
 def chatgroupkey_command(sender, command, label, args):
     key = " ".join(args)

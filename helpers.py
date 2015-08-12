@@ -126,7 +126,7 @@ def runas(player, cmd):
         player.chat("/" + cmd)
     else:
         server.dispatchCommand(player, cmd)
-    
+
 
 def is_player(obj):
     """
