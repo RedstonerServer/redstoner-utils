@@ -5,7 +5,8 @@
 on hold because the PlotMe developer continued to develop PlotMe
 """
 
-import sys
+from helpers import *
+from basecommands import simplecommand
 
 x_plot_size = 3
 z_plot_size = 3
@@ -23,8 +24,16 @@ def plot_id(x, z):
     return [x // (x_plot_size + padding), z // (z_plot_size + padding)]
 
 
-x = int(sys.argv[1])
-z = int(sys.argv[2])
-print "id: %s" % plot_id(x, z)
-print "base: %s" % base_coords(x, z)
-print "bounds: %s" % bounds(x, z)
+@simplecommand("plotter",
+    aliases = ["pt"],
+    senderLimit = 0,
+    helpSubcmd = True,
+    description = "Plot commands",
+    usage = "")
+def plotter_command(sender, command, label, args):
+    loc = sender.getLocation()
+    x = loc.getX()
+    z = loc.getZ()
+    msg(sender, "id: %s" % plot_id(x, z))
+    msg(sender, "base: %s" % base_coords(x, z))
+    msg(sender, "bounds: %s" % bounds(x, z))
