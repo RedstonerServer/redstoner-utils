@@ -3,6 +3,15 @@
 # exit on failure
 set -e
 
+for cmd in curl java unzip git pip; do
+  if ! which -s "$cmd"; then
+    tput setf 4 >&2
+    echo "Error: please install '$cmd' to proceed" >&2
+    tput sgr0 >&2
+    exit 1
+  fi
+done
+
 echo -e "> This will only set up Spigot and all the plugins, configuration files are still up to you to manage"
 echo -e "> Press enter to coninue"
 read
