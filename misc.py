@@ -206,7 +206,7 @@ pythoners = [
         description = "Runs python [code..] and returns the result",
         helpNoargs  = True)
 def on_pyeval_command(sender, command, label, args):
-    if uid(sender) not in pythoners and is_player(sender):
+    if is_player(sender) and uid(sender) not in pythoners:
         return noperm(sender)
     msg(sender, " ".join(args), False, "e")
     thread.start_new_thread(eval_thread, (sender, " ".join(args)))
