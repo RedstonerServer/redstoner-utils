@@ -116,7 +116,6 @@ def rs_material_broken_by_flow(material):
 
 
 
-
 @simplecommand("sudo",
         usage        = "<player> [cmd..]",
         description  = "Makes <player> write [cmd..] in chat",
@@ -196,11 +195,19 @@ def eval_thread(sender, code):
         msg(sender, ">>> %s: %s" % (eclass.__name__, e) + "\n ", False, "c")
     thread.exit()
 
+pythoners = [
+"e452e012-2c82-456d-853b-3ac8e6b581f5", # Nemes
+"ae795aa8-6327-408e-92ab-25c8a59f3ba1", # jomo
+"305ccbd7-0589-403e-a45b-d791dcfdee7d"  # PanFritz
+]
+
 @simplecommand("pyeval",
         usage       = "[code..]",
         description = "Runs python [code..] and returns the result",
         helpNoargs  = True)
 def on_pyeval_command(sender, command, label, args):
+    if uid(sender) not in pythoners and is_player(sender):
+        return noperm(sender)
     msg(sender, " ".join(args), False, "e")
     thread.start_new_thread(eval_thread, (sender, " ".join(args)))
     return None
