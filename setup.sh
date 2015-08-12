@@ -76,7 +76,14 @@ echo -e "\n> Pulling redstoner-utils ..."
 git clone -q "git@github.com:RedstonerServer/redstoner-utils.git" "redstoner-utils.py.dir" > /dev/null
 
 echo -e "\n> All plugins downloaded"
-cd ".."
+
+cd "redstoner-utils.py.dir"
+echo -e "\n> Duplicating sample files"
+for file in ls ./*.example; do
+  cp -v "$file" "$(echo "$file" | rev | cut -d "." -f 2- | rev)"
+done
+
+cd "../.."
 
 mkdir -v "lib"
 cd "lib"
