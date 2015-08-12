@@ -11,6 +11,7 @@ from basecommands import simplecommand
 
 @simplecommand("plotter",
     aliases = ["pt"],
+    senderLimit = 0,
     description = "Plot commands")
 def plotter_command(sender, command, label, args):
     loc = sender.getLocation()
