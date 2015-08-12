@@ -73,7 +73,7 @@ rm "logblockquestioner.zip"
 mv -v "LogBlockQuestioner.jar" "logblockquestioner.jar"
 
 echo -e "\n> Pulling redstoner-utils ..."
-git clone -q "https://github.com/RedstonerServer/redstoner-utils.git" "redstoner-utils.py.dir" > /dev/null
+git clone -q "git@github.com:RedstonerServer/redstoner-utils.git" "redstoner-utils.py.dir" > /dev/null
 
 echo -e "\n> All plugins downloaded"
 cd ".."
@@ -124,7 +124,7 @@ resource-pack-hash=
 announce-player-achievements=true
 pvp=true
 snooper-enabled=true
-level-type=SUPERFLAT
+level-type=FLAT
 hardcore=false
 enable-command-block=false
 max-players=20
