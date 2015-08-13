@@ -34,10 +34,10 @@ def matches_thread(password, user):
 
 
 @simplecommand("cgpass",
-	usage       = "<password> <new password>",
-	description = "Changes your password",
-	senderLimit = 0,
-	helpNoargs  = True)
+    usage       = "<password> <new password>",
+    description = "Changes your password",
+    senderLimit = 0,
+    helpNoargs  = True)
 def change_pass_command(sender, command, label, args):
     if sender.getName() in logging_in:
         return "&cYou are not logged in"
@@ -52,9 +52,9 @@ def change_pass_command(sender, command, label, args):
     return "&cYou are not registered"
 
 @simplecommand("login",
-        usage       = "<password>", 
+        usage       = "<password>",
         description = "Logs you in if <password> matches your password.",
-        senderLimit = 0, 
+        senderLimit = 0,
         helpNoargs  = True)
 def login_command(sender, command, label, args):
     password = args[0]
@@ -195,7 +195,7 @@ def kick_thread():
                 if name in logging_in:
                     del logging_in[name]
                     break
-                
+
 
 
 thread = threading.Thread(target = kick_thread)
