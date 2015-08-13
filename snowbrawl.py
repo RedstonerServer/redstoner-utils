@@ -561,7 +561,7 @@ timingsThread.start()
 # Events
 ##############################################################################################
 
-@hook.event("player.PlayerMoveEvent", "high")
+@hook.event("player.PlayerMoveEvent", "low")
 def onMove(event):
     if event.getPlayer().getWorld().getName() != "minigames":
         return
