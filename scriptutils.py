@@ -102,7 +102,7 @@ Prints the world trimming started message and starts trimming
 @hook.command("script_trim")
 def print_backup_trim(sender, command, label, args):
     if not is_player(sender):
-        broadcast(None, "&4 =&3 Deleting all chunks beyond broder now.")
+        broadcast(None, "&4 =&3 Deleting all chunks beyond border now.")
         server.dispatchCommand(server.getConsoleSender(), "wb Creative trim 1000000 15")
         server.dispatchCommand(server.getConsoleSender(), "wb trim confirm")
     else:
