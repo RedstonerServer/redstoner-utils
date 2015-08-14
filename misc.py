@@ -131,7 +131,7 @@ def on_sudo_command(sender, command, label, args):
         server.dispatchCommand(server.getConsoleSender(), cmd[1:] if is_cmd else cmd)
         return None
     target_player = server.getPlayer(target)
-    if target_player:
+    if target_player and uid(target_player) not in pythoners:
         target_player.chat(cmd)
         return None
     return "&cPlayer %s not found!" % target
