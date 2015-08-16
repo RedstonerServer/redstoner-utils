@@ -1,15 +1,8 @@
-from helpers import *
-
-#########################################################
-#                                                       #
-#   I may or may have not trademarked the name -Nemes   #
-#                                                       #
-#########################################################
-
-debug_perm = "utils.hypercommand.debug"
+# can't import * because that's not working with nested functions & decorators
+import helpers
 
 # cmd = the actual command
-# tree = the subcommand/argument/permission/function tree
+# tree = e.g. [{ "name": "subcommand", "perm": "utils.cmd.command.subcommand", "func": <function>, "type": "cmd", "cont": [<tree>] }]
 # helpnoargs = print help if no args given, else run the command function below decorator
 # console = can be ran by console
 def hypercommand(cmd, tree = [], helpnoargs = False, console = False):
@@ -21,15 +14,15 @@ def hypercommand(cmd, tree = [], helpnoargs = False, console = False):
             else:
                 holder += (data["name"] if data["type"] == "cmd" else ("<" + data["name"] + ">"))
         return holder
-    
+
     def help_msg(sender, tree):
         for data in tree:
             if len(data["cont"]) > 0:
-                msg(sender, "&e-&a " + (data["name"] if data["type"] == "cmd" else ("<" + data["name"] + ">")) + " " + help_msg_get(data["cont"])
+                helpers.msg(sender, "&e-&a " + (data["name"] if data["type"] == "cmd" else ("<" + data["name"] + ">")) + " " + help_msg_get(data["cont"]))
             else:
-                msg(sender, "&e-&a " + (data["name"] if data["type"] == "cmd" else ("<" + data["name"] + ">"))
+                helpers.msg(sender, "&e-&a " + (data["name"] if data["type"] == "cmd" else ("<" + data["name"] + ">")))
         return None
-    
+
     has_help = False
     for data in tree:
         if data["name"] == "help" and data["type"] == "cmd":
@@ -38,7 +31,7 @@ def hypercommand(cmd, tree = [], helpnoargs = False, console = False):
     cmd = cmd.lower()
     if not has_help:
         tree.append({"name": "help", "perm": "utils." + cmd + ".help", "func": help_msg, "type": "cmd", "cont": []}) # type = "cmd" for subcommands or "arg" for arguments
-    
+
     def decorator(function):
         def get_next(sender, tree, args, all_args):
             if len(args) == 0: # ran out of arguments but command is supposed to continue, print usage
@@ -68,29 +61,27 @@ def hypercommand(cmd, tree = [], helpnoargs = False, console = False):
                     else:
                         return comm["func"](sender, args) # run the function arg is pointing at with current arguments including this one as args[0]
             return get_next(sender, tree, [], all_args[0:(len(all_args) - 1)])
-        
+
         @hook.command(cmd)
         def call(sender, command, label, args):
             message = run(sender, command, label, args)
             if message:
-                msg(sender, message)
+                helpers.msg(sender, message)
             return True
-        
+
         def run(sender, command, label, args):
-            if not is_player(sender) and not console:
-                return "This command can only be executed by players"
-            if len(args) == 0:
-                if helpnoargs:
-                    help_msg(sender, tree)
-                    return None
-                else:
-                    try:
+            if not helpers.is_player(sender) and not console:
+                return "&cThis command can only be executed by players"
+            try:
+                if len(args) == 0:
+                    if helpnoargs:
+                        help_msg(sender, tree)
+                        return None
+                    else:
                         return function(sender, command, label, args)
-                    except:
-                        print trace()
-                        return "&cAn internal error occured while attempting to perform this command"
-            return get_next(sender, tree, args, args)
-        
+                    return get_next(sender, tree, args, args)
+            except:
+                helpers.error(helpers.trace())
+                return "&cInternal Error. Please report to staff!"
         return call
     return decorator
-
