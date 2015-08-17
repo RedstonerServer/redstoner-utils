@@ -37,10 +37,10 @@ def matches_thread(password, user):
 
 
 @simplecommand("cgpass",
-	usage       = "<password> <new password>",
-	description = "Changes your password",
-	senderLimit = 0,
-	helpNoargs  = True)
+    usage       = "<password> <new password>",
+    description = "Changes your password",
+    senderLimit = 0,
+    helpNoargs  = True)
 def change_pass_command(sender, command, label, args):
     
     py_player = get_py_player(sender)
@@ -63,9 +63,9 @@ def change_pass_command(sender, command, label, args):
 
 
 @simplecommand("login",
-        usage       = "<password>", 
+        usage       = "<password>",
         description = "Logs you in if <password> matches your password.",
-        senderLimit = 0, 
+        senderLimit = 0,
         helpNoargs  = True)
 def login_command(sender, command, label, args):
     py_player = get_py_player(sender)

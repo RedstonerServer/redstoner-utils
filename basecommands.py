@@ -20,13 +20,13 @@ def helpMsg(sender, cmd, description, usage, aliases, permission):
 
 
 def simplecommand(cmd,
-                aliases     = [], 
-                usage       = "[args...]", 
+                aliases     = [],
+                usage       = "[args...]",
                 description = None,
-                senderLimit = -1, 
-                amin        = 0, 
-                amax        = -1, 
-                helpNoargs  = False, 
+                senderLimit = -1,
+                amin        = 0,
+                amax        = -1,
+                helpNoargs  = False,
                 helpSubcmd  = False):
     cmd = cmd.lower()
     permission = "utils." + cmd
@@ -107,4 +107,4 @@ class Validate():
         if not checkargs(sender, args, amin, amax):
             raise CommandException("")
 
-    
+

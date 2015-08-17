@@ -50,7 +50,7 @@ settingInformation = dict( #[setting type, identifying description, detailed des
 )
 
 defaults = {
-    0: list, 
+    0: list,
     1: dict,
     2: list
 }
@@ -87,8 +87,8 @@ def getSettingDetails(arg):
     raise CommandException(" &cThat setting could not be found.\n For command help, use &o/toggle &cor &o/set")
 
 @simplecommand("toggle",
-        aliases = ["setting", "set", "config"], 
-        usage = "<setting> [value|info]", 
+        aliases = ["setting", "set", "config"],
+        usage = "<setting> [value|info]",
         description = "Toggles or sets your preferences for our redstone \nutilities. The following settings are available:\n" + ", ".join([x for x in settingInformation]),
         senderLimit = 0,
         helpNoargs = True,
@@ -144,13 +144,13 @@ def toggle_command(sender, command, label, args):
         if arg2 == "details":
             return " &aSetting %s:\n &9%s \n&6Accepted arguments: [<slot>|clear|details]" % (setting, details[2])
 
-        slot = int(arg2) if arg2.isdigit() else 0 
+        slot = int(arg2) if arg2.isdigit() else 0
         if not (0 <= slot <= details[4]):
             return " &cSlot number must be more than or equal to 0 and less than or equal to %s!" % details[4]
 
         item = fromStack(player.getItemInHand())
         if item[0] == 0 or item[1] <= 0:
-            if enabled: 
+            if enabled:
                 items = values[uuid]
                 if slot in items:
                     del items[slot]
@@ -197,16 +197,16 @@ def on_block_place(event):
     material = block.getType()
 
 
-    if (material in (Material.WOOD_STEP, Material.STEP) 
-        and isEnabled("slab", uuid) 
-        and player.hasPermission("utils.toggle.slab") 
+    if (material in (Material.WOOD_STEP, Material.STEP)
+        and isEnabled("slab", uuid)
+        and player.hasPermission("utils.toggle.slab")
         and block.getData() < 8
         ):
         block.setData(block.getData() + 8) # Flip upside down
 
 
-    elif (material == Material.CAULDRON 
-        and isEnabled("cauldron", uuid) 
+    elif (material == Material.CAULDRON
+        and isEnabled("cauldron", uuid)
         and player.hasPermission("utils.toggle.cauldron")
         ):
         block.setData(3) #3 layers of water, 3 signal strength
@@ -214,7 +214,7 @@ def on_block_place(event):
 
     elif ((material == Material.FURNACE and player.hasPermission("utils.toggle.furnace"))
         or (material == Material.DROPPER and player.hasPermission("utils.toggle.dropper"))
-        or (material == Material.HOPPER and player.hasPermission("utils.toggle.hopper")) 
+        or (material == Material.HOPPER and player.hasPermission("utils.toggle.hopper"))
         ):
         stacks = get(str(material).lower()).get(uuid)
         if stacks != None: # Enabled
@@ -227,7 +227,7 @@ def on_block_place(event):
     """
     elif (material == Material.REDSTONE_TORCH_ON
         and event.getBlockAgainst().getType() == Material.REDSTONE_BLOCK
-        and isEnabled("torch", uuid) 
+        and isEnabled("torch", uuid)
         and player.hasPermission("utils.toggle.torch")
         ):
         torches_to_break.append(block)
@@ -244,8 +244,8 @@ def on_block_place(event):
 @hook.event("player.PlayerInteractEvent", "monitor")
 def on_interact(event):
     player = event.getPlayer()
-    if (isEnabled("cauldron", uid(player)) 
-        and player.hasPermission("utils.toggle.cauldron") 
+    if (isEnabled("cauldron", uid(player))
+        and player.hasPermission("utils.toggle.cauldron")
         and is_creative(player)
         and event.getAction() == Action.RIGHT_CLICK_BLOCK
         and (not event.hasItem() or event.getItem().getType() == Material.REDSTONE)
@@ -269,7 +269,7 @@ def stop_breaking_torches():
 class torch_breaker(Runnable):
 
     def run():
-        
+
         try:
             if break_torches:
                 for i in range(len(torches_to_break)):

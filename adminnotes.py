@@ -92,7 +92,7 @@ def adminnotes_command(sender, command, label, args):
                 show_an_help(sender)
                 return
             if not args[1].isdigit():
-                msg(sender, "&cThe ID has to be numeric (check /an if you're unsure)")    
+                msg(sender, "&cThe ID has to be numeric (check /an if you're unsure)")
                 return
             note_id = int(args[1])-1
             if note_id >= len(notes):

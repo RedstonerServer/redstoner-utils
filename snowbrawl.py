@@ -49,7 +49,7 @@ class Arena(object):
         self.match_goal = None # amount of deaths or time until the match ends (depends on arena_type)
         self.arena_type = None # arena type (death or time)
         self.explosion_damage = None
-        
+
         self.player_stats = {}
         self.players = Queue()
         self.spawn_location = []
@@ -60,7 +60,7 @@ class Arena(object):
         self.corner1 = None # The corner1 given by the player (really bad for 3D position compare)
         self.corner2 = None # The corner2 given by the player (really bad for 3D position compare)
         self.tpp = None # The top, positive x, positive z corner
-        self.bnn = None # The bottom, negative x, negative z corner     
+        self.bnn = None # The bottom, negative x, negative z corner
 
     #set corners of arena
     def set_corner(self, sender, type):
@@ -75,21 +75,21 @@ class Arena(object):
     #Compares the corner1 and corner2 locations and figures out tpp and bnn so that we dont have to do it everytime we run in_arena()
     def update_corner_points(self):
         self.tpp = None
-        self.bnn = None                                                    
+        self.bnn = None
         if self.corner1 == None or self.corner2 == None:
             return
         corn1 = self.corner1.get_location()
         corn2 = self.corner2.get_location()
         if not corn1.getWorld().getName() == corn2.getWorld().getName():
             return
-        
+
         top = corn1.y if corn1.y > corn2.y else corn2.y
         bottom = corn1.y if corn1.y < corn2.y else corn2.y
         pos_x = corn1.x if corn1.x > corn2.x else corn2.x
         pos_z = corn1.z if corn1.z > corn2.z else corn2.z
         neg_x = corn1.x if corn1.x < corn2.x else corn2.x
         neg_z = corn1.z if corn1.z < corn2.z else corn2.z
-        
+
         self.tpp = Coords(corn1.getWorld(), pos_x, top, pos_z, 0, 0)
         self.bnn = Coords(corn2.getWorld(), neg_x, bottom, neg_z, 0, 0)
 
@@ -118,9 +118,9 @@ class Arena(object):
             self.start_match()
             return True
         return False
-    
+
     #remove a player from the queue
-    def remove_player(self, player):        
+    def remove_player(self, player):
         if self.queue.contains(player):
             self.queue.remove(player)
             return True
@@ -132,7 +132,7 @@ class Arena(object):
             return False
         loc_tpp = self.tpp.get_location()
         loc_bnn = self.bnn.get_location()
-        
+
         if loc.y > loc_tpp.y:
             return False
         if loc.y < loc_bnn.y:
@@ -179,12 +179,12 @@ class Arena(object):
                     alist[i] = alist[i+1]
                     alist[i+1] = temp
         return alist
-    
+
     @make_synchronized #Jython synchronized block
     def end_match(self): #End match, sort the players and print the 3 players with least amount of deaths
-        
+
         sorted_list = self.bubbleSort(self.players.read())
-        
+
         for player in self.players.read():
             if player.isOnline():
                 loc = self.sign_location[0].get_location().get_location()
@@ -256,7 +256,7 @@ class Arena(object):
 
     def get_click_signs(self):
         return self.sign_click
-    
+
     #Check if player is in the queue
     def in_queue(self,player):
         if self.queue.contains(player):
@@ -307,7 +307,7 @@ class Arena(object):
                     sign.get_location().set_location(location)
                     break
 
-    #Remove location out of location 
+    #Remove location out of location
     def delete_location(self, name, type):
         if type == "spawn":
             for spawn in self.spawn_location[:]:
@@ -359,11 +359,11 @@ class Arena(object):
         return data
 
     def load(self, data):
-        self.explosion_damage = float(data["explosion"])
-        self.player_limit = int(data["players"])
-        self.refill = int(data["refill"])
+        self.explosion_damage = None if str(data["explosion"]) == "None" else float(data["explosion"])
+        self.player_limit = None if str(data["players"]) == "None" else int(data["players"])
+        self.refill = None if str(data["refill"]) == "None" else int(data["refill"])
         self.arena_type = str(data["type"])
-        self.match_goal = int(data["goal"])
+        self.match_goal = None if str(data["goal"]) == "None" else int(data["goal"])
         self.corner1 = Coords(None).load(data["corners"][0]) if not data["corners"][0] == None else None
         self.corner2 = Coords(None).load(data["corners"][1]) if not data["corners"][1] == None else None
         self.tpp = Coords(None).load(data["corners"][2]) if not data["corners"][2] == None else None
@@ -472,16 +472,16 @@ class Queue(object):
 
     def __init__(self):
         self.queue = []
-    
+
     #Appends to queue
     def put(self,args):
         self.queue.append(args)
-    
+
     #Returns the first item in the queue and removes it
     def get(self):
         if len(self.queue) > 0:
             return self.queue.pop(0)
-    
+
         else:
             return False
 
@@ -498,7 +498,7 @@ class Queue(object):
         if player in self.queue:
             return True
         return False
-    
+
     #Clear the queue
     def clear(self):
         self.queue = []
@@ -532,7 +532,7 @@ class timings_runnable(Runnable):
         self.arena = arena
 
     def run(self):
-        self.arena.end_match()        
+        self.arena.end_match()
 
 #timings thread to end arenas if their type is time
 def timings():
@@ -545,10 +545,10 @@ def timings():
                     if arena.start_time + arena.match_goal < current_time:
                         timing = timings_runnable(arena)
                         server.getScheduler().runTask(server.getPluginManager().getPlugin("RedstonerUtils"), timing)
-   
+
         time.sleep(0.1)
 
-    
+
 timingsThread = threading.Thread(target = timings)
 timingsThread.daemon = True #Thread dies if main thread dies
 timingsThread.start()
@@ -561,7 +561,7 @@ timingsThread.start()
 # Events
 ##############################################################################################
 
-@hook.event("player.PlayerMoveEvent", "high")
+@hook.event("player.PlayerMoveEvent", "low")
 def onMove(event):
     if event.getPlayer().getWorld().getName() != "minigames":
         return
@@ -663,7 +663,7 @@ def on_quit(event):
 
 ##############################################################################################
 # Command handling
-############################################################################################## 
+##############################################################################################
 
 
 def create_arena(sender, args):
