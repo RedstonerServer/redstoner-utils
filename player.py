@@ -4,7 +4,7 @@ py_players = []
 
 class py_player:
 
-	def __init__(player):
+	def __init__(self,player):
 		self.player = player
 
 	"""
@@ -12,8 +12,8 @@ class py_player:
 
 
 	"""
-	self.logging_in = False
-	self.login_time = 0
+		self.logging_in = False
+		self.login_time = 0
 
 def get_py_player(player):
 	py_player = players[players.index(player)]
