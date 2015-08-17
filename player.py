@@ -4,28 +4,28 @@ py_players = []
 
 class py_player:
 
-	def __init__(self,player):
-		self.player = player
+    def __init__(self,player):
+        self.player = player
 
-	"""
-	Player properties, please add a short description of the property when adding a new one.
+    """
+    Player properties, please add a short description of the property when adding a new one.
 
 
-	"""
-		self.logging_in = False
-		self.login_time = 0
+    """
+        self.logging_in = False
+        self.login_time = 0
 
 def get_py_player(player):
-	py_player = players[players.index(player)]
-	return py_player
+    py_player = players[players.index(player)]
+    return py_player
 
 
 @hook.event("player.PlayerJoinEvent","lowest")
 def on_join(event):
-	player = py_player(event.getPlayer())
-	players.append(player)
+    player = py_player(event.getPlayer())
+    players.append(player)
 
 
 @hook.event("player.PlayerQuitEvent","highest")
 def on_leave(event):
-	players.remove(get_py_player(event.getPlayer()))
+    players.remove(get_py_player(event.getPlayer()))
