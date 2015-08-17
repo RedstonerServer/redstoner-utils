@@ -79,7 +79,7 @@ shared["load_modules"] = [
     # Replacement for LoginSecurity
     "loginsecurity",
     # Centralized Player class
-    "playermanager"
+    "player"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:

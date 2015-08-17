@@ -31,8 +31,7 @@ def matches_thread(password, user):
     else:
         if py_player.logging_in:
             msg(user, "&cInvalid password!")
-        else:
-            msg(user,"&cAlready logged in!")
+
 
 
 
@@ -69,6 +68,11 @@ def change_pass_command(sender, command, label, args):
         senderLimit = 0, 
         helpNoargs  = True)
 def login_command(sender, command, label, args):
+    py_player = get_py_player(sender)
+
+    if not py_player.logging_in:
+        msg(sender,"&cAlready logged in!")
+
     password = args[0]
     matches(password, sender)
 
@@ -128,6 +132,7 @@ def rmpass_command(sender, command, label, args):
 @simplecommand("rmotherpass",
         aliases     = ["lacrmpass"],
         usage       = "<user>",
+        senderLimit = -1,
         description = "Removes password of <user> and sends them a notification",
         helpNoargs  = True)
 def rmotherpass_command(sender, command, label, args):
@@ -198,7 +203,7 @@ def delete_pass(uuid):
     curs.close()
     conn.close()
 
-@hook.event("player.PlayerJoinEvent", "high")
+@hook.event("player.PlayerJoinEvent", "low")
 def on_join(event):
     user = event.getPlayer()
     py_player = get_py_player(event.getPlayer())
@@ -235,16 +240,17 @@ def kick_thread():
         time.sleep(1)
         now = time.time()
         for py_player in py_players:
-            if now - py_player.login_time > wait_time:
-                player = py_player.player
-                kick = kick_class(player)
-                server.getScheduler().runTask(server.getPluginManager().getPlugin("RedstonerUtils"), kick)
-                
+            if py_player.logging_in:
+                if now - py_player.login_time > wait_time:
+                    player = py_player.player
+                    kick = kick_class(player)
+                    server.getScheduler().runTask(server.getPluginManager().getPlugin("RedstonerUtils"), kick)
+                    
 
-                """if name in logging_in:
-                    del logging_in[name]
-                    break
-                """
+                    """if name in logging_in:
+                        del logging_in[name]
+                        break
+                    """
 
 
 thread = threading.Thread(target = kick_thread)
