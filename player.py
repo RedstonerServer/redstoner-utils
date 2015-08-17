@@ -1,22 +1,26 @@
 from helpers import *
 
-players = []
+py_players = []
 
 class py_player:
 
 	def __init__(player):
 		self.player = player
 
-	#Properties TODO
-	#Example:
+	"""
+	Player properties, please add a short description of the property when adding a new one.
+
+
+	"""
 	self.logging_in = False
+	self.login_time = 0
 
 def get_py_player(player):
 	py_player = players[players.index(player)]
 	return py_player
 
 
-@hook.event("player.PlayerJoinEvent","highest")
+@hook.event("player.PlayerJoinEvent","lowest")
 def on_join(event):
 	player = py_player(event.getPlayer())
 	players.append(player)

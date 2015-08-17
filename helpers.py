@@ -10,6 +10,8 @@ import org.bukkit.block as bblock
 import org.bukkit.event.entity as entity
 import org.bukkit.command.ConsoleCommandSender
 from org.bukkit.entity import *
+from player import get_py_player
+from player import py_players
 
 from traceback import format_exc as trace
 

@@ -14,7 +14,6 @@ min_pass_length = 8
 blocked_events = ["block.BlockBreakEvent", "block.BlockPlaceEvent", "player.PlayerMoveEvent","player.AsyncPlayerChatEvent"]
 
 
-logging_in = {}
 
 
 def matches(password,user):
@@ -24,13 +23,18 @@ def matches(password,user):
 
 def matches_thread(password, user):
     hashed = get_pass(uid(user))
+    py_player = get_py_player(user)
     if crypt.verify(password, hashed):
-        if user.getName() in logging_in:
-            del logging_in[user.getName()]
+        if py_player.logging_in:
+            py_player.logging_in = False
             msg(user, "&aLogged in successfully!")
     else:
-        if user.getName() in logging_in:
-            msg(user, "&cInvalid password")
+        if py_player.logging_in:
+            msg(user, "&cInvalid password!")
+        else:
+            msg(user,"&cAlready logged in!")
+
+
 
 
 @simplecommand("cgpass",
@@ -39,17 +43,25 @@ def matches_thread(password, user):
 	senderLimit = 0,
 	helpNoargs  = True)
 def change_pass_command(sender, command, label, args):
-    if sender.getName() in logging_in:
+    
+    py_player = get_py_player(sender)
+
+    if py_player.logging_in:
         return "&cYou are not logged in"
     if not len(args) == 2:
         return "&cInvalid arguments"
+
     password = args[0]
     new_password = args[1]
     uuid = uid(sender)
+
     if is_registered(uuid):
         change_pass(uuid, crypt.encrypt(new_password, rounds=200000, salt_size=16))
         return "&aPassword changed"
     return "&cYou are not registered"
+
+
+
 
 @simplecommand("login",
         usage       = "<password>", 
@@ -60,22 +72,35 @@ def login_command(sender, command, label, args):
     password = args[0]
     matches(password, sender)
 
+
+
+
 @simplecommand("register",
         usage       = "<password>",
         description = "Registers you with <password>. Next time you join, log in with /login",
         senderLimit = 0,
         helpNoargs  = True)
 def register_command(sender, command, label, args):
+
+    py_player = get_py_player(sender)
+
     if len(args) > 1:
         return "&cPassword can only be one word!"
+
     uuid = uid(sender)
     if is_registered(uuid):
         return "&cYou are already registered!"
+
     password = args[0]
+
     if len(password) < min_pass_length:
         return "&cThe password has to be made up of at least %s characters!" % min_pass_length
+
     create_pass(uuid, password)
     return "&cPassword set. Use /login <password> upon join."
+
+
+
 
 @simplecommand("rmpass",
         description = "Removes your password if the password matches",
@@ -83,14 +108,22 @@ def register_command(sender, command, label, args):
         amax = 0,
         helpNoargs  = False)
 def rmpass_command(sender, command, label, args):
-    if sender.getName() in logging_in:
+
+    py_player = get_py_player(sender)
+
+    if py_player.logging_in:
         return "&cYou are not logged in"
+
     if not is_registered(uid(sender)):
         return "&cYou are not registered!"
-    if not sender.getName() in logging_in:
+
+    if py_player.logging_in == False:
         delete_pass(uid(sender))
         return "&aPassword removed successfully. You will not be prompted anymore."
     return "&cFailed to remove password, please contact a staff member"
+
+
+
 
 @simplecommand("rmotherpass",
         aliases     = ["lacrmpass"],
@@ -98,12 +131,18 @@ def rmpass_command(sender, command, label, args):
         description = "Removes password of <user> and sends them a notification",
         helpNoargs  = True)
 def rmotherpass_command(sender, command, label, args):
-    if sender.getName() in logging_in:
+    
+    py_player = get_py_player(sender)
+
+    if py_player.logging_in:
         return "&cYou are not logged in"
+    
     if not sender.hasPermission(admin_perm):
         noperm(sender)
         return
+
     user = server.getOfflinePlayer(args[0])
+    
     if is_registered(uid(user)):
         delete_pass(uid(user))
         runas(server.getConsoleSender(), colorify("mail send %s &cYour password was reset by a staff member. Use &6/register&c to set a new one." % user.getName()))
@@ -162,16 +201,24 @@ def delete_pass(uuid):
 @hook.event("player.PlayerJoinEvent", "high")
 def on_join(event):
     user = event.getPlayer()
+    py_player = get_py_player(event.getPlayer())
     if is_registered(uid(user)):
         msg(event.getPlayer(), "&6You will be disconnected after 60 seconds if you don't &alogin")
         msg(user, "&cUse /login <password>")
-        logging_in[user.getName()] = time.time()
+        py_player.logging_in = True
+        py_player.login_time = time.time()
+        return
+    elif user.hasPermission(admin_perm):
+        pass #Do what? force them to make a password, lots of code, maybe just message us on slack?
 
+#This shouldn't be needed anymore as py_player gets removed anyway.
+"""
 
 @hook.event("player.PlayerQuitEvent", "high")
 def on_quit(event):
     if event.getPlayer().getName() in logging_in:
         del logging_in[event.getPlayer().getName()]
+"""
 
 ##Threading start
 class kick_class(Runnable):
@@ -187,15 +234,17 @@ def kick_thread():
     while True:
         time.sleep(1)
         now = time.time()
-        for name, jointime in logging_in.iteritems():
-            if now - jointime > wait_time:
-                player = server.getPlayer(name)
+        for py_player in py_players:
+            if now - py_player.login_time > wait_time:
+                player = py_player.player
                 kick = kick_class(player)
                 server.getScheduler().runTask(server.getPluginManager().getPlugin("RedstonerUtils"), kick)
-                if name in logging_in:
+                
+
+                """if name in logging_in:
                     del logging_in[name]
                     break
-                
+                """
 
 
 thread = threading.Thread(target = kick_thread)
@@ -206,6 +255,6 @@ thread.start()
 for blocked_event in blocked_events:
     @hook.event(blocked_event, "high")
     def on_blocked_event(event):
-        user = event.getPlayer()
-        if user.getName() in logging_in:
+        user = get_py_player(event.getPlayer())
+        if user.logging_in:
             event.setCancelled(True)
