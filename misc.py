@@ -114,7 +114,9 @@ def rs_material_broken_by_flow(material):
     length = len(parts)
     return length > 1 and (parts[0] == "DIODE" or parts[1] in ("TORCH", "WIRE", "BUTTON", "HOOK") or (length == 3 and parts[1] == "COMPARATOR"))
 
-
+sudo_blacklist = ["pyeval", "script_backup_begin", "script_backup_end", "script_backup_error", "script_backup_database_begin", "script_backup_database_dumps", "script_backup_database_end",
+"script_backup_database_error", "script_backup_database_abort", "script_trim", "script_trim_result", "script_spigot_update", "script_disk_filled", "script_restart", "script_restart_abort",
+"script_stop", "script_stop_abort", "script_shutdown"]
 
 @simplecommand("sudo",
         usage        = "<player> [cmd..]",
@@ -127,11 +129,14 @@ def on_sudo_command(sender, command, label, args):
     msg(sender, "&2[SUDO] &rRunning '&e%s&r' as &3%s" % (cmd, target))
     is_cmd     = cmd[0] == "/"
     is_console = target.lower() in ["server", "console"]
+    first_cmd = (args[1])[1:] if is_cmd else None
+    if first_cmd in sudo_blacklist and (is_player(sender) and uid(sender) not in pythoners):
+        return "&cYou can't sudo this command"
     if is_console:
         server.dispatchCommand(server.getConsoleSender(), cmd[1:] if is_cmd else cmd)
         return None
     target_player = server.getPlayer(target)
-    if target_player and uid(target_player) not in pythoners:
+    if target_player:
         target_player.chat(cmd)
         return None
     return "&cPlayer %s not found!" % target
