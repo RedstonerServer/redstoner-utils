@@ -79,7 +79,9 @@ shared["load_modules"] = [
     # Replacement for LoginSecurity
     "loginsecurity",
     # Centralized Player class
-    "player"
+    "player",
+    # Servercontrol extension for telnet access to logs/AC
+    "servercontrol"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:
