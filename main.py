@@ -81,7 +81,11 @@ shared["load_modules"] = [
     # Centralized Player class
     "player",
     # Servercontrol extension for telnet access to logs/AC
-    "servercontrol"
+    "servercontrol",
+    # Script helper plugin
+    "scriptutils", 
+    # Per-player notes
+    "tag"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:
