@@ -14,6 +14,7 @@ from player import get_py_player
 from player import py_players
 
 #Imports for async query
+from secrets import *
 import mysqlhack
 from com.ziclix.python.sql import zxJDBC
 import threading
@@ -201,19 +202,19 @@ If you want your function to run sync in the case you are doing something spigot
 Example can be found in loginsecurity.py
 
 """
-def async_query(mysql_database,mysql_user,mysql_pass,query,args,target):
+def async_query(mysql_database,query,query_args,target_args,target):
 
-    def async_query_t(mysql_database,mysql_user,mysql_pass,query,args,target):
-        db_conn = zxJDBC.connect("servercontrol.db")
+    def async_query_t(mysql_database,query,query_args,target_args,target):
+        db_conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
         db_curs = db_conn.cursor()
-        db_curs.execute(query,args)
+        db_curs.execute(query,query_args)
         db_conn.commit()
         fetchall = db_curs.fetchall()
         db_curs.close()
         db_conn.close()
-        target(fetchall)
+        target(fetchall,target_args)
 
-    t = threading.Thread(target=async_query_t,args=(mysql_database,mysql_user,mysql_pass,query,args,target))
+    t = threading.Thread(target=async_query_t,args=(mysql_database,query,query_args,target_args,target))
     t.daemon = True
     t.start()
 
