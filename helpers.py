@@ -13,6 +13,11 @@ from org.bukkit.entity import *
 from player import get_py_player
 from player import py_players
 
+#Imports for async query
+import mysqlhack
+from com.ziclix.python.sql import zxJDBC
+import threading
+
 from traceback import format_exc as trace
 
 
@@ -187,6 +192,30 @@ def known_player(player):
     this is different to HasPlayedBefore(), which will return False on first join
     """
     return player.hasPlayedBefore()
+
+"""
+Runs a async query, calls target function with fetchall as an argument, it will be an empty list if there is nothing to fetch.
+(So make sure your function takes that argument.)
+
+If you want your function to run sync in the case you are doing something spigot wouldn't like to be async use the bukkit scheduler.
+Example can be found in loginsecurity.py
+
+"""
+def async_query(mysql_database,mysql_user,mysql_pass,query,args,target):
+
+    def async_query_t(mysql_database,mysql_user,mysql_pass,query,args,target):
+        db_conn = zxJDBC.connect("servercontrol.db")
+        db_curs = db_conn.cursor()
+        db_curs.execute(query,args)
+        db_conn.commit()
+        fetchall = db_curs.fetchall()
+        db_curs.close()
+        db_conn.close()
+        target(fetchall)
+
+    t = threading.Thread(target=async_query_t,args=(mysql_database,mysql_user,mysql_pass,query,args,target))
+    t.daemon = True
+    t.start()
 
 
 def open_json_file(filename, default = None):
