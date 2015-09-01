@@ -4,7 +4,7 @@
 set -e
 
 for cmd in curl java unzip git pip; do
-  if ! which -s "$cmd"; then
+  if ! which "$cmd" >/dev/null; then
     tput setf 4 >&2
     echo "Error: please install '$cmd' to proceed" >&2
     tput sgr0 >&2
