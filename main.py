@@ -19,6 +19,7 @@ except:
 
 @hook.enable
 def on_enable():
+    shared["modules"]["vanishfix"].enabled()
     info("RedstonerUtils enabled!")
 
 
@@ -85,7 +86,9 @@ shared["load_modules"] = [
     # Script helper plugin
     "scriptutils", 
     # Per-player notes
-    "tag"
+    "tag",
+    # vanish toggle module - temporary fix
+    "vanishfix"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:
