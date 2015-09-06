@@ -88,7 +88,9 @@ shared["load_modules"] = [
     # Per-player notes
     "tag",
     # vanish toggle module - temporary fix
-    "vanishfix"
+    "vanishfix",
+    # obisidian mining punishment plugin
+    "punishments"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:
