@@ -31,14 +31,11 @@ def get_last_seen(player):
 
 
 # receive link and email from website
-def get_website_data(player):
-    conn    = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
-    curs    = conn.cursor()
+def get_webite_data(player):
     uuid = str(uid(player)).replace("-", "")
-    curs.execute("SELECT DISTINCT `id`, `email` FROM users WHERE `uuid` = ? LIMIT 1", (uuid,))
-    results = curs.fetchall()
-    curs.close()
-    conn.close()
+    async_query(mysql_database,"SELECT DISTINCT `id`, `email` FROM users WHERE `uuid` = ? LIMIT 1",(uuid,),get_website_data_target)
+
+def get_website_data_target(results):
     return ("http://redstoner.com/users/%s" % results[0][0], results[0][1]) if results else (None, None)
 
 
