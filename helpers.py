@@ -202,9 +202,9 @@ If you want your function to run sync in the case you are doing something spigot
 Example can be found in loginsecurity.py
 
 """
-def async_query(mysql_database,query,query_args,target_args,target):
+def async_query(mysql_database,query,query_args,target,*target_args,**target_kwargs):
 
-    def async_query_t(mysql_database,query,query_args,target_args,target):
+    def async_query_t(mysql_database,query,query_args,target,target_args,target_kwargs):
         db_conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
         db_curs = db_conn.cursor()
         db_curs.execute(query,query_args)
@@ -212,9 +212,9 @@ def async_query(mysql_database,query,query_args,target_args,target):
         fetchall = db_curs.fetchall()
         db_curs.close()
         db_conn.close()
-        target(fetchall,target_args)
+        target(fetchall,target_args,target_kwargs)
 
-    t = threading.Thread(target=async_query_t,args=(mysql_database,query,query_args,target_args,target))
+    t = threading.Thread(target=async_query_t,args=(mysql_database,query,query_args,target,target_args,target_kwargs))
     t.daemon = True
     t.start()
 
