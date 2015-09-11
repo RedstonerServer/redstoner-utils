@@ -31,11 +31,14 @@ def get_last_seen(player):
 
 
 # receive link and email from website
-def get_webite_data(player):
+def get_website_data(player):
+    conn    = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
+    curs    = conn.cursor()
     uuid = str(uid(player)).replace("-", "")
-    async_query(mysql_database,"SELECT DISTINCT `id`, `email` FROM users WHERE `uuid` = ? LIMIT 1",(uuid,),get_website_data_target)
-
-def get_website_data_target(results):
+    curs.execute("SELECT DISTINCT `id`, `email` FROM users WHERE `uuid` = ? LIMIT 1", (uuid,))
+    results = curs.fetchall()
+    curs.close()
+    conn.close()
     return ("http://redstoner.com/users/%s" % results[0][0], results[0][1]) if results else (None, None)
 
 
@@ -83,7 +86,10 @@ def on_hook_command(sender, command, label, args):
         plugin_header(sender, "Check")
         msg(sender, "&7Please notice that the data may not be fully accurate!")
         player = server.getOfflinePlayer(args[0]) if len(args) > 0 else None
-        get_all_data(sender, player)
+        
+        t = threading.Thread(target=get_all_data args=(sender, player))
+        t.daemon = True
+        t.start()
     else:
         msg(sender, "&4You don't have the required permissions to execute this command!")
     return True
