@@ -203,7 +203,7 @@ def delete_pass(uuid):
     curs.close()
     conn.close()
 
-@hook.event("player.PlayerJoinEvent", "low")
+@hook.event("player.PlayerJoinEvent", "highest")
 def on_join(event):
     user = event.getPlayer()
     py_player = get_py_player(event.getPlayer())
@@ -271,4 +271,5 @@ def pre_command_proccess(event):
     if player.logging_in:
         args = event.getMessage().split(" ")
         if not args[0].lower() == "/login":
+            msg(player.player, "&6You need to login before you do that!")
             event.setCancelled(True)
