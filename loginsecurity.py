@@ -264,3 +264,11 @@ for blocked_event in blocked_events:
         user = get_py_player(event.getPlayer())
         if user.logging_in:
             event.setCancelled(True)
+
+@hook.event("player.PlayerCommandPreprocessEvent","normal")
+def pre_command_proccess(event):
+    player = get_py_player(event.getPlayer())
+    if player.logging_in:
+        args = event.getMessage().split(" ")
+        if not args[0].lower() == "/login":
+            event.setCancelled(True)
