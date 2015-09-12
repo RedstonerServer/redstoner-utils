@@ -87,7 +87,7 @@ def on_hook_command(sender, command, label, args):
         msg(sender, "&7Please notice that the data may not be fully accurate!")
         player = server.getOfflinePlayer(args[0]) if len(args) > 0 else None
         
-        t = threading.Thread(target=get_all_data args=(sender, player))
+        t = threading.Thread(target=get_all_data, args=(sender, player))
         t.daemon = True
         t.start()
     else:
