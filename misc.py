@@ -256,6 +256,13 @@ def on_modules_command(sender, command, label, args):
     plugin_header(sender, "Modules")
     msg(sender, ", ".join([(("&a" if mod in shared["modules"] else "&c") + mod) for mod in shared["load_modules"]]))
 
+@hook.command("warn")
+def on_warn_command(sender, command, label, args):
+    broadcast(None, " &b= &2&lLag incoming! &r-%s" % sender.getDisplayName())
+
+@hook.command("warnp")
+def on_warnp_command(sender, command, label, args):
+    broadcast(None, " &b= &2&lPosible lag incoming! &r-%s" % sender.getDisplayName())
 
 """ Something I'm planning for schematics
 @hook.event("player.PlayerCommandPreprocessEvent", "low")
