@@ -11,9 +11,9 @@ calc_perm_power = "utils.calc.power"
 
 def calc(sender, text):
     try:
-        do_calc(sender, text)
+        return do_calc(sender, text)
     except:
-        return
+        return None
 
 def do_calc(sender, text):
     """
