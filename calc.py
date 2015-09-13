@@ -10,6 +10,12 @@ calc_perm = "utils.calc"
 calc_perm_power = "utils.calc.power"
 
 def calc(sender, text):
+    try:
+        do_calc(sender, text)
+    except:
+        return
+
+def do_calc(sender, text):
     """
     extracts a mathematical expression from `text`
     returns (expression, result) or None
