@@ -208,7 +208,7 @@ def on_join(event):
     user = event.getPlayer()
     py_player = get_py_player(event.getPlayer())
     if is_registered(uid(user)):
-        msg(event.getPlayer(), "&6You will be disconnected after 60 seconds if you don't &alogin")
+        msg(event.getPlayer(), "&4You will be disconnected after 60 seconds if you don't &alogin")
         msg(user, "&cUse /login <password>")
         py_player.logging_in = True
         py_player.login_time = time.time()
@@ -271,5 +271,5 @@ def pre_command_proccess(event):
     if player.logging_in:
         args = event.getMessage().split(" ")
         if not args[0].lower() == "/login":
-            msg(player.player, "&6You need to login before you do that!")
+            msg(player.player, "&4You need to login before you do that!")
             event.setCancelled(True)
