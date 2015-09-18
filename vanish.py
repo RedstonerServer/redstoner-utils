@@ -27,7 +27,8 @@ def set_state(player, state):
 def enable_vanish(target):
     vanished.append(uid(target))
     for player in list(server.getOnlinePlayers()):
-        player.hidePlayer(target)
+        if not is_authorized(player):
+            player.hidePlayer(target)
 
 
 def disable_vanish(target):
