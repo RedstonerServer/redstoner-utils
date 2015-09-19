@@ -271,7 +271,7 @@ def warn_command(sender, command, label, args):
         description = "Warns everybody on the server that you might cause lag shortly",
         amax        = 0,
         helpSubcmd  = True)
-def warn_command(sender, command, label, args):
+def warnp_command(sender, command, label, args):
     broadcast(None, " &b= &2&lPossible lag incoming! &r-%s" % sender.getDisplayName())
 
 
