@@ -256,19 +256,25 @@ def on_modules_command(sender, command, label, args):
     plugin_header(sender, "Modules")
     msg(sender, ", ".join([(("&a" if mod in shared["modules"] else "&c") + mod) for mod in shared["load_modules"]]))
 
-@hook.command("warn")
-def on_warn_command(sender, command, label, args):
-    sender.hasPermission("utils.warn"):
-        broadcast(None, " &b= &2&lLag incoming! &r-%s" % sender.getDisplayName())
-    else:
-        noperm(sender)
 
-@hook.command("warnp")
-def on_warnp_command(sender, command, label, args):
-    sender.hasPermission("utils.warnp"):
-        broadcast(None, " &b= &2&lPossible lag incoming! &r-%s" % sender.getDisplayName())
-    else:
-        noperm(sender)
+@simplecommand("warn",
+        usage       = "",
+        description = "Warns everybody on the server that you will cause lag shortly",
+        amax        = 0,
+        helpSubcmd  = True):
+def warn_command(sender, command, label, args):
+    broadcast(None, " &b= &2&lLag incoming! &r-%s" % sender.getDisplayName())
+
+
+@simplecommand("warnp",
+        usage       = "",
+        description = "Warns everybody on the server that you might cause lag shortly",
+        amax        = 0,
+        helpSubcmd  = True):
+def warn_command(sender, command, label, args):
+    broadcast(None, " &b= &2&lPossible lag incoming! &r-%s" % sender.getDisplayName())
+
+
 
 """ Something I'm planning for schematics
 @hook.event("player.PlayerCommandPreprocessEvent", "low")
