@@ -261,7 +261,7 @@ def on_modules_command(sender, command, label, args):
         usage       = "",
         description = "Warns everybody on the server that you will cause lag shortly",
         amax        = 0,
-        helpSubcmd  = True):
+        helpSubcmd  = True)
 def warn_command(sender, command, label, args):
     broadcast(None, " &b= &2&lLag incoming! &r-%s" % sender.getDisplayName())
 
@@ -270,7 +270,7 @@ def warn_command(sender, command, label, args):
         usage       = "",
         description = "Warns everybody on the server that you might cause lag shortly",
         amax        = 0,
-        helpSubcmd  = True):
+        helpSubcmd  = True)
 def warn_command(sender, command, label, args):
     broadcast(None, " &b= &2&lPossible lag incoming! &r-%s" % sender.getDisplayName())
 
