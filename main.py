@@ -19,7 +19,6 @@ except:
 
 @hook.enable
 def on_enable():
-    shared["modules"]["vanishfix"].enabled()
     info("RedstonerUtils enabled!")
 
 
