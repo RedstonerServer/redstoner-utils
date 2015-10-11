@@ -26,3 +26,4 @@ def on_join(event):
 @hook.event("player.PlayerQuitEvent","highest")
 def on_leave(event):
     py_players.remove(get_py_player(event.getPlayer()))
+
