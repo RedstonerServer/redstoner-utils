@@ -142,6 +142,82 @@ def on_sudo_command(sender, command, label, args):
     return "&cPlayer %s not found!" % target
 
 
+container_levels = dict(
+    FURNACE = [],
+    HOPPER = [],
+    CHEST = [],
+)
+
+
+"""
+Suggestion by Armadillo28, see thread: http://redstoner.com/forums/threads/2213-putting-the-correct-amount-of-items-in-a-container?page=1#reply-14507
+"""
+"""
+@simplecommand("signalstrength",
+        usage = "<signal strength> [item] [data]",
+        aliases = ["ss", "level"],
+        description = "Fills the targeted container with the correct amount of items to achieve the desired signal strength.",
+        amin = 1,
+        amax = 3,
+        helpNoargs = True,
+        helpSubcmd = True,
+        senderLimit = 0)
+def on_signalstrength_command(sender, command, label, args):
+    values = []
+    try:
+        for i in range(len(args)):
+            values[i] = int(args[i])
+    except ValueError:
+        return "&cYou have to enter a number for the signal strength"
+
+
+    target_block = sender.getTargetBlock(None, 5)
+    Validate.notNone(target_block)
+    target_type = str(target_block.getType())
+    Validate.isTrue(target_type in container_levels)
+
+    levels = container_levels[target_type]
+
+    item_value = 1
+    item_type = Material.REDSTONE
+    item_data = 0
+    if len(values) > 1:
+        item_type = Material.getMaterial(values[1])
+        if item_type == None:
+            return "&cThat is not an item ID"
+        if len(values) == 3:
+            item_data = values[2]
+            if not (0 <= item_data <= 15):
+                return "&cThe data must be a number from 0 to a maximum of 15"
+        if values[1] in (items that stack up to 16):
+            item_value = 4
+        elif values[1] in (items that stack up to 1):
+            item_value = 64
+
+    target_strength = values[0]
+
+    item_count = levels[target_strength] / item_value
+
+    if int(item_count) * item_value < levels[target_strength] and (int(item_count) + 1) * item_value >= levels[target_strength + 1]: #if target_strength = 15, first check will always be false, so no IndexError
+        return "&cThe desired signal strength could not be achieved with the requested item type"
+
+    item_count = int(item_count)
+    if item_count % 1 != 0:
+        item_count += 1
+
+    def stack(count):
+        return ItemStack(values[1])
+
+    full_stacks = int(item_count / item_value)
+    for i in range(0, full_stacks) #amount of full stacks
+        target_block.setItem(i, ItemStack())
+"""
+
+
+
+
+
+
 
 @simplecommand("me",
         usage        = "[message..]",
