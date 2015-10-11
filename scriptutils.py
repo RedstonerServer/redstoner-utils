@@ -149,7 +149,7 @@ arg 0 size of backup
 @hook.command("script_backup_database_end")
 def print_backup_db_end(sender, command, label, args):
     if not is_player(sender):
-        broadcast(None, "&6 =&2 Databse backup completed.")
+        broadcast(None, "&6 =&2 Database backup completed.")
         server.dispatchCommand(server.getConsoleSender(), "ac &abackup size: &2%sMB&a." % args[0])
     else:
         noperm(sender)
