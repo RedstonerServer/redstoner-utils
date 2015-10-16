@@ -10,7 +10,7 @@
 # file named "aliases". The
 # file is generated if not
 # present. Set values to -1
-# for unlimited values.
+# for "unlimited" setting.
 
 from helpers import *
 
@@ -25,9 +25,14 @@ def safe_open_json():
 
 @hook.command("alias", usage = "/<command> [to_alias] [alias...]", desc = "Aliases words in chat")
 def on_alias_command(sender, cmd, label, args):
+    
     if not is_player(sender):
        msg(sender, "Sorry, Console cannot alias words")
-       return False
+       return True
+
+    if not sender.hasPermission("utils.alias.allowed"):
+        plugin_header(recipient = sender, name = "Chat Alias")
+        noperm(sender)
 
     if len(args) == 0:
         plugin_header(recipient = sender, name = "Chat Alias")
@@ -67,12 +72,12 @@ def on_alias_command(sender, cmd, label, args):
         data = safe_open_json()
         alias = " ".join(args[1:])
         try:
-            if len(alias) > int(data["gnl"]["max_len"]) and data["gnl"]["max_len"] > 0:
+            if len(alias) > int(data["gnl"]["max_len"]) and int(data["gnl"]["max_len"]) >= 0:
                 plugin_header(recipient = sender, name = "Chat Alias")
                 msg(sender, "Please do not alias long words/sentences.")
                 return True
             
-            if len(data[str(sender.getUniqueId())]) >= int(data["gnl"]["max_entries"]) and data["gnl"]["max_entries"] > 0:
+            if len(data[str(sender.getUniqueId())]) >= int(data["gnl"]["max_entries"]) and int(data["gnl"]["max_entries"]) >= 0:
                 plugin_header(recipient = sender, name = "Chat Alias")
                 msg(sender, "You have reached the maximum amount of alias entries! Sorry!")
                 return True
