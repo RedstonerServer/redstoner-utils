@@ -42,6 +42,8 @@ shared["load_modules"] = [
     "blockplacemods",
     # Adds /calc, toggles automatic solving of Math expressions in chat
     "calc",
+    # Adds aliasing of chat words
+    "chatalias",
     # Plugin to locate laggy chunks. /lc <n> lists chunks with more than n entities
     "lagchunks",
     # Adds /report and /rp, Stores reports with time and location
