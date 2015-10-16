@@ -38,7 +38,7 @@ def on_alias_command(sender, cmd, label, args):
         msg(sender, "\nYour Aliases:")
         data = safe_open_json()
         try:
-            for alias, value in data[sender.getName()].items():
+            for alias, value in data[str(sender.getUniqueId())].items():
                 msg(sender, "%s ==> %s" % (alias, value))
         except KeyError:
             pass
@@ -47,13 +47,13 @@ def on_alias_command(sender, cmd, label, args):
     elif len(args) == 1:
         data = safe_open_json()
         if args[0] == "*":
-            data[sender.getName()].clear()
+            del data[str(sender.getUniqueId())]
             save_json_file("aliases", data)
             plugin_header(recipient = sender, name = "Chat Alias")
             msg(sender, "ALL alias data successfuly removed!")
             return True
         
-        if data[sender.getName()].pop(args[0], None) is None:
+        if data[str(sender.getUniqueId())].pop(args[0], None) is None:
             plugin_header(recipient = sender, name = "Chat Alias")
             msg(sender, "Could not remove: alias not present!")
             return True
@@ -72,14 +72,14 @@ def on_alias_command(sender, cmd, label, args):
                 msg(sender, "Please do not alias long words/sentences.")
                 return True
             
-            if len(data[sender.getName()]) >= int(data["gnl"]["max_entries"]) and data["gnl"]["max_entries"] > 0:
+            if len(data[str(sender.getUniqueId())]) >= int(data["gnl"]["max_entries"]) and data["gnl"]["max_entries"] > 0:
                 plugin_header(recipient = sender, name = "Chat Alias")
                 msg(sender, "You have reached the maximum amount of alias entries! Sorry!")
                 return True
         except KeyError:
-            data[sender.getName()] = {}
+            data[str(sender.getUniqueId())] = {}
         
-        data[sender.getName()][args[0]] = alias
+        data[str(sender.getUniqueId())][args[0]] = alias
         save_json_file("aliases", data)
         plugin_header(recipient = sender, name = "Chat Alias")
         msg(sender, "Chat Alias %s ==> %s successfully created!" % (args[0], alias))
@@ -96,5 +96,5 @@ def on_player_chat(event):
         return
 
     data = safe_open_json()
-    for alias, value in data[event.getPlayer().getName()].items():
+    for alias, value in data[str(event.getPlayer().getUniqueId())].items():
         event.setMessage(event.getMessage().replace(alias, value))
