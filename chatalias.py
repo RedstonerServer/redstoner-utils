@@ -91,10 +91,10 @@ def on_alias_command(sender, cmd, label, args):
 
 
 @hook.event("player.AsyncPlayerChatEvent", "High")
-def on_player_chat(e):
-    if e.isCancelled():
+def on_player_chat(event):
+    if event.isCancelled():
         return
 
     data = safe_open_json()
-    for alias, value in data[e.getPlayer().getName()].items():
-        e.setMessage(e.getMessage().replace(alias, value))
+    for alias, value in data[event.getPlayer().getName()].items():
+        event.setMessage(event.getMessage().replace(alias, value))
