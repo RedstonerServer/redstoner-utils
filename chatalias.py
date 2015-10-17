@@ -33,6 +33,7 @@ def on_alias_command(sender, cmd, label, args):
     if not sender.hasPermission("utils.alias.allowed"):
         plugin_header(recipient = sender, name = "Chat Alias")
         noperm(sender)
+        return True
 
     if len(args) == 0:
         plugin_header(recipient = sender, name = "Chat Alias")
