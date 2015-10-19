@@ -4,7 +4,7 @@ from traceback import format_exc as print_traceback
 
 
 mentions   = open_json_file("mentio", {}) # contains a list of keywords for each player (uuid)
-max_amount = 3
+max_amount = -1
 arrow      = colorify(u"&r&7\u2192&r")
 colors_reg = reg_compile(u"\u00A7[\\da-fk-or]") # finds color codes
 
@@ -70,7 +70,7 @@ def add_keyword(sender, args):
     keywords = get_keywords(sender)
     new_word = stripcolors(args[1].lower())
 
-    if len(keywords) >= max_amount:
+    if (len(keywords) >= max_amount) and (max_amount >= 0):
         msg(sender, "&cYou are already listening for %s words! Try &6/mentio del <word>" % max_amount)
         return True
 

@@ -298,7 +298,8 @@ def eval_thread(sender, code):
 pythoners = [
 "e452e012-2c82-456d-853b-3ac8e6b581f5", # Nemes
 "ae795aa8-6327-408e-92ab-25c8a59f3ba1", # jomo
-"305ccbd7-0589-403e-a45b-d791dcfdee7d"  # PanFritz
+"305ccbd7-0589-403e-a45b-d791dcfdee7d", # PanFritz
+"51f2ad3c-6cc8-40ea-aa2b-f25970316921"  # Dico
 ]
 
 @simplecommand("pyeval",

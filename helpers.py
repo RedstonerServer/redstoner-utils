@@ -256,3 +256,26 @@ def toggle(player, ls, name = "Toggle", add = None):
     elif add != False:
         ls.append(pid)
         msg(player, "&a%s turned on!" % name)
+
+def send_JSON_message(playername, message):
+    bukkit.Bukkit.getServer().dispatchCommand(bukkit.Bukkit.getServer().getConsoleSender(), "tellraw " + playername + " " + message)
+
+
+def isIP(tocheck):
+    subsets = ["","","",""]
+    i = 0
+    for j in range(0,len(tocheck)):
+        if not (tocheck[j] in "0123456789."):
+            return False
+        elif tocheck[j] == ".":
+            i += 1
+            if (i >= 4):
+                return False
+        else:
+            subsets[i] +=  tocheck[j]
+    if not (i == 3):
+        return False
+    for j in range(0,3):
+        if not ((int(subsets[j]) >= 0) & (int(subsets[j]) <= 255)):
+            return False
+    return True
