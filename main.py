@@ -54,8 +54,11 @@ shared["load_modules"] = [
     "webtoken",
     # Adds /lol, broadcasts random funyy messages. A bit like the splash text in the menu
     "saylol",
+<<<<<<< HEAD
+=======
     # Adds /signalstrength, lets you request a signal strength and an amount of items will be inserted into target container to meet that strength.
     "signalstrength",
+>>>>>>> b4f5a68e4e3ba4993e8326d2f11f9582933b694e
     # Shows the owner of a skull when right-clicked
     "skullclick",
     # Adds /listen, highlights chat and plays a sound when your name was mentioned
@@ -74,6 +77,8 @@ shared["load_modules"] = [
     "check",
     # Adds /an, a command you can use to share thoughts/plans/news
     "adminnotes",
+    # Adds busy status to players
+    "imbusy",
     # Adds /imout, displays fake leave/join messages
     "imout",
     #adds snowbrawl minigame
