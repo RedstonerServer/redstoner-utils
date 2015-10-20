@@ -43,6 +43,7 @@ The arguments are as follows:
 
 Comments on the function added to the decorator:
 It should return a message to send to the player. Color codes are translated automatically. It can return None or an empty string to send nothing.
+Returning "HELP" makes it show the help message.
 
 Inside the function, calls to static methods in the class Validate can be used to make the code shorter and easier to write (maybe not easier to read).
 For example, to make sure that a condition is met, use Validate.isTrue(condition, message to send to the player if the condition is not met)
