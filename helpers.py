@@ -6,6 +6,7 @@ import org.bukkit as bukkit
 import org.bukkit.Location as Location
 import org.bukkit.entity.Player as Player
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause as TeleportCause
+import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
 import org.bukkit.block as bblock
 import org.bukkit.event.entity as entity
 import org.bukkit.command.ConsoleCommandSender
@@ -141,6 +142,15 @@ def is_player(obj):
     return True when ob is a bukkit Player
     """
     return (isinstance(obj, Player))
+
+
+def can_build(player, block):
+    """
+    return True if the player can change/build at the location of given block
+    """
+    event = BlockBreakEvent(block, player)
+    server.getPluginManager().callEvent(event)
+    return not event.isCancelled()
 
 
 def checkargs(sender, args, amin, amax):

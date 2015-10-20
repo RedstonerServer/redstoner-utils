@@ -4,11 +4,7 @@ from time import time as now
 from time import sleep
 from sys import exc_info
 import thread
-
 import org.bukkit.inventory.ItemStack as ItemStack
-import org.bukkit.Material as Material
-from math import ceil
-
 import org.bukkit.Bukkit as Bukkit
 from basecommands import simplecommand, Validate
 
@@ -143,93 +139,6 @@ def on_sudo_command(sender, command, label, args):
         target_player.chat(cmd)
         return None
     return "&cPlayer %s not found!" % target
-
-
-"""
-Suggestion by Armadillo28, see thread: http://redstoner.com/forums/threads/2213?page=1#reply-14507
-
-Clarification on these formulas on http://minecraft.gamepedia.com/Redstone_Comparator#Containers
-"""
-
-def required_item_count(strength, slots, stack):
-    if strength == 0:
-        count = 0
-    elif strength == 1:
-        count = 1
-    else:
-        count = int(ceil(slots * stack / 14.0 * (strength - 1)))
-
-    resulting_strength = int(1 + 14.0 * count / stack / slots)
-
-    return count if resulting_strength == strength else None
-
-@simplecommand("signalstrength",
-        usage = "<signal strength> [item] [data]",
-        aliases = ["ss", "level"],
-        description = "Fills the targeted container with the correct amount of items to achieve the desired signal strength.",
-        amin = 1,
-        amax = 3,
-        helpNoargs = True,
-        helpSubcmd = True,
-        senderLimit = 0)
-def on_signalstrength_command(sender, command, label, args):
-
-    target_block = sender.getTargetBlock(None, 5)
-    Validate.notNone(target_block, "&cThat command can only be used when a container is targeted")
-
-    try:
-        inv = target_block.getState().getInventory()
-    except AttributeError:
-        return "&cThat command can only be used when a container is targeted"
-
-    #---------Define the requested strength, item type and item data----------
-    Validate.isTrue(args[0].isdigit() and 0 <= int(args[0]) <= 15, "&cThe signal strength has to be a value from 0 to 15")
-    strength = int(args[0])
-
-    item_type = Material.REDSTONE if len(args) < 2 else Material.getMaterial(int(args[1]) if args[1].isdigit() else args[1])
-    Validate.notNone(item_type, "&cThat item id does not exist")
-
-    item_data = 0 if len(args) < 3 else int(args[2]) if args[2].isdigit() else -1
-    Validate.isTrue(0 <= item_data <= 15, "&cThe data has to be a value from 0 to 15")
-
-    #--------Get the stack size and required amount of items to achieve the desired signal strength---------
-    stack_size = item_type.getMaxStackSize()
-    item_count = required_item_count(strength, inv.getSize(), stack_size)
-    Validate.notNone(item_count, "&cThe desired signal strength could not be achieved with the requested item type")
-
-    #------------Add the other side of the chest if target is a double chest--------------
-    target_blocks = [target_block]
-    target_type = target_block.getType()
-    if target_type in (Material.CHEST, Material.TRAPPED_CHEST):
-        loc = target_block.getLocation()
-        x = loc.getBlockX()
-        y = loc.getBlockY()
-        z = loc.getBlockZ()
-        world = loc.getWorld()
-
-        target_blocks += [
-            block for block in (
-                world.getBlockAt(x + 1, y, z), 
-                world.getBlockAt(x - 1, y, z), 
-                world.getBlockAt(x, y, z + 1), 
-                world.getBlockAt(x, y, z - 1),
-            ) if block.getType() == target_type
-        ]
-
-    #----------------Insert items-------------
-    full_stack_count, remaining = divmod(item_count, stack_size)
-
-    inv.clear()
-    for block in target_blocks:
-        for i in range(full_stack_count):
-            inv.setItem(i, ItemStack(item_type, stack_size, item_data))
-        if remaining > 0:
-            inv.setItem(full_stack_count, ItemStack(item_type, remaining, item_data))
-
-
-    return "&aSuccesfully edited the targeted %s to give out a signal strenth of %s to comparators" % (
-        str(target_type).lower().replace("_", " "), strength)
-
 
 
 
