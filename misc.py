@@ -146,7 +146,7 @@ def on_sudo_command(sender, command, label, args):
 
 
 """
-Suggestion by Armadillo28, see thread: http://redstoner.com/forums/threads/2213-putting-the-correct-amount-of-items-in-a-container?page=1#reply-14507
+Suggestion by Armadillo28, see thread: http://redstoner.com/forums/threads/2213?page=1#reply-14507
 
 Clarification on these formulas on http://minecraft.gamepedia.com/Redstone_Comparator#Containers
 """
@@ -182,20 +182,14 @@ def on_signalstrength_command(sender, command, label, args):
     except AttributeError:
         return "&cThat command can only be used when a container is targeted"
 
-    #--------Check if all arguments are an int >= 0 and reassign args---------
-    for i in range(len(args)):
-        if not args[i].isdigit():
-            return "&cThe %s has to be a number >= 0" % ("signal strength", "item", "data")[i]
-    args = [int(arg) for arg in args]
-
     #---------Define the requested strength, item type and item data----------
-    strength = args[0]
-    Validate.isTrue(0 <= strength <= 15, "&cThe signal strength has to be a value from 0 to 15")
+    Validate.isTrue(args[0].isdigit() and 0 <= int(args[0]) <= 15, "&cThe signal strength has to be a value from 0 to 15")
+    strength = int(args[0])
 
-    item_type = Material.REDSTONE if len(args) < 2 else Material.getMaterial(args[1])
+    item_type = Material.REDSTONE if len(args) < 2 else Material.getMaterial(int(args[1]) if args[1].isdigit() else args[1])
     Validate.notNone(item_type, "&cThat item id does not exist")
 
-    item_data = 0 if len(args) < 3 else args[2]
+    item_data = 0 if len(args) < 3 else int(args[2]) if args[2].isdigit() else -1
     Validate.isTrue(0 <= item_data <= 15, "&cThe data has to be a value from 0 to 15")
 
     #--------Get the stack size and required amount of items to achieve the desired signal strength---------
@@ -233,7 +227,8 @@ def on_signalstrength_command(sender, command, label, args):
             inv.setItem(full_stack_count, ItemStack(item_type, remaining, item_data))
 
 
-    return "&aSuccesfully edited the targeted %s to give out a signal strenth of %s to comparators" % (str(target_type).lower().replace("_", " "), strength)
+    return "&aSuccesfully edited the targeted %s to give out a signal strenth of %s to comparators" % (
+        str(target_type).lower().replace("_", " "), strength)
 
 
 
