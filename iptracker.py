@@ -5,6 +5,7 @@ from java.util import UUID as UUID
 from helpers import *
 from org.bukkit import *
 from traceback import format_exc as trace
+from iptracker_secrets import *
 
 iptrack_permission = "utils.iptrack"
 
@@ -16,13 +17,13 @@ def on_player_join(event):
     uuid = uid(player)
     conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs = conn.cursor()
-    curs.execute("SELECT ips FROM iptrack_uuidtoips WHERE uuid = ?", (uuid, ))
+    curs.execute("SELECT ips FROM uuid2ips WHERE uuid = ?", (uuid, ))
     results = curs.fetchall()
     if len(results) == 0:
         ips = []
     else:
         ips = json.loads(results[0][0])
-    curs.execute("SELECT uuids FROM iptrack_iptouuids WHERE ip = ?", (ip, ))
+    curs.execute("SELECT uuids FROM ip2uuids WHERE ip = ?", (ip, ))
     results = curs.fetchall()
     if len(results) == 0:
         uuids = []
@@ -33,15 +34,15 @@ def on_player_join(event):
     if ip not in ips:
         ips.append(ip)
         if new_ip_entry:
-            curs.execute("INSERT INTO iptrack_uuidtoips VALUES (?,?)", (uuid, json.dumps(ips), ))
+            curs.execute("INSERT INTO uuid2ips VALUES (?,?)", (uuid, json.dumps(ips), ))
         else:
-            curs.execute("UPDATE iptrack_uuidtoips SET ips = ? WHERE uuid = ?", (uuid, json.dumps(ips), ))
+            curs.execute("UPDATE uuid2ips SET ips = ? WHERE uuid = ?", (uuid, json.dumps(ips), ))
     if uuid not in uuids:
         uuids.append(uuid)
         if new_uuid_entry:
-            curs.execute("INSERT INTO iptrack_iptouuids VALUES (?,?)", (ip, json.dumps(uuids), ))
+            curs.execute("INSERT INTO ip2uuids VALUES (?,?)", (ip, json.dumps(uuids), ))
         else:
-            curs.execute("UPDATE iptrack_iptouuids SET uuids = ? WHERE uuid = ?", (ip, json.dumps(uuids), ))
+            curs.execute("UPDATE ip2uuids SET uuids = ? WHERE uuid = ?", (ip, json.dumps(uuids), ))
         conn.commit()
     curs.close()
     conn.close()
@@ -56,7 +57,7 @@ def on_getinfo_command(sender, args):
             if isIP(args[0]):
                 conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
                 curs = conn.cursor()
-                curs.execute("SELECT uuids FROM iptrack_iptouuids WHERE ip = ?", (args[0], ))
+                curs.execute("SELECT uuids FROM ip2uuids WHERE ip = ?", (args[0], ))
                 results = curs.fetchall()
                 curs.close()
                 conn.close()
@@ -76,7 +77,7 @@ def on_getinfo_command(sender, args):
                 uuid = target.getUniqueId()
                 conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
                 curs = conn.cursor()
-                curs.execute("SELECT ips FROM iptrack_uuidtoips WHERE uuid = ?", (uuid.toString(), ))
+                curs.execute("SELECT ips FROM uuid2ips WHERE uuid = ?", (uuid.toString(), ))
                 results = curs.fetchall()
                 curs.close()
                 conn.close()
