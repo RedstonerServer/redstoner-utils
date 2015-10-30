@@ -7,11 +7,17 @@ from org.bukkit import *
 from traceback import format_exc as trace
 from iptracker_secrets import *
 
+
 iptrack_permission = "utils.iptrack"
 
 
 @hook.event("player.PlayerJoinEvent", "low")
 def on_player_join(event):
+    t = threading.Thread(target=on_player_join_thread, args=(event))
+    t.daemon = True
+    t.start()
+
+def on_player_join_thread(event):
     player = event.getPlayer()
     ip = player.getAddress().getHostString()
     uuid = uid(player)
@@ -50,9 +56,14 @@ def on_player_join(event):
 
 @hook.command("getinfo")
 def on_getinfo_command(sender, args):
+    t = threading.Thread(target=on_player_join_thread, args=(sender, args))
+    t.daemon = True
+    t.start()
+
+def on_getinfo_command_thread(sender, args):
     if(sender.hasPermission(iptrack_permission)):
         if not checkargs(sender, args, 1, 1):
-            return false
+            return False
         else:
             if isIP(args[0]):
                 conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
