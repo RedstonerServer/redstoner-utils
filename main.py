@@ -74,6 +74,8 @@ shared["load_modules"] = [
     "check",
     # Adds /an, a command you can use to share thoughts/plans/news
     "adminnotes",
+    # Adds busy status to players
+    "imbusy",
     # Adds /imout, displays fake leave/join messages
     "imout",
     #adds snowbrawl minigame
@@ -95,7 +97,9 @@ shared["load_modules"] = [
     # obisidian mining punishment plugin
     "punishments",
     # a simple replacement for the buggy essentials /vanish
-    "vanish"
+    "vanish",
+    # ip-tracking utility
+    "iptracker"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:
