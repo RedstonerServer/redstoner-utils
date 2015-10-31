@@ -110,7 +110,7 @@ def on_alias_command(sender, cmd, label, args):
         return False
 
 
-@hook.event("player.AsyncPlayerChatEvent", "High")
+@hook.event("player.AsyncPlayerChatEvent", "high")
 def on_player_chat(event):
     playerid = str(event.getPlayer().getUniqueId())
     data = safe_open_json()
