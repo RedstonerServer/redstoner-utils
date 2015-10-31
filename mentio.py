@@ -4,7 +4,7 @@ from traceback import format_exc as print_traceback
 
 
 mentions   = open_json_file("mentio", {}) # contains a list of keywords for each player (uuid)
-max_amount = -1
+max_amount = 1000
 arrow      = colorify(u"&r&7\u2192&r")
 colors_reg = reg_compile(u"\u00A7[\\da-fk-or]") # finds color codes
 

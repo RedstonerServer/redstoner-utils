@@ -98,7 +98,7 @@ def command(sender, cmd, label, args):
             msg(sender, "&e-&a There are no people mining obsidian")
             return True
         for slave in slaves:
-            msg(sender, "&e-&a %s: %s blocks" % (slave.get_uuid(), slave.get_blocks()))
+            msg(sender, "&e-&a %s: %s blocks" % (server.getOfflinePlayer(juuid(slave.get_uuid())).getName(), slave.get_blocks()))
         return True
     elif args[0] == "add":
         player = server.getOfflinePlayer(str(args[1]))
@@ -106,6 +106,7 @@ def command(sender, cmd, label, args):
             player.teleport(server.getWorld(punish_world).getSpawnLocation())
             Slave(False, player, int(args[2]))
             save_slaves()
+            msg(player, "&e-&a You have been punished, mine %s blocks of obsidian to get out!" % args[2])
             msg(sender, "&e-&a Player %s has been added into punishments for %s blocks of obsidian" % (player.getName(), args[2]))
         else:
             msg(sender, "&cYou can only punish online players")

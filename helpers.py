@@ -87,7 +87,7 @@ def colorify(text):
     """
     replace &-codes with real color codes
     """
-    return sub("&(?=[?\\da-fk-or])", u"\u00A7", "%s" % text)
+    return sub("&" + u"\u00A7", "&", "%s" % sub("&(?=[?\\da-fk-or])", u"\u00A7", "%s" % text))
 
 
 def stripcolors(text):

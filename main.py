@@ -97,7 +97,9 @@ shared["load_modules"] = [
     # obisidian mining punishment plugin
     "punishments",
     # a simple replacement for the buggy essentials /vanish
-    "vanish"
+    "vanish",
+    # ip-tracking utility
+    "iptracker"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:

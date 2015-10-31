@@ -93,7 +93,7 @@ def get_entire_container(container):
                 world.getBlockAt(x - 1, y, z), 
                 world.getBlockAt(x, y, z + 1), 
                 world.getBlockAt(x, y, z - 1),
-            ) if block.getType() == target_type
+            ) if block.getType() == container_type
         ]
 
     return container_blocks
@@ -101,7 +101,7 @@ def get_entire_container(container):
 
 
 @simplecommand("signalstrength",
-        usage = "(<signal strength> [item] [data]) or (default <item> [data])",
+        usage = "(default) [signalstrength] [item] [data]",
         aliases = ["ss", "level"],
         description = "Fills the targeted container with the correct amount of items to achieve the desired signal strength.",
         amin = 0,
