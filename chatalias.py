@@ -15,7 +15,7 @@
 from helpers import *
 from traceback import format_exc as trace
 
-global data = None
+data = None
 
 def safe_open_json():
     global data
