@@ -15,8 +15,12 @@
 from helpers import *
 from traceback import format_exc as trace
 
+global data = None
 
 def safe_open_json():
+    global data
+    if data is not None:
+        return data
     data = open_json_file("aliases")
     if data is None:
         data = {"gnl":{"max_len":"35","max_entries":"10"}}
