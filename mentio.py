@@ -13,7 +13,7 @@ def saveMentions():
     save_json_file("mentio", mentions)
 
 
-@hook.event("player.AsyncPlayerChatEvent", "normal")
+@hook.event("player.AsyncPlayerChatEvent", "monitor")
 def onChat(event):
     if not event.isCancelled():
         sender     = event.getPlayer()
