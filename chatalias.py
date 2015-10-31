@@ -13,6 +13,7 @@
 # for "unlimited" setting.
 
 from helpers import *
+from traceback import format_exc as trace
 
 
 def safe_open_json():
@@ -25,7 +26,7 @@ def safe_open_json():
 
 @hook.command("alias", usage = "/<command> [to_alias] [alias...]", desc = "Aliases words in chat")
 def on_alias_command(sender, cmd, label, args):
-    
+
     if not is_player(sender):
        msg(sender, "Sorry, Console cannot alias words")
        return True
@@ -53,15 +54,25 @@ def on_alias_command(sender, cmd, label, args):
     elif len(args) == 1:
         data = safe_open_json()
         if args[0] == "*":
-            del data[str(sender.getUniqueId())]
+            try:
+                del data[str(sender.getUniqueId())]
+            except KeyError:
+                plugin_header(recipient = sender, name = "Chat Alias")
+                msg(sender, "No alias data to remove!")
+                return True
             save_json_file("aliases", data)
             plugin_header(recipient = sender, name = "Chat Alias")
             msg(sender, "ALL alias data successfuly removed!")
             return True
         
-        if data[str(sender.getUniqueId())].pop(args[0], None) is None:
+        try:
+            if data[str(sender.getUniqueId())].pop(args[0], None) is None:
+                plugin_header(recipient = sender, name = "Chat Alias")
+                msg(sender, "Could not remove: alias not present!")
+                return True
+        except KeyError:
             plugin_header(recipient = sender, name = "Chat Alias")
-            msg(sender, "Could not remove: alias not present!")
+            msg(sender, "Could not remove: you do not have any aliases!")
             return True
             
         save_json_file("aliases", data)
@@ -95,12 +106,18 @@ def on_alias_command(sender, cmd, label, args):
         return False
 
 
-
 @hook.event("player.AsyncPlayerChatEvent", "High")
 def on_player_chat(event):
+    playerid = str(event.getPlayer().getUniqueId())
+    data = safe_open_json()
+
     if event.isCancelled():
         return
 
-    data = safe_open_json()
-    for alias, value in data[str(event.getPlayer().getUniqueId())].items():
+    try:
+        crashtest = data[playerid].items()
+    except KeyError:
+        return
+
+    for alias, value in data[playerid].items():
         event.setMessage(event.getMessage().replace(alias, value))
