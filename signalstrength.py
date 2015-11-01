@@ -109,7 +109,9 @@ def get_entire_container(container):
         helpSubcmd = True,
         senderLimit = 0)
 def on_signalstrength_command(sender, command, label, args):
-
+    if not sender.hasPermission("utils.ss"):
+        noperm(sender)
+        return None
     if len(args) > 0 and args[0].lower() in ("default", "defaults", "setdefaults"):
         strength, item_type, item_data = get_data(sender, args[1:])
 

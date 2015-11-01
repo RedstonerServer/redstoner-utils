@@ -13,7 +13,7 @@ iptrack_permission = "utils.iptrack"
 
 @hook.event("player.PlayerJoinEvent", "low")
 def on_player_join(event):
-    t = threading.Thread(target=on_player_join_thread, args=(event))
+    t = threading.Thread(target=on_player_join_thread, args=(event, ))
     t.daemon = True
     t.start()
 

@@ -263,7 +263,10 @@ def on_modules_command(sender, command, label, args):
         amax        = 0,
         helpSubcmd  = True)
 def warn_command(sender, command, label, args):
-    broadcast(None, " &b= &2&lLag incoming! &r-%s" % sender.getDisplayName())
+    if sender.hasPermission("utils.warn"):
+        broadcast(None, " &b= &2&lLag incoming! &r-%s" % sender.getDisplayName())
+    else:
+        noperm(sender)
 
 
 @simplecommand("warnp",
@@ -272,7 +275,10 @@ def warn_command(sender, command, label, args):
         amax        = 0,
         helpSubcmd  = True)
 def warnp_command(sender, command, label, args):
-    broadcast(None, " &b= &2&lPossible lag incoming! &r-%s" % sender.getDisplayName())
+    if sender.hasPermission("utils.warnp"):
+        broadcast(None, " &b= &2&lPossible lag incoming! &r-%s" % sender.getDisplayName())
+    else:
+        noperm(sender)
 
 
 
