@@ -27,19 +27,19 @@ def on_player_join(event):
                 if role != ranks[rank]:
                     set_role(uuid, ranks[rank])
         return
-    if not user.hasPlayedBefore():
-        return
-    if role == None:
+    if user.hasPlayedBefore() and role == None:
         msg(user, "&cYou haven't registed yet! Make sure to do so on redstoner.com")
 
 
-
 def get_role(uuid):
-    return execute_query("SELECT `role_id` FROM users WHERE `uuid` = ? LIMIT 1", uuid)[0][17]
+    results = execute_query("SELECT `role_id` FROM users WHERE `uuid` = ? LIMIT 1", uuid)
+    return results[0][0]
+    # Returns a table with 1 row (LIMIT 1) and 1 column (SELECT `role_id`), so we're looking for the first row of the first column.
 
 
 def set_role(uuid, role_id):
-    execute_update("UPDATE users SET `role_id` = %d WHERE `uuid` = ?" % role_id, uuid)
+    execute_update(("UPDATE users SET `role_id` = %d WHERE `uuid` = ?" % role_id), uuid)
+    # %d is like %s for integers (unlogically, you'd expect something like %i), though %s also works here.
 
 
 def execute_query(query, uuid):
