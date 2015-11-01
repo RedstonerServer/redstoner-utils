@@ -19,7 +19,6 @@ except:
 
 @hook.enable
 def on_enable():
-    shared["modules"]["vanishfix"].enabled()
     info("RedstonerUtils enabled!")
 
 
@@ -39,10 +38,12 @@ shared["load_modules"] = [
     "adminchat",
     # Adds /badge, allows to give players achievements
     "badges",
-       # Adds a few block placement corrections/mods
-       "blockplacemods",
+    # Adds a few block placement corrections/mods
+    "blockplacemods",
     # Adds /calc, toggles automatic solving of Math expressions in chat
     "calc",
+    # Adds aliasing of chat words
+    "chatalias",
     # Plugin to locate laggy chunks. /lc <n> lists chunks with more than n entities
     "lagchunks",
     # Adds /report and /rp, Stores reports with time and location
@@ -53,6 +54,8 @@ shared["load_modules"] = [
     "webtoken",
     # Adds /lol, broadcasts random funyy messages. A bit like the splash text in the menu
     "saylol",
+    # Adds /signalstrength, lets you request a signal strength and an amount of items will be inserted into target container to meet that strength.
+    "signalstrength",
     # Shows the owner of a skull when right-clicked
     "skullclick",
     # Adds /listen, highlights chat and plays a sound when your name was mentioned
@@ -71,6 +74,8 @@ shared["load_modules"] = [
     "check",
     # Adds /an, a command you can use to share thoughts/plans/news
     "adminnotes",
+    # Adds busy status to players
+    "imbusy",
     # Adds /imout, displays fake leave/join messages
     "imout",
     #adds snowbrawl minigame
@@ -88,9 +93,13 @@ shared["load_modules"] = [
     # Per-player notes
     "tag",
     # vanish toggle module - temporary fix
-    "vanishfix",
+    #"vanishfix",
     # obisidian mining punishment plugin
-    "punishments"
+    "punishments",
+    # a simple replacement for the buggy essentials /vanish
+    "vanish",
+    # ip-tracking utility
+    "iptracker"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:

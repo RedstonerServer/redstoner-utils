@@ -34,11 +34,11 @@ def command(sender, command, label, args):
         else:
             msg(sender, "&a-&c Unknown subcommand! (add, check, del)")
     else:
-        msg(sender, "&a&c Usage: /tag add/check")
+        msg(sender, "&a&c Usage: /tag add/check/del")
     return True
 
 def delete(sender, args):
-    player = server.getPlayer(args[0])
+    player = server.getOfflinePlayer(args[0])
     uuid = uid(player)
     try:
         if data[uuid] == None:
@@ -54,7 +54,7 @@ def delete(sender, args):
     msg(sender, "&a-&e Deleted note at %s" % args[1])
 
 def add(sender, args):
-    player = server.getPlayer(args[0])
+    player = server.getOfflinePlayer(args[0])
     uuid = uid(player)
     try:
         if data[uuid] == None:
@@ -66,7 +66,7 @@ def add(sender, args):
     save_json_file("tag", data)
 
 def check(sender, args):
-    player = server.getPlayer(args[0])
+    player = server.getOfflinePlayer(args[0])
     uuid = uid(player)
     try:
         num = 0

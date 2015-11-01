@@ -6,7 +6,7 @@ from sys import exc_info
 import thread
 import org.bukkit.inventory.ItemStack as ItemStack
 import org.bukkit.Bukkit as Bukkit
-from basecommands import simplecommand
+from basecommands import simplecommand, Validate
 
 
 
@@ -66,7 +66,6 @@ def cmd_event2(event):
         elif not event.isCancelled():
             event.setCancelled(True)
             event.getPlayer().chat("//up " + " ".join(args[1:]))
-
 
 
 
@@ -203,7 +202,8 @@ def eval_thread(sender, code):
 pythoners = [
 "e452e012-2c82-456d-853b-3ac8e6b581f5", # Nemes
 "ae795aa8-6327-408e-92ab-25c8a59f3ba1", # jomo
-"305ccbd7-0589-403e-a45b-d791dcfdee7d"  # PanFritz
+"305ccbd7-0589-403e-a45b-d791dcfdee7d", # PanFritz
+"51f2ad3c-6cc8-40ea-aa2b-f25970316921"  # Dico
 ]
 
 @simplecommand("pyeval",
@@ -256,13 +256,25 @@ def on_modules_command(sender, command, label, args):
     plugin_header(sender, "Modules")
     msg(sender, ", ".join([(("&a" if mod in shared["modules"] else "&c") + mod) for mod in shared["load_modules"]]))
 
-@hook.command("warn")
-def on_warn_command(sender, command, label, args):
+
+@simplecommand("warn",
+        usage       = "",
+        description = "Warns everybody on the server that you will cause lag shortly",
+        amax        = 0,
+        helpSubcmd  = True)
+def warn_command(sender, command, label, args):
     broadcast(None, " &b= &2&lLag incoming! &r-%s" % sender.getDisplayName())
 
-@hook.command("warnp")
-def on_warnp_command(sender, command, label, args):
+
+@simplecommand("warnp",
+        usage       = "",
+        description = "Warns everybody on the server that you might cause lag shortly",
+        amax        = 0,
+        helpSubcmd  = True)
+def warnp_command(sender, command, label, args):
     broadcast(None, " &b= &2&lPossible lag incoming! &r-%s" % sender.getDisplayName())
+
+
 
 """ Something I'm planning for schematics
 @hook.event("player.PlayerCommandPreprocessEvent", "low")
