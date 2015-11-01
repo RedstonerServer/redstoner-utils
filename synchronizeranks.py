@@ -21,13 +21,12 @@ def on_player_join(event):
     role = get_role(uuid)
     if role in [1, 2, 6]: #Disabled/Banned/Superadmin
         return
-    if role:
+    if role != None:
         for rank in ranks:
             if user.hasPermission("group." + rank):
                 if role != ranks[rank]:
                     set_role(uuid, ranks[rank])
-        return
-    if user.hasPlayedBefore() and role == None:
+    elif user.hasPlayedBefore():
         msg(user, "&cYou haven't registed yet! Make sure to do so on redstoner.com")
 
 
