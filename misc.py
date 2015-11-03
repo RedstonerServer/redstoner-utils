@@ -7,6 +7,7 @@ import thread
 import org.bukkit.inventory.ItemStack as ItemStack
 import org.bukkit.Bukkit as Bukkit
 from basecommands import simplecommand, Validate
+import java.util.Arrays as Arrays
 
 
 
@@ -161,7 +162,8 @@ def on_pluginversions_command(sender, command, label, args):
     """
     try:
         plugin_header(sender, "Plugin versions")
-        plugins = [pl.getDescription() for pl in list(ArrayList(java_array_to_list(server.getPluginManager().getPlugins())))]
+        raw_plugins = server.getPluginManager().getPlugins() # Plugin[]
+        plugins = [raw_plugins[i].getDescription() for i in range(len(raw_plugins))]
         info(type(plugins[0]).__name__)
         plugins.sort(key = lambda pl: pl.getDescription().getName())
         msg(sender, "&3Listing all " + str(len(plugins)) + " plugins and their version:")

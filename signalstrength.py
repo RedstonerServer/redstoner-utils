@@ -109,6 +109,11 @@ def get_entire_container(container):
         helpSubcmd = True,
         senderLimit = 0)
 def on_signalstrength_command(sender, command, label, args):
+    
+    #Sender has to be in creative and if in Trusted world, they have to be Trusted+. Any ranks above trusted inherit groups.trusted.
+    if (not is_creative(sender)) or (sender.getWorld().getName() == "Trusted" and not is_rank(sender, "trusted")):
+        return "&cYou do not have permission to use that command in this world"
+
     if len(args) > 0 and args[0].lower() in ("default", "defaults", "setdefaults"):
         strength, item_type, item_data = get_data(sender, args[1:])
 

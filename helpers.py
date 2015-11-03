@@ -181,6 +181,16 @@ def is_creative(player):
     return str(player.getGameMode()) == "CREATIVE"
 
 
+def is_rank(player, rank):
+    """
+    rank: a string equal to the PEX group name found in /pex groups
+    returns True if one of the following conditions are met:
+    - the player is of the given rank,
+    - their rank inherits the given rank.
+    """
+    return player.hasPermission("groups." + rank)
+
+
 def uid(player):
     """
     returns the player's UUID
