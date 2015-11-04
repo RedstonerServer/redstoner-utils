@@ -43,6 +43,12 @@ def on_chatgroup_command(sender, command, label, args):
         msg(sender, "&aUse chat like '&e%s<message>' to send messages to this group." % get_key(sender_id))
     elif len(args) == 1 and args[0] == "key":
         msg(sender, "&aYour chatgroup key is currently: '&c%s&a'" % get_key(sender_id))
+    elif len(args) == 1 and args[0] == "tpahere":
+        if sender_id in groups.keys():
+            do_for_chatgroup(groups[sender_id], send_tpa_request, sender)
+            msg(sender, "&aSent a tpahere request to all users in your chatgroup")
+        else:
+            msg(sender, "&cYou have to be in a chatgroup to do that")
     else:
         msg(sender, "&e/chatgroup join <name>")
         msg(sender, "&e/chatgroup leave")
@@ -73,10 +79,16 @@ def groupchat(sender, message, ann = False):
     else:
         mesg = "&8[&bCG&8] &f%s&f: &6%s" % (name, message)
     info("[ChatGroups] %s (%s): %s" % (sender.getDisplayName(), group, message))
+    do_for_chatgroup(group, msg, mesg)
+
+def do_for_chatgroup(group, func, args):
     for receiver in server.getOnlinePlayers():
-        groups.get(uid(receiver)) == group and msg(receiver, mesg)
+        if groups.get(uid(receiver)) == group:
+            func(receiver, args)
 
-
+def send_tpa_request(receiver, sender):
+    if not receiver == sender:
+        runas(sender, "/tpahere " + receiver.getName())
 
 def save_groups():
     save_json_file("chatgroups", groups)
@@ -114,6 +126,7 @@ def chatgroupkey_command(sender, command, label, args):
     cg_keys[uid(sender)] = key
     save_keys()
     return "&aYour chatgroup key was set to: '&c%s&a'" % key
+
 
 def save_keys():
     save_json_file("chatgroup_keys", cg_keys)
