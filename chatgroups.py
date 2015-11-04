@@ -79,13 +79,15 @@ def groupchat(sender, message, ann = False):
         mesg = "&8[&bCG&8] &e&o%s&e&o %s" % (name, message)
     else:
         mesg = "&8[&bCG&8] &f%s&f: &6%s" % (name, message)
+    mesg = colorify(mesg)
+    
     info("[ChatGroups] %s (%s): %s" % (sender.getDisplayName(), group, message))
-    do_for_chatgroup(group, msg, mesg)
+    do_for_chatgroup(group, msg, mesg, usecolor = False)
 
-def do_for_chatgroup(group, func, args):
+def do_for_chatgroup(group, func, *args, **kwargs):
     for receiver in server.getOnlinePlayers():
         if groups.get(uid(receiver)) == group:
-            func(receiver, args)
+            func(receiver, args, kwargs)
 
 def send_tpa_request(receiver, sender):
     if not receiver == sender:
