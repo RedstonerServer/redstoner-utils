@@ -54,6 +54,7 @@ def on_chatgroup_command(sender, command, label, args):
         msg(sender, "&e/chatgroup leave")
         msg(sender, "&e/chatgroup info")
         msg(sender, "&e/chatgroup key")
+        msg(sender, "&e/chatgroup tpahere")
 
 
 @hook.command("cgt")
