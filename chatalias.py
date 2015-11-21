@@ -4,23 +4,21 @@
 # so that when they send a
 # message in chat, it gets
 # replaced by their specified
-# word. Configuration of this
-# plugin is in the "gnl"
-# (general) tag of the JSON
-# file named "aliases". The
-# file is generated if not
+# word. The JSON file for this
+# plugin is generated if not
 # present. Set values to -1
 # for "unlimited" setting.
 
 from helpers import *
+import re
 from traceback import format_exc as trace
 
 data = None
 
 max_entries = 10
 max_alias_length = 35
-# minecraft message limit is 100 so I decided to give a little tolerance
-max_overall_length = 115
+# Minecraft message limit is 100 so I decided to give a little tolerance (and I added a bit more)
+max_overall_length = 100 + max_alias_length
 
 alias_perm = "utils.alias.allowed"
 exceed_length = "utils.alias.exceedlimit"
@@ -38,6 +36,10 @@ def safe_open_json():
     save_json_file("aliases", data)
     return data
 
+def multiple_replace(aliases, text):
+    regex = re.compile("|".join(map(re.escape, aliases.keys())))
+    return regex.sub(lambda mo: aliases[mo.group(0)], text)
+
 
 @hook.command("alias",
               usage="/<command> [to_alias] [alias...]",
@@ -45,7 +47,7 @@ def safe_open_json():
 def on_alias_command(sender, cmd, label, args):
 
     if not is_player(sender):
-        msg(sender, "Sorry, Console cannot alias words")
+        msg(sender, "Sorry, non-players cannot alias words")
         return True
     if not sender.hasPermission(alias_perm):
         plugin_header(recipient=sender, name="Chat Alias")
@@ -123,16 +125,14 @@ def on_player_chat(event):
     data = safe_open_json()
     if event.isCancelled():
         return
-    try:
-        crashtest = data[playerid].items()
-    except KeyError:
+    if not data[playerid]:
         return
-    for alias, value in data[playerid].items():
-        event.setMessage(event.getMessage().replace(alias, value))
-    if (event.getPlayer().hasPermission('essentials.chat.color')):
+    event.setMessage(multiple_replace(data[playerid], event.getMessage()))
+
+    if (event.getPlayer().hasPermission("essentials.chat.color")):
         event.setMessage(colorify(event.getMessage()))
-    if (len(event.getMessage()) > max_overall_length) and (not sender.hasPermission(exceed_overall_length)):
+    if (max_overall_length >= 0) and (len(event.getMessage()) > max_overall_length) and (not event.getPlayer().hasPermission(exceed_overall_length)):
         event.setCancelled(True)
-        msg(sender, "&7The message generated was too long and was not sent " +
-            "but it would've looked like that:")
-        msg(sender, event.getMessage())
+        plugin_header(recipient=event.getPlayer(), name="Chat Alias")
+        msg(event.getPlayer(), "&7The message generated was too long and was not sent. :/")
+
