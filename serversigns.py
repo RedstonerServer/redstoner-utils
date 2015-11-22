@@ -251,7 +251,7 @@ faces = {
     BlockFace.EAST  : (5,),
 }
 
-@hook.event("block.BlockBreakEvent", "highest")
+@hook.event("block.BlockBreakEvent", "lowest")
 def on_break(event):
     try:
         global checking_block
@@ -264,7 +264,7 @@ def on_break(event):
 
         for block_face, data_values in faces.iteritems():
             block2 = block.getRelative(block_face)
-            if block2.getData() in data_values:
+            if block2.getType == Material.WALL_SIGN and block2.getData() in data_values:
                 check_sign(event, block2)
 
         block3 = block.getRelative(BlockFace.UP)
@@ -277,7 +277,7 @@ def on_break(event):
 def check_sign(event, block, attached = True):
     player = event.getPlayer()
     sign = getSign(fromLoc(block.getLocation()))
-    if not canEdit(sign, player) and not can_build(player, block):
+    if not can_build(player, block):
         event.setCancelled(True)
         msg(event.getPlayer(), signsMsg("You cannot break %s" % ("the sign attached to that block" if attached else "that sign")))
     else:
