@@ -260,7 +260,8 @@ def on_break(event):
 
         block = event.getBlock()
         if block.getType() in (Material.SIGN_POST, Material.WALL_SIGN):
-            check_sign(event, block, attached = False)
+            if check_sign(event, block, attached = False):
+                del signs[from]
 
         for block_face, data_values in faces.iteritems():
             block2 = block.getRelative(block_face)
@@ -278,9 +279,13 @@ def check_sign(event, block, attached = True):
     player = event.getPlayer()
     sign = getSign(fromLoc(block.getLocation()))
     if not canEdit(sign, player) and not can_build(player, block):
-            event.setCancelled(True)
-            msg(event.getPlayer(), signsMsg("You cannot break %s" % ("the sign attached to that block" if attached else "that sign")))
-
+        event.setCancelled(True)
+        msg(event.getPlayer(), signsMsg("You cannot break %s" % ("the sign attached to that block" if attached else "that sign")))
+    else:
+        loc = fromLoc(block.getLocation())
+        del signs[loc]
+        save_signs()
+        msg(player, signsMsg("Reset the %s which you just broke" % identifySign(loc)))
 
 def can_build(player, block):
     global checking_block
