@@ -134,6 +134,7 @@ def svs_command(sender, command, label, args):
     #------------------------ Sub commands that require the block to be a sign -------------------------------
     if arg1 == "claim":
         Validate.isTrue(not sign, signsMsg("The %s was already claimed" % signName))
+        Validate.isTrue(can_build2(block, player), signsMsg("You are not permitted to claim signs here"))
         target = sender
         if arg2:
             Validate.isTrue(player.hasPermission("utils.serversigns.admin"), signsMsg("You are not authorized to claim signs for other players"))
@@ -251,7 +252,7 @@ faces = {
     BlockFace.EAST  : (5,),
 }
 
-@hook.event("block.BlockBreakEvent", "lowest")
+@hook.event("block.BlockBreakEvent", "monitor")
 def on_break(event):
     try:
         global checking_block
@@ -277,7 +278,7 @@ def on_break(event):
 def check_sign(event, block, attached = True):
     player = event.getPlayer()
     sign = getSign(fromLoc(block.getLocation()))
-    if not can_build(player, block):
+    if not can_build2(player, block):
         event.setCancelled(True)
         msg(event.getPlayer(), signsMsg("You cannot break %s" % ("the sign attached to that block" if attached else "that sign")))
     else:
@@ -286,7 +287,7 @@ def check_sign(event, block, attached = True):
         save_signs()
         msg(player, signsMsg("Reset the %s which you just broke" % identifySign(loc)))
 
-def can_build(player, block):
+def can_build2(player, block):
     global checking_block
     event = BlockBreakEvent(block, player)
     checking_block = True
