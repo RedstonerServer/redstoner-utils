@@ -260,7 +260,7 @@ def on_break(event):
 
         block = event.getBlock()
         if block.getType() in (Material.SIGN_POST, Material.WALL_SIGN):
-            check_sign(event, block, attached = False):
+            check_sign(event, block, attached = False)
 
         for block_face, data_values in faces.iteritems():
             block2 = block.getRelative(block_face)
