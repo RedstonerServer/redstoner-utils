@@ -245,10 +245,10 @@ def on_click(event):
 checking_block = False
 
 faces = {
-    BlockFace.NORTH : (0,1,2),
-    BlockFace.SOUTH : 3,
-    BlockFace.WEST  : 4,
-    BlockFace.EAST  : 5
+    BlockFace.NORTH : (0,1,2,),
+    BlockFace.SOUTH : (3,),
+    BlockFace.WEST  : (4,),
+    BlockFace.EAST  : (5,),
 }
 
 @hook.event("block.BlockBreakEvent", "highest")
@@ -268,7 +268,7 @@ def on_break(event):
                 check_sign(event, block2)
 
         block3 = block.getRelative(BlockFace.UP)
-        if block3.getMaterial == Material.SIGN_POST:
+        if block3.getType() == Material.SIGN_POST:
             check_sign(event, block3)
     except:
         error(trace())
