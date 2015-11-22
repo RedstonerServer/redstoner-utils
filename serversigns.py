@@ -86,20 +86,41 @@ def signsMsg(msg, colour = '4'):
 
 
 @simplecommand(cmd = "serversigns", aliases = ["svs", "signmsg"],
-    description = "Makes something happen when you right click certain signs",
-    usage = "[claim|unclaim|add <msg>|remove <line>|clear|info|help]",
+    description = "Makes something happen when you right click signs. \nUse /svs help for more details.",
+    usage = "<claim|reset|add <msg>[++]|remove <ID>|clear|info|help>",
     helpNoargs = True,
     senderLimit = 0)
 def svs_command(sender, command, label, args):
     arg1 = args[0].lower()
-    Validate.isTrue(arg1 in ("claim", "reset", "add", "remove", "info", "clear", "help", "switch"), signsMsg("That argument could not be recognized, use &o/svs help &4for expected arguments"))
+    Validate.isTrue(arg1 in ("claim", "reset", "add", "remove", "info", "clear", "help", "switch", "reverse", "unclaim"), 
+        signsMsg("That argument could not be recognized, use &o/svs help &4for expected arguments"))
     Validate.isAuthorized(sender, "utils.serversigns." + arg1)
 
     #-------------------- Sub commands that don't require any conditions -----------------------
     if arg1 == "help":
         admin = sender.hasPermission("utils.serversigns.admin")
-
-        return "&2COMMAND HELP HERE"
+        msg = signsMsg("Server signs lets you add messages to a sign.", 'a')
+        msg += "\nRight clicking the sign will display all the messages. Commands"
+        msg += "\ncan also be added, by prefixing the message with a '/'."
+        msg += "\nHow to use &b/serversigns&a:"
+        msg += "\n&b/svs claim" + ("" if not sender.hasPermission("utils.serversigns.admin") else " [owner]")
+        msg += "\n&a- Claims the sign so that you can add messages to it"
+        msg += "\n&b/svs info"
+        msg += "\n&a- Displays information about the (claimed) sign"
+        msg += "\n&b/svs add <message>[++]"
+        msg += "\n&a- Adds the message to the sign. Use ++ at the end"
+        msg += "\n&a- to add the message to your buffer. You can then use"
+        msg += "\n&a- the same command again to create a longer message."
+        msg += "\n&b/svs remove <message ID>"
+        msg += "\n&a- Removes the message with the given ID from the sign."
+        msg += "\n&a- The ID is given before each message by &b/svs info&a."
+        msg += "\n&b/svs switch|reverse <message ID 1> <message ID 2>"
+        msg += "\n&a- Reverses the order in which the given messages are shown."
+        msg += "\n&b/svs clear"
+        msg += "\n&a- Removes all messages from the sign."
+        msg += "\n&b/svs reset|unclaim"
+        msg += "\n&a- Resets the sign, removing all messages and its owner."
+        return msg
     #-------------------------------------------------------------------------------------------
 
     block = sender.getTargetBlock(None, 5)
@@ -109,13 +130,13 @@ def svs_command(sender, command, label, args):
     sign     = getSign(loc)
     signName = identifySign(loc)
     arg2     = args[1].lower() if len(args) > 1 else None
-    is_admin = sender.hasPermission("utils.serversigns.admin")
 
     #------------------------ Sub commands that require the block to be a sign -------------------------------
     if arg1 == "claim":
+        Validate.isTrue(not sign, signsMsg("The %s was already claimed" % signName))
         target = sender
         if arg2:
-            Validate.isTrue(is_admin, signsMsg("You are not authorized to claim signs for other players"))
+            Validate.isTrue(player.hasPermission("utils.serversigns.admin"), signsMsg("You are not authorized to claim signs for other players"))
             target = server.getOfflinePlayer(arg2)
             Validate.notNone(target, signsMsg("That player could not be found"))
             Validate.isTrue(target.isOnline(), signsMsg("The target has to be online"))
@@ -174,8 +195,8 @@ def svs_command(sender, command, label, args):
         return signsMsg("Removed message with id %s from the %s" % (id, signName), 'a')
 
 
-    if arg1 == "switch":
-        Validate.isTrue(len(args) == 3, signsMsg("You have to enter the 2 IDs of the lines to switch"))
+    if arg1 in ("switch", "reverse"):
+        Validate.isTrue(len(args) == 3, signsMsg("You have to enter the 2 IDs of the messages to reverse"))
         try:
             id1 = int(args[1])
             id2 = int(args[2])
@@ -184,16 +205,19 @@ def svs_command(sender, command, label, args):
         for id in (id1, id2):
             Validate.isTrue(id != 0 and id < len(sign), signsMsg("The %s has no message with an ID of %s, use &o/svs info &4for all messages." % (signName, id)))
         sign[id1], sign[id2] = sign[id2], sign[id1]
-        return signsMsg("Switched the lines with IDs %s and %s of the %s" % (id1, id2, signName), 'a')
+        save_signs()
+        return signsMsg("Reversed the messages with IDs %s and %s of the %s" % (id1, id2, signName), 'a')
 
 
     if arg1 == "clear":
         signs[loc] = [sign[0]]
+        save_signs()
         return signsMsg("Removed all messages from the %s" % signName, 'a')
 
 
-    if arg1 == "reset":
+    if arg1 in ("reset", "unclaim"):
         del signs[loc]
+        save_signs()
         return signsMsg("Removed all messages and the owner from the %s, it can now be claimed" % signName, 'a')
     #-------------------------------------------------------------------------------------------------------
 
