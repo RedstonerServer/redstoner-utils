@@ -277,7 +277,7 @@ def on_break(event):
 def check_sign(event, block, attached = True):
     player = event.getPlayer()
     sign = getSign(fromLoc(block.getLocation()))
-    if not canEdit(sign, player) and not can_build(player, block.getLocation()):
+    if not canEdit(sign, player) and not can_build(player, block):
             event.setCancelled(True)
             msg(event.getPlayer(), signsMsg("You cannot break %s" % ("the sign attached to that block" if attached else "that sign")))
 
