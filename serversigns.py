@@ -253,22 +253,25 @@ faces = {
 
 @hook.event("block.BlockBreakEvent", "highest")
 def on_break(event):
-    global checking_block
-    if checking_block or event.isCancelled():
-        return
+    try:
+        global checking_block
+        if checking_block or event.isCancelled():
+            return
 
-    block = event.getBlock()
-    if block.getMaterial() in (Material.SIGN_POST, Material.WALL_SIGN):
-        check_sign(event, block, attached = False)
+        block = event.getBlock()
+        if block.getMaterial() in (Material.SIGN_POST, Material.WALL_SIGN):
+            check_sign(event, block, attached = False)
 
-    for block_face, data_values in faces.iteritems():
-        block2 = block.getRelative(block_face)
-        if block2.getData() in data_values:
-            check_sign(event, block2)
+        for block_face, data_values in faces.iteritems():
+            block2 = block.getRelative(block_face)
+            if block2.getData() in data_values:
+                check_sign(event, block2)
 
-    block3 = block.getRelative(BlockFace.UP)
-    if block3.getMaterial == Material.SIGN_POST:
-        check_sign(event, block3)
+        block3 = block.getRelative(BlockFace.UP)
+        if block3.getMaterial == Material.SIGN_POST:
+            check_sign(event, block3)
+    except:
+        error(trace())
 
 
 def check_sign(event, block, attached = True):
