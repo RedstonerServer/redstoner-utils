@@ -24,7 +24,7 @@ settingInformation = dict( #[setting type, identifying description, detailed des
     ],
     furnace = [1,
         "automatically filling furnaces upon placement",
-        "Sets your preferred default furnace contents to your currently held itemstack. Use an empty hand to empty a slot, or /toggle dropper clear to clear all slots.",
+        "Sets your preferred default furnace contents to your currently held itemstack. Use an empty hand to empty a slot, or /toggle furnace clear to clear all slots.",
         ["cooker", "fillf"], 2
     ],
     #torch = [0,
@@ -44,7 +44,7 @@ settingInformation = dict( #[setting type, identifying description, detailed des
     ],
     hopper = [1,
         "automatically filling hoppers upon placement",
-        "Sets your preferred default hopper contents to your currently held itemstack. Use an empty hand to empty a slot, or /toggle dropper clear to clear all slots.",
+        "Sets your preferred default hopper contents to your currently held itemstack. Use an empty hand to empty a slot, or /toggle hopper clear to clear all slots.",
         ["itemtransporter", "fillh"], 4
     ]
 )

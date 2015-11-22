@@ -99,7 +99,9 @@ shared["load_modules"] = [
     # a simple replacement for the buggy essentials /vanish
     "vanish",
     # ip-tracking utility
-    "iptracker"
+    "iptracker",
+    #server signs for everyone
+    "serversigns"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:
