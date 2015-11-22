@@ -5,7 +5,7 @@ import java.util.UUID as UUID
 import org.bukkit.Material as Material
 import org.bukkit.block.BlockFace as BlockFace
 
-blocked_cmds = ("pex", "kick", "ban", "tempban", "pyeval", "sudo")
+blocked_cmds = ("pex", "kick", "ban", "tempban", "pyeval", "sudo", "stop", "reload", "op", "deop", "whitelist")
 
 def load_signs():
     signs_obj = open_json_file("serversigns", [])
@@ -170,7 +170,7 @@ def svs_command(sender, command, label, args):
         except:
             return signsMsg("The ID of the message has to be a number and can be found by using &o/svs info")
         Validate.isTrue(id != 0 and id < len(sign), signsMsg("The %s has no message with an ID of %s, use &o/svs info &4for all messages." % (signName, id)))
-        sign.remove(id)
+        del sign[id]
         return signsMsg("Removed message with id %s from the %s" % (id, signName), 'a')
 
 
