@@ -134,7 +134,7 @@ def svs_command(sender, command, label, args):
     #------------------------ Sub commands that require the block to be a sign -------------------------------
     if arg1 == "claim":
         Validate.isTrue(not sign, signsMsg("The %s was already claimed" % signName))
-        Validate.isTrue(can_build2(block, player), signsMsg("You are not permitted to claim signs here"))
+        Validate.isTrue(can_build2(sender, block), signsMsg("You are not permitted to claim signs here"))
         target = sender
         if arg2:
             Validate.isTrue(player.hasPermission("utils.serversigns.admin"), signsMsg("You are not authorized to claim signs for other players"))
