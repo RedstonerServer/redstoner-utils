@@ -10,6 +10,14 @@ class py_event:
 		except:
 			warn("Player doesn't exist")
 
+	@property
+	def cancelled(self):
+		return self.event.isCancelled()
+
+	@cancelled.setter
+	def cancelled(self, value):
+		self.event.setCancelled(value)
+
 def event_handler(event_name = None, priority = "normal"):
 	def decorator(wrapped):
 		@hook.event(event_name, priority)
