@@ -57,6 +57,11 @@ py_players = Py_players()
 
 @async(daemon=True)
 def fetch_player(player):
+    properties = (player.uuid, player.name, player.nickname, player.registered, 
+                        player.password, player.banned, 
+                        player.banned_reason, player.played_time, 
+                        player.last_login, player.first_seen)
+
     with mysql_connect() as sql:
         sql.execute("SELECT * FROM utils_players WHERE uuid = ?", (player.uuid,))
         result = sql.fetchall()
@@ -68,13 +73,16 @@ def fetch_player(player):
                 banned_reason, played_time, last_login, first_seen) \
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 
-                args=(player.uuid, player.name, player.nickname, player.registered, 
-                        player.password, player.banned, 
-                        player.banned_reason, player.played_time, 
-                        player.last_login, player.first_seen))
-    else:
-        pass
-        #test
+                args=properties)
+
+    elif len(result) is 1:
+        props = result[0]
+        print props
+        for prop in properties:
+            prop = props[properties.index(prop)]
+
+
+        
 
 
 @hook.event("player.PlayerJoinEvent","lowest")
