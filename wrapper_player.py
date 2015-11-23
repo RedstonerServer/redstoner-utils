@@ -74,7 +74,7 @@ def fetch_player(player):
                         player.last_login, player.first_seen))
     else:
         pass
-
+        #test
 
 
 @hook.event("player.PlayerJoinEvent","lowest")
