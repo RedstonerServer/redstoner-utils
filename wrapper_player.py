@@ -6,6 +6,9 @@ from players_secret import *
 from datetime import datetime
 from com.ziclix.python.sql import zxJDBC
 
+def get_py_player(player):
+
+
 class py_player:
     def __init__(self,player):
         self.player = player
