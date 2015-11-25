@@ -125,8 +125,9 @@ def on_player_chat(event):
     data = safe_open_json()
     if event.isCancelled():
         return
-    if not data[playerid]:
+    if not playerid in data:
         return
+
     event.setMessage(multiple_replace(data[playerid], event.getMessage()))
 
     if (event.getPlayer().hasPermission("essentials.chat.color")):
@@ -135,4 +136,3 @@ def on_player_chat(event):
         event.setCancelled(True)
         plugin_header(recipient=event.getPlayer(), name="Chat Alias")
         msg(event.getPlayer(), "&7The message generated was too long and was not sent. :/")
-

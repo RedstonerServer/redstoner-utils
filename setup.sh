@@ -91,7 +91,7 @@ echo -e "\n> All plugins downloaded"
 
 cd "redstoner-utils.py.dir"
 echo -e "\n> Duplicating sample files"
-for file in ls ./*.example; do
+for file in ./*.example; do
   cp -v "$file" "$(echo "$file" | rev | cut -d "." -f 2- | rev)"
 done
 

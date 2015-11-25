@@ -5,6 +5,14 @@ import java.util.UUID as UUID
 import org.bukkit.Material as Material
 import org.bukkit.block.BlockFace as BlockFace
 
+"""
+  # About permissions:
+  # To use the command, the user needs to have utils.serversigns.
+  # To use ANY subcommand, the user needs to have utils.serversigns.<subcommand> IN ADDITION to the previously mentioned node.
+  # To be able to add commands as messages to a sign, a user will need the node utils.serversigns.command.
+  # To be able to claim a sign for another player or to edit signs that the user doesn't own, they will need utils.serversigns.admin.
+"""
+
 blocked_cmds = ("pex", "kick", "ban", "tempban", "pyeval", "sudo", "stop", "reload", "op", "deop", "whitelist")
 
 def load_signs():
@@ -23,6 +31,18 @@ def save_signs():
 signs = load_signs() # {("world", x, y, z): ["owner_id", "msg1", "msg2"]}
 
 lines = {} # Accumulated messages so players can have longer messages: {"Dico200": "Message...........", ""}
+
+@hook.enable
+def check_all_signs(): 
+    # Check if all saved signs actually represent a sign block. There are ways to break the signs without the plugin knowing.
+    for loc in dict(signs): # Can't change dict size during iteration, using a copy
+        world = server.getWorld(loc[0])
+        if world and world.getBlockAt(loc[1], loc[2], loc[3]).getType() in (Material.SIGN_POST, Material.WALL_SIGN):
+            continue
+        del signs[loc]
+        info("[Server Signs] Couldn't find a %s, removed the data for the sign that was once there." % identifySign(loc))
+    save_signs()
+
 
 def fromLoc(bLoc):
     """
@@ -222,9 +242,6 @@ def svs_command(sender, command, label, args):
         return signsMsg("Removed all messages and the owner from the %s, it can now be claimed" % signName, 'a')
     #-------------------------------------------------------------------------------------------------------
 
-
-
-
 @hook.event("player.PlayerInteractEvent")
 def on_click(event):
     if str(event.getAction()) != "RIGHT_CLICK_BLOCK":
@@ -254,25 +271,22 @@ faces = {
 
 @hook.event("block.BlockBreakEvent", "monitor")
 def on_break(event):
-    try:
-        global checking_block
-        if checking_block or event.isCancelled():
-            return
+    global checking_block
+    if checking_block or event.isCancelled():
+        return
 
-        block = event.getBlock()
-        if block.getType() in (Material.SIGN_POST, Material.WALL_SIGN):
-            check_sign(event, block, attached = False)
+    block = event.getBlock()
+    if block.getType() in (Material.SIGN_POST, Material.WALL_SIGN):
+        check_sign(event, block, attached = False)
 
-        for block_face, data_values in faces.iteritems():
-            block2 = block.getRelative(block_face)
-            if block2.getType() == Material.WALL_SIGN and block2.getData() in data_values:
-                check_sign(event, block2)
+    for block_face, data_values in faces.iteritems():
+        block2 = block.getRelative(block_face)
+        if block2.getType() == Material.WALL_SIGN and block2.getData() in data_values:
+            check_sign(event, block2)
 
-        block3 = block.getRelative(BlockFace.UP)
-        if block3.getType() == Material.SIGN_POST:
-            check_sign(event, block3)
-    except:
-        error(trace())
+    block3 = block.getRelative(BlockFace.UP)
+    if block3.getType() == Material.SIGN_POST:
+        check_sign(event, block3)
 
 
 def check_sign(event, block, attached = True):
@@ -286,6 +300,7 @@ def check_sign(event, block, attached = True):
         del signs[loc]
         save_signs()
         msg(player, signsMsg("Reset the %s which you just broke" % identifySign(loc)))
+
 
 def can_build2(player, block):
     global checking_block

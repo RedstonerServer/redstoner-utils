@@ -6,12 +6,15 @@ from players_secret import *
 from datetime import datetime
 from com.ziclix.python.sql import zxJDBC
 
+def get_py_player(player):
+
+
 class py_player:
     def __init__(self,player):
         self.player = player
-        self.logging_in = True
-        
         self.login_time = time.time()
+        self.logging_in = False
+
         self.nickname = self.name
         self.registered = False
         self.password = "None"
@@ -23,9 +26,6 @@ class py_player:
 
     def kick(self, kick_message = "You have been kicked from the server!"):
         self.player.KickPlayer(kick_message)
-
-    def msg(self, message):
-        self.player.sendMessage(message)
 
     @property
     def name(self):
@@ -60,11 +60,6 @@ py_players = Py_players()
 
 @async(daemon=True)
 def fetch_player(player):
-    properties = (player.uuid, player.name, player.nickname, player.registered, 
-                        player.password, player.banned, 
-                        player.banned_reason, player.played_time, 
-                        player.last_login, player.first_seen)
-
     with mysql_connect() as sql:
         sql.execute("SELECT * FROM utils_players WHERE uuid = ?", (player.uuid,))
         result = sql.fetchall()
@@ -76,39 +71,19 @@ def fetch_player(player):
                 banned_reason, played_time, last_login, first_seen) \
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 
-                args=properties)
-
-    elif len(result) is 1:
-        props = result[0]
-        print props
-        for prop in properties:
-            prop = props[properties.index(prop)]
-
+                args=(player.uuid, player.name, player.nickname, player.registered, 
+                        player.password, player.banned, 
+                        player.banned_reason, player.played_time, 
+                        player.last_login, player.first_seen))
     else:
-        player.kick("Something went wrong while loading your player data, please contact an admin")
-        return
-    player.logging_in = False
-    player.msg("You have succesfully logged into redstoner!")
-
-
-blocked_events = ["block.BlockBreakEvent", "block.BlockPlaceEvent", "player.PlayerMoveEvent",
-                    "player.AsyncPlayerChatEvent","player.PlayerTeleportEvent",
-                    "player.PlayerCommandPreprocessEvent", "player.PlayerInteractEvent"]
-
-for event in blocked_events:
-    @hook.event(event,"highest")
-    def on_blocked_event(event):
-        player = py_players[event.getPlayer()]
-        if player.logging_in:
-            event.setCancelled(True)
-
+        pass
+        #test
 
 
 @hook.event("player.PlayerJoinEvent","lowest")
 def on_join(event):
     player = py_player(event.getPlayer())
     py_players.append(player)
-    player.msg("Your input will be blocked for a short while")
     fetch_player(player)
 
 
