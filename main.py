@@ -34,7 +34,7 @@ info("Loading RedstonerUtils...")
 
 
 # Import all modules, in this order
-shared["load_modules"] = ["test"]
+shared["load_modules"] = ["test", "login"]
 
 shared["modules"] = {}
 for module in shared["load_modules"]:

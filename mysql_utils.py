@@ -13,10 +13,22 @@ class mysql_connect:
         if args is None:
             return self.curs.execute(query)
         else:
+            print query
+            print args
             return self.curs.execute(query, args)
 
     def fetchall(self):
         return self.curs.fetchall()
+
+    @property
+    def columns(self):
+        self.execute("SHOW COLUMNS FROM utils_players")
+        fetched = self.fetchall()
+        columns = []
+
+        for row in fetched:
+            columns.append(row[0])
+        return columns
 
     def __enter__(self):
         return self
