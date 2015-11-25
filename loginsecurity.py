@@ -8,7 +8,7 @@ import mysqlhack
 from com.ziclix.python.sql import zxJDBC
 from java.lang import Runnable
 
-wait_time = 60 #seconds
+wait_time = 30 #seconds
 admin_perm = "utils.loginsecurity.admin"
 min_pass_length = 8
 blocked_events = ["block.BlockBreakEvent", "block.BlockPlaceEvent", "player.PlayerMoveEvent","player.AsyncPlayerChatEvent"]

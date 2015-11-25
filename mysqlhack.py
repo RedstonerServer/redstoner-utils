@@ -4,12 +4,12 @@ A library that makes use of the so called ClassPathHack for jython
 to allow proper loading of mysql-connector.jar at runtime.
 Import only, no methods.
 """
-import jarray
-import java.net.URL
-import java.io.File
-from java.lang import Class
-import java.net.URLClassLoader
 import java.lang.reflect.Method
+import java.io.File
+import java.net.URL
+import java.net.URLClassLoader
+import jarray
+from java.lang import Class
 
 
 # hacky code to add mysql-connector to java's classpath ('classPathHack')

@@ -1,30 +1,26 @@
 #pylint: disable = F0401
-
-import org.bukkit as bukkit
-import org.bukkit.block as bblock
-import org.bukkit.Location as Location
-import org.bukkit.event.entity as entity
-import org.bukkit.entity.Player as Player
-import org.bukkit.command.ConsoleCommandSender
-import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause as TeleportCause
-
 from re import sub
-from thread_utils import *
-from player import py_players
-from org.bukkit.entity import *
-from player import get_py_player
-from traceback import format_exc as trace
 from java.util.UUID import fromString as juuid
 from json import dumps as json_dumps, loads as json_loads
+import org.bukkit as bukkit
+import org.bukkit.Location as Location
+import org.bukkit.entity.Player as Player
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause as TeleportCause
+import org.bukkit.event.block.BlockBreakEvent as BlockBreakEvent
+import org.bukkit.block as bblock
+import org.bukkit.event.entity as entity
+import org.bukkit.command.ConsoleCommandSender
+from org.bukkit.entity import *
+from player import get_py_player
+from player import py_players
 
 #Imports for async query
-import threading
-import mysqlhack
-
 from secrets import *
+import mysqlhack
 from com.ziclix.python.sql import zxJDBC
+import threading
 
+from traceback import format_exc as trace
 
 
 shared = {} # this dict can be used to share stuff across modules
@@ -217,6 +213,31 @@ def known_player(player):
     this is different to HasPlayedBefore(), which will return False on first join
     """
     return player.hasPlayedBefore()
+
+"""
+Runs a async query, calls target function with fetchall as an argument, it will be an empty list if there is nothing to fetch.
+(So make sure your function takes that argument.)
+
+If you want your function to run sync in the case you are doing something spigot wouldn't like to be async use the bukkit scheduler.
+Example can be found in loginsecurity.py
+
+"""
+def async_query(mysql_database,query,query_args,target,*target_args,**target_kwargs):
+
+    def async_query_t(mysql_database,query,query_args,target,target_args,target_kwargs):
+        db_conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
+        db_curs = db_conn.cursor()
+        db_curs.execute(query,query_args)
+        db_conn.commit()
+        fetchall = db_curs.fetchall()
+        db_curs.close()
+        db_conn.close()
+        target(fetchall,target_args,target_kwargs)
+
+    t = threading.Thread(target=async_query_t,args=(mysql_database,query,query_args,target,target_args,target_kwargs))
+    t.daemon = True
+    t.start()
+
 
 def open_json_file(filename, default = None):
     """
