@@ -13,7 +13,7 @@ def is_vanished(player):
     return uid(player) in vanished
 
 
-#this can be used to silently set the vanished state of a player I guess.
+#this can be used to silently set the vanished state of a player
 def set_state(player, state):
     if state == is_vanished(player):
         return
@@ -37,10 +37,6 @@ def disable_vanish(target):
         player.showPlayer(target)
 
 
-def get_online_vanished_players():
-    return (player.getPlayer() for player in (retrieve_player(uuid) for uuid in vanished) if player.isOnline())
-
-
 @simplecommand("vanish", 
         aliases = ["v"],
         usage = "[on/off]",
@@ -52,38 +48,45 @@ def get_online_vanished_players():
         helpSubcmd = True
 )
 def vanish_command(sender, command, label, args):
-    current_state = is_vanished(sender)
-    new_state = not current_state
+    try:
+        current_state = is_vanished(sender)
+        new_state = not current_state
 
-    if len(args) == 1:
-        arg = args[0].lower()
-        if arg == "on":
-            new_state = True
-        elif arg == "off":
-            new_state = False
+        if len(args) == 1:
+            arg = args[0].lower()
+            if arg == "on":
+                new_state = True
+            elif arg == "off":
+                new_state = False
 
-    Validate.isTrue(current_state != new_state, "&cYou were %s vanished!" % ("already" if current_state else "not yet"))
-    set_state(sender, new_state)
-    return "&a%s vanish mode!" % ("Enabled" if new_state else "Disabled")
+        if current_state == new_state:
+            return "&cYou were %s vanished!" % ("already" if current_state else "not yet")
+
+        set_state(sender, new_state)
+        return "&a%s vanish mode!" % ("Enabled" if new_state else "Disabled")
+    except:
+        error(trace())
 
 
 @hook.event("player.PlayerJoinEvent")
 def on_player_join(event):
     player = event.getPlayer()
+
     if not is_authorized(player):
-        for vanished in get_online_vanished_players():
-            player.hidePlayer(vanished)
+        for uuid in vanished:
+            player.hidePlayer(retrieve_player(uuid))
+
+    elif is_vanished(player):
+        msg(player, "&cKeep in mind that you are still vanished! Use /vanish to disable.")
 
 
 @hook.event("player.PlayerQuitEvent")
 def on_player_quit(event):
     player = event.getPlayer()
-    if not is_authorized(player):
-        for vanished in get_online_vanished_players():
-            player.showPlayer(vanished)
 
-    elif is_vanished(player):
-        disable_vanish(player)
+    if not is_authorized(player):
+        for uuid in vanished:
+            player.showPlayer(retrieve_player(uuid))
 
 
 @simplecommand("vanishother",
@@ -107,7 +110,9 @@ def vanishother_command(sender, command, label, args):
         elif arg == "off":
             new_state = False
 
-    Validate.isTrue(current_state != new_state, "&cThat player was %s vanished!" % ("already" if current_state else "not yet"))
+    if current_state == new_state:
+        return "&cThat player was already vanished!" if current_state else "&cThat player was not yet vanished!"
+
     set_state(target, new_state)
 
     enabled_str = "enabled" if new_state else "disabled"
