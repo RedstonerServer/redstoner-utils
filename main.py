@@ -11,12 +11,10 @@ sys.path += ['', '/usr/lib/python2.7', '/usr/lib/python2.7/plat-linux2', '/usr/l
 try:
     # Library that adds a bunch of re-usable methods which are used in nearly all other modules
     from helpers import *
-    from wrapper import *
+    #from wrapper import *
 except:
-    print("[RedstonerUtils] ERROR: Failed to import Wrapper:")
-    print(print_traceback())
-
-
+    error("[RedstonerUtils] ERROR: Failed to import Wrapper:")
+    error(print_traceback())
 
 @hook.enable
 def on_enable():
@@ -34,7 +32,10 @@ info("Loading RedstonerUtils...")
 
 
 # Import all modules, in this order
-shared["load_modules"] = ["test", "login"]
+shared["load_modules"] = [
+    "test", 
+#    "login",
+]
 
 shared["modules"] = {}
 for module in shared["load_modules"]:

@@ -3,7 +3,7 @@ import mysqlhack
 from mysql_utils import *
 from util_events import fire_event
 from thread_utils import *
-from players_secret import *
+#from players_secret import *
 from datetime import datetime
 from com.ziclix.python.sql import zxJDBC
 from traceback import format_exc as print_traceback
@@ -113,7 +113,6 @@ py_players = Py_players()
 
 @async(daemon=True)
 def fetch_player(player):
-
     properties = []
     keys = []
     for key, value in player.props.iteritems():
@@ -163,9 +162,10 @@ blocked_events = ["block.BlockBreakEvent", "block.BlockPlaceEvent", "player.Play
 for event in blocked_events:
     @hook.event(event,"highest")
     def on_blocked_event(event):
-        player = py_players[event.getPlayer()]
-        if player.logging_in:
-            event.setCancelled(True)
+        """player = py_players[event.getPlayer()]
+                                if player.logging_in:
+                                    event.setCancelled(True)"""
+        pass
 
 
 
@@ -174,11 +174,11 @@ def on_join(event):
     try:
         player = py_player(event.getPlayer())
     except:
-        print(print_traceback())
+        error(print_traceback())
         time.sleep(10)
     py_players.append(player)
     player.msg("Your input will be blocked for a short while")
-    fetch_player(player)
+    #fetch_player(player)
 
 
 @hook.event("player.PlayerQuitEvent","highest")

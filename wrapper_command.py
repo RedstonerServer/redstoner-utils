@@ -1,8 +1,6 @@
 from wrapper_player import *
 from helpers import *
 
-root_commands = Command_dict() # {"command": command_object}
-
 class Command(object):
     """
       # Documentation to come.s
@@ -20,18 +18,17 @@ class Command(object):
     def __init__(self,
                 command, 
                 parent = None,
-                aliases = (), 
+                aliases = tuple(), 
                 permission = None,
                 description = "Description",
-                type = Command.SENDER_ANY,
-                no_arg_action = Command.ACTION_IGNORE,
-                help_request_action = Command.ACTION_IGNORE,
-                arguments = (), 
-    ):
+                type = 0, 
+                no_arg_action = 3,
+                help_request_action = 3,
+                arguments = tuple(), 
+        ):
 
         self.command = command.lower()
         self.aliases = tuple(alias.lower() for alias in aliases)
-        self.permission = self.command if permission == None else permission
         self.description = description
         self.type = type
         self.no_arg_action = no_arg_action
@@ -52,7 +49,8 @@ class Command(object):
 
             prev_arg = arg_info
 
-        # ---- Add self to parent sub_commands ----
+        # ---- Add self to parent sub_commands and set permission node ----
+        perm_builder = "utils"
         if self.parent == None:
             root_commands[self.command] = self
         else:
@@ -69,6 +67,8 @@ class Command(object):
             except KeyError as e:
                 raise Argument_exception("Error occurred while setting up command hierarchy: " + e.message + "\n" + trace())
 
+        perm_builder += "." + (permission if permission else command).lower()
+
     def __call__(self, handler):
         """
           # To clarify: This function is called when you 'call' an instance of a class.
@@ -77,8 +77,8 @@ class Command(object):
         """
         self.handler = handler
 
-        if parent == None:
-            @hook.command(self.command, self.aliases)
+        if self.parent == None:
+            @hook.command(self.command, aliases = self.aliases)
             def run(sender, command, label, args):
                 """
                   # This function will take care of prefixing and colouring of messages in the future.
@@ -87,6 +87,8 @@ class Command(object):
                 try:
                     message = self.execute(sender, command, label, args)
                 except Command_exception as e:
+                    message = e.message
+                except Argument_exception as e:
                     message = e.message
                 except Exception:
                     error(trace())
@@ -101,14 +103,14 @@ class Command(object):
         try:
             return self.sub_commands[args[0].lower()].execute(sender, command, label, args[1:])
         except (KeyError, IndexError):
-            self.execute_checks(sender, command, label, args)
+            return self.execute_checks(sender, command, label, args)
 
     def execute_checks(self, sender, command, label, args):
 
         # ---- Check sender type ----
         if is_player(sender):
             Validate.is_true(self.type != Command.SENDER_CONSOLE, "That command can only be used by the console")
-            sender = py_players[sender]
+            #sender = py_players.__getattr__(sender)
         else:
             Validate.is_true(self.type != Command.SENDER_PLAYER, "That command can only be used by players")
 
@@ -134,7 +136,8 @@ class Command(object):
         # ---- Set up passed arguments, prepare for handler call ----
         scape = Command_scape(args, self.arguments, command, label)
         if is_player(sender):
-            sender = py_players[sender]
+            #sender = py_players[sender]
+            pass
 
         return self.handler(sender, self, scape)
         # @Command("hello") def on_hello_command(sender, command, scape/args)
@@ -234,6 +237,8 @@ class Command_dict(dict):
                 return cmd_obj
         raise KeyError("Subcommand '%s' was not found" % alias)
 
+root_commands = Command_dict() # {"command": command_object}
+
 class Command_exception(Exception):
 
     def __init__(self, message):
@@ -284,7 +289,8 @@ class Command_scape(list):
                 target = server.getPlayer(given_arg)
                 if target == None:
                     raise Argument_exception("The %s has to be an online player" % arg_info.name)
-                self.append(py_players[target])
+                self.append(target)
+                #self.append(py_players[target])
 
             elif arg_type == Argument.OFFLINE_PLAYER:
                 try:
