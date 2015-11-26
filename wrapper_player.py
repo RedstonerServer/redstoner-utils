@@ -15,16 +15,18 @@ class py_player(object):
         self.authenticated = False
         self.login_time = time.time()
         
-        self.props ={"uuid":self.uuid,
-        "name":self.name,
-        "nickname":self.name,
-        "registered":False,
-        "password":"None",
-        "banned":False,
-        "banned_reason":"You have been banned!",
-        "played_time":time.time() - self.login_time,
-        "last_login":datetime.now(),
-        "first_seen":datetime.now()}
+        self.props = {
+            "uuid":self.uuid,
+            "name":self.name,
+            "nickname":self.name,
+            "registered":False,
+            "password":"None",
+            "banned":False,
+            "banned_reason":None,
+            "played_time":time.time() - self.login_time,
+            "last_login":datetime.now(),
+            "first_seen":datetime.now(),
+        }
 
     def __setattr__(self, attribute, value):
         if not attribute in dir(self):
@@ -39,7 +41,7 @@ class py_player(object):
         try:
             return self.props[attribute]
         except:
-            pass
+            raise AttributeError("Attribute %s does not exist on this py_player" % attribute)
             
     def save(self):
         properties = []

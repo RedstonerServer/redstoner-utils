@@ -13,24 +13,24 @@ events = []
 class base_event():
     def __init__(self,event_name):
         self.name = event_name
-        self.canceled = False
+        self.cancelled = False
         self._handlers = [ [],[],[],[],[],[] ]
 
-        self.canceled_lock = threading.Lock()
+        self.cancelled_lock = threading.Lock()
 
     def add_handler(self,function,priority):
         for prior in priorities:
             if prior == priority:
                 self._handlers[priorities.index(prior)].append(function)
 
-    def fire(self,*args):
+    def call(self,*args):
         for priority in self._handlers:
             for handler in priority:
                 handler(self,*args)
 
-    def set_canceled(self,state):
-        with self.canceled_lock:
-            self.canceled = state
+    def set_cancelled(self,state):
+        with self.cancelled_lock:
+            self.cancelled = state
 
 
 class utils_events(base_event):
@@ -38,17 +38,26 @@ class utils_events(base_event):
         base_event.__init__(self,event_name)
 
 
-def add_event(event_name,event = base_event): #Adds a new event
-    event = event(event_name)
+def add_event(event_name, event_class = base_event):
+    """
+      # Adds a new event type of the given class with the given name
+    """
+    event = event_class(event_name)
     events.append(event)
 
-def fire_event(event_name,*args): #Fires the event
+def call_event(event_name,*args):
+    """
+      # Calls the ehe event with the given arguments
+    """
     for event in events:
         if event.name == event_name:
-            event.fire(*args)
+            event.call(*args)
             return event
 
-def check_events(event_name): #Returns false if the even does not exist.
+def check_events(event_name):
+    """
+      # Returns whether there is an event with the name event_name
+    """
     for event in events:
         if event.name == event_name:
             return True

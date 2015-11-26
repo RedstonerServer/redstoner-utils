@@ -19,14 +19,14 @@ class Command(object):
 
     def __init__(self,
                 command, 
+                parent = None,
                 aliases = (), 
                 permission = None,
                 description = "Description",
-                type = Command.SENDER_ANY
-                no_arg_action = Command.ACTION_IGNORE
-                help_request_action = Command.ACTION_IGNORE
+                type = Command.SENDER_ANY,
+                no_arg_action = Command.ACTION_IGNORE,
+                help_request_action = Command.ACTION_IGNORE,
                 arguments = (), 
-                parent = None,
     ):
 
         self.command = command.lower()
@@ -67,7 +67,7 @@ class Command(object):
                 parent_obj.sub_commands[self.command] = self
 
             except KeyError as e:
-                error("Error occurred while setting up command hierarchy: " + e.message + "\n" + trace())
+                raise Argument_exception("Error occurred while setting up command hierarchy: " + e.message + "\n" + trace())
 
     def __call__(self, handler):
         """
