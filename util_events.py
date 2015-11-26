@@ -23,7 +23,7 @@ class base_event():
             if prior == priority:
                 self._handlers[priorities.index(prior)].append(function)
 
-    def call(self,*args):
+    def fire(self,*args):
         for priority in self._handlers:
             for handler in priority:
                 handler(self,*args)
@@ -45,7 +45,7 @@ def add_event(event_name, event_class = base_event):
     event = event_class(event_name)
     events.append(event)
 
-def call_event(event_name,*args):
+def fire_event(event_name,*args):
     """
       # Calls the ehe event with the given arguments
     """

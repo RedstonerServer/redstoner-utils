@@ -106,7 +106,9 @@ class Command(object):
     def execute_checks(self, sender, command, label, args):
 
         # ---- Check sender type ----
+        if is_player(sender):
             Validate.is_true(self.type != Command.SENDER_CONSOLE, "That command can only be used by the console")
+            sender = py_players[sender]
         else:
             Validate.is_true(self.type != Command.SENDER_PLAYER, "That command can only be used by players")
 
@@ -130,8 +132,6 @@ class Command(object):
                 return self.help()
 
         # ---- Set up passed arguments, prepare for handler call ----
-        if is_player(sender):
-            sender = py_players[sender]
         scape = Command_scape(args, self.arguments, command, label)
         if is_player(sender):
             sender = py_players[sender]
