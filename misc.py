@@ -114,6 +114,17 @@ def rs_material_broken_by_flow(material):
     length = len(parts)
     return length > 1 and (parts[0] == "DIODE" or parts[1] in ("TORCH", "WIRE", "BUTTON", "HOOK") or (length == 3 and parts[1] == "COMPARATOR"))
 
+
+@hook.event("player.PlayerInteractEvent")
+def on_interact(event):
+    if (not event.isCancelled()
+        and str(event.getAction()) == "RIGHT_CLICK_BLOCK"
+        and str(event.getMaterial()) in ("REDSTONE_COMPARATOR_OFF", "REDSTONE_COMPARATOR_ON")
+        and not can_build(player, event.getClickedBlock())
+    ):
+        event.setCancelled(True)
+
+
 sudo_blacklist = ["pyeval", "script_backup_begin", "script_backup_end", "script_backup_error", "script_backup_database_begin", "script_backup_database_dumps", "script_backup_database_end",
 "script_backup_database_error", "script_backup_database_abort", "script_trim", "script_trim_result", "script_spigot_update", "script_disk_filled", "script_restart", "script_restart_abort",
 "script_stop", "script_stop_abort", "script_shutdown", "stop", "esudo", "essentials:sudo"]
