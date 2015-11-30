@@ -127,7 +127,7 @@ def on_interact(event):
 
 sudo_blacklist = ["pyeval", "script_backup_begin", "script_backup_end", "script_backup_error", "script_backup_database_begin", "script_backup_database_dumps", "script_backup_database_end",
 "script_backup_database_error", "script_backup_database_abort", "script_trim", "script_trim_result", "script_spigot_update", "script_disk_filled", "script_restart", "script_restart_abort",
-"script_stop", "script_stop_abort", "script_shutdown", "stop", "esudo", "essentials:sudo"]
+"script_stop", "script_stop_abort", "script_shutdown", "stop", "esudo", "essentials:sudo", "sudo"]
 
 @simplecommand("sudo",
         usage        = "<player> [cmd..]",

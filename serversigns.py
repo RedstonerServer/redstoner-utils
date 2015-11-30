@@ -5,7 +5,7 @@ import java.util.UUID as UUID
 import org.bukkit.Material as Material
 import org.bukkit.block.BlockFace as BlockFace
 
-blocked_cmds = ("pex", "kick", "ban", "tempban", "pyeval", "sudo", "stop", "reload", "op", "deop", "whitelist")
+blocked_cmds = tuple(shared["modules"]["misc"].sudo_blacklist) + ("pex", "kick", "ban", "tempban", "reload", "op", "deop", "whitelist")
 
 def load_signs():
     signs_obj = open_json_file("serversigns", [])
