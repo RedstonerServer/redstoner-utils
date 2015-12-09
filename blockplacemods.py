@@ -11,6 +11,17 @@ import org.bukkit.event.block.Action as Action
 import org.bukkit.block.BlockFace as BlockFace
 import org.bukkit.scheduler.BukkitRunnable as Runnable
 
+"""
+  # Permissions:
+  # - utils.toggle: for use of the command
+  # - utils.toggle.cauldron
+  # - utils.toggle.slab
+  # - utils.toggle.furnace
+  # - utils.toggle.piston
+  # - utils.toggle.dropper
+  # - utils.toggle.hopper
+"""
+
 settingInformation = dict( #[setting type, identifying description, detailed description, aliases, (optional) max slot id], setting types: 0 = toggle, default on. 1 = Set your setting to held itemstack, 2 = toggle, default off
     cauldron = [0,
         "easy cauldron water level control",
