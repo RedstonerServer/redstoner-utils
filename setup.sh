@@ -25,7 +25,7 @@ mkdir -v "build"
 cd "build"
 
 echo -e "\n> Downloading Spigot build tools"
-curl --progress-bar -Lo "buildtools.jar" "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
+curl --progress-bar -Lo "BuildTools.jar" "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
 
 echo -e "\n> Building Spigot, this will take a while ..."
 java -jar BuildTools.jar > /dev/null
