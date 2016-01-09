@@ -22,7 +22,7 @@ import threading
 
 from traceback import format_exc as trace
 
-
+helpers_version = "2.0.0"
 shared = {} # this dict can be used to share stuff across modules
 
 server = bukkit.Bukkit.getServer()
@@ -87,7 +87,7 @@ def colorify(text):
     """
     replace &-codes with real color codes
     """
-    return sub("&" + u"\u00A7", "&", "%s" % sub("&(?=[?\\da-fk-or])", u"\u00A7", "%s" % text))
+    return sub("&(?=[?\\da-fk-or])", u"\u00A7", "%s" % text)
 
 
 def stripcolors(text):
@@ -181,16 +181,6 @@ def is_creative(player):
     return str(player.getGameMode()) == "CREATIVE"
 
 
-def is_rank(player, rank):
-    """
-    rank: a string equal to the PEX group name found in /pex groups
-    returns True if one of the following conditions are met:
-    - the player is of the given rank,
-    - their rank inherits the given rank.
-    """
-    return player.hasPermission("groups." + rank)
-
-
 def uid(player):
     """
     returns the player's UUID
@@ -281,7 +271,8 @@ def send_JSON_message(playername, message):
     bukkit.Bukkit.getServer().dispatchCommand(bukkit.Bukkit.getServer().getConsoleSender(), "tellraw " + playername + " " + message)
 
 
-def isIP(tocheck):
+# Allows to check if a String is a valid IPv4 or not. Accepts any string, returns true if the String is a valid IPv4
+def is_ip(tocheck):
     subsets = ["","","",""]
     i = 0
     for j in range(0,len(tocheck)):
@@ -299,3 +290,27 @@ def isIP(tocheck):
         if not ((int(subsets[j]) >= 0) & (int(subsets[j]) <= 255)):
             return False
     return True
+
+
+# Allows the use of e.g. numeric permission nodes like "permission.amount.5" and similar.
+# To get the data fetch the player and the start of the permission node, looking like "permission.amount."
+def get_permission_content(player, permnode):
+    perms = player.getEffectivePermissions()
+    for perm in perms:
+        if str(perm.getPermission()).startswith(permnode):
+               return str(perm.getPermission()).replace(permnode, "")
+
+
+# Gets an online player from their name
+def get_player(name):
+    for p in bukkit.Bukkit.getServer().getOnlinePlayers():
+        if p.getName().lower() == name.lower():
+            return p
+    return None
+
+
+def array_to_list(array):
+    return_list = []
+    for a in array:
+        return_list += [a]
+    return return_list
