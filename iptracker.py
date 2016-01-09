@@ -9,6 +9,7 @@ from iptracker_secrets import *
 
 
 iptrack_permission = "utils.iptrack"
+iptrack_version = "1.1.0"
 
 
 @hook.event("player.PlayerJoinEvent", "low")
@@ -42,13 +43,13 @@ def on_player_join_thread(event):
         if new_ip_entry:
             curs.execute("INSERT INTO uuid2ips VALUES (?,?)", (uuid, json.dumps(ips), ))
         else:
-            curs.execute("UPDATE uuid2ips SET ips = ? WHERE uuid = ?", (uuid, json.dumps(ips), ))
+            curs.execute("UPDATE uuid2ips SET ips = ? WHERE uuid = ?", (json.dumps(ips), uuid, ))
     if uuid not in uuids:
         uuids.append(uuid)
         if new_uuid_entry:
             curs.execute("INSERT INTO ip2uuids VALUES (?,?)", (ip, json.dumps(uuids), ))
         else:
-            curs.execute("UPDATE ip2uuids SET uuids = ? WHERE uuid = ?", (ip, json.dumps(uuids), ))
+            curs.execute("UPDATE ip2uuids SET uuids = ? WHERE ip = ?", (json.dumps(uuids), ip, ))
         conn.commit()
     curs.close()
     conn.close()
@@ -56,7 +57,7 @@ def on_player_join_thread(event):
 
 @hook.command("getinfo")
 def on_getinfo_command(sender, args):
-    t = threading.Thread(target=on_player_join_thread, args=(sender, args))
+    t = threading.Thread(target=on_getinfo_command_thread, args=(sender, args))
     t.daemon = True
     t.start()
 
@@ -65,7 +66,7 @@ def on_getinfo_command_thread(sender, args):
         if not checkargs(sender, args, 1, 1):
             return False
         else:
-            if isIP(args[0]):
+            if is_ip(args[0]):
                 conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
                 curs = conn.cursor()
                 curs.execute("SELECT uuids FROM ip2uuids WHERE ip = ?", (args[0], ))
