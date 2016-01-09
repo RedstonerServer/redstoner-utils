@@ -1,138 +1,321 @@
-# Chat Aliasing plugin by Curs3d #
-##################################
-# Allows users to alias words,
-# so that when they send a
-# message in chat, it gets
-# replaced by their specified
-# word. The JSON file for this
-# plugin is generated if not
-# present. Set values to -1
-# for "unlimited" setting.
+############################################
+# Alias v2.0 by Pepich                     #
+# Changes to previous version from curs3d: #
+# Dynamic alias limit from permissions     #
+# AC/CG/MSG support                        #
+# Color support                            #
+# Bugfixes                                 #
+#                                          #
+#                  TODO:                   #
+# Add command support...                   #
+############################################
 
+import os
+import org.bukkit as bukkit
+from org.bukkit import *
 from helpers import *
-import re
 from traceback import format_exc as trace
+from secrets import *
 
-data = None
+# Version number and requirements
 
-max_entries = 10
-max_alias_length = 35
-# Minecraft message limit is 100 so I decided to give a little tolerance (and I added a bit more)
-max_overall_length = 100 + max_alias_length
+alias_version = "2.0.0"
+helpers_versions = ["1.1.0", "2.0.0"]
+enabled = False
+error = colorify("&cUnspecified error")
+commands_per_page = 5
+global_aliases = {"./":"/"}
+data = {}
+use_mysql = False
 
-alias_perm = "utils.alias.allowed"
-exceed_length = "utils.alias.exceedlimit"
-exceed_entries = "utils.alias.exceedlimit"
-exceed_overall_length = "utils.alias.exceedlimit"
+# Permissions:
+
+# Grants full access immediately
+permission_ALL = "utils.alias.*"
+# Access to the command to display the help screen
+permission_BASE = "utils.alias"
+# Make replacements only when the user has this permission
+permission_USE = "utils.alias.use"
+# Modify aliases
+permission_MODIFY = "utils.alias.modify"
+permission_MODIFY_OTHERS = "utils.alias.modify.others"
+# List aliases
+permission_LIST = "utils.alias.list"
+permission_LIST_OTHERS = "utils.alias.list.others"
+# Set alias amounts/length limits, e.g. utils.alias.amount.420
+permission_AMOUNT = "utils.alias.amount."
+permission_LENGTH = "utils.alias.length."
+# See when the plugin was disabled due to version errors
+permission_INFO = "utils.alias.info"
+permission_FINFO = "utils.alias.finfo"
+
+########
+# CODE #
+########
+
+enabled = helpers_version in helpers_versions
+if not enabled:
+    error = colorify("&6Incompatible versions detected (&chelpers.py&6)")
 
 
-def safe_open_json():
-    global data
-    if data is not None:
-        return data
-    data = open_json_file("aliases")
-    if data is None:
-        data = {}
-    save_json_file("aliases", data)
-    return data
-
-def multiple_replace(aliases, text):
-    regex = re.compile("|".join(map(re.escape, aliases.keys())))
-    return regex.sub(lambda mo: aliases[mo.group(0)], text)
+def safe_open_json(uuid):
+    if not os.path.exists("plugins/redstoner-utils.py.dir/files/aliases"):
+        os.makedirs("plugins/redstoner-utils.py.dir/files/aliases")
+    value = open_json_file("aliases/" + uuid)
+    if value is None:
+        value = global_aliases
+    save_json_file("aliases/" + uuid, value)
+    return value
 
 
 @hook.command("alias",
-              usage="/<command> [to_alias] [alias...]",
-              desc="Aliases words in chat")
+              usage="/<command> <add, remove, list, help> [...]",
+              desc="Allows aliasing of words")
 def on_alias_command(sender, cmd, label, args):
+    try:
+        args = array_to_list(args)
+        if not enabled:
+            disabled_fallback(sender)
+            return True
+        if not hasPerm(sender, permission_BASE):
+            plugin_header(recipient=sender, name="Alias")
+            noperm(sender)
+            return True
+        return subcommands[args[0].lower()](sender, args[1:])
+    except:
+        print(trace())
+        return subcommands["help"](sender, "1")
 
-    if not is_player(sender):
-        msg(sender, "Sorry, non-players cannot alias words")
-        return True
-    if not sender.hasPermission(alias_perm):
-        plugin_header(recipient=sender, name="Chat Alias")
-        noperm(sender)
-        return True
-    if len(args) == 0:
-        plugin_header(recipient=sender, name="Chat Alias")
-        msg(sender, "&7This is a plugin that allows you to get words" +
-            "replaced by other ones automatically!")
-        msg(sender, "&7\nCommands:")
-        msg(sender, "&e/alias <word> &7removes <word> from your aliases. " +
-            "Use &e/alias * &7to remove all aliases.")
-        msg(sender, "&e/alias <word> <replacement> &7will change &e<word> " +
-            "&7to &e<replacement> &7in chat")
-        msg(sender, "&7\nYour Aliases:")
-        data = safe_open_json()
-        try:
-            for alias, value in data[str(sender.getUniqueId())].items():
-                msg(sender, "&7%s &7==> %s" % (alias, value))
-        except KeyError:
-            pass
-        return True
-    elif len(args) == 1:
-        data = safe_open_json()
-        if args[0] == "*":
-            try:
-                del data[str(sender.getUniqueId())]
-            except KeyError:
-                plugin_header(recipient=sender, name="Chat Alias")
-                msg(sender, "&7No alias data to remove!")
-                return True
-            save_json_file("aliases", data)
-            plugin_header(recipient=sender, name="Chat Alias")
-            msg(sender, "&cALL &7alias data successfuly removed!")
-            return True
-        try:
-            if data[str(sender.getUniqueId())].pop(args[0], None) is None:
-                plugin_header(recipient=sender, name="Chat Alias")
-                msg(sender, "&7Could not remove: alias not present!")
-                return True
-        except KeyError:
-            plugin_header(recipient=sender, name="Chat Alias")
-            msg(sender, "&7Could not remove: you do not have any aliases!")
-            return True
-        save_json_file("aliases", data)
-        plugin_header(recipient=sender, name="Chat Alias")
-        msg(sender, "&7Alias for %s &7successfuly removed" % args[0])
-        return True
-    elif len(args) >= 2:
-        data = safe_open_json()
-        alias = " ".join(args[1:])
-        try:
-            if (len(alias) > max_alias_length) and (max_alias_length >= 0) and (not sender.hasPermission(exceed_length)):
-                plugin_header(recipient=sender, name="Chat Alias")
-                msg(sender, "&7Please do not alias long words/sentences.")
-                return True
-            if (len(data[str(sender.getUniqueId())]) >= max_entries) and (max_entries >= 0) and (not sender.hasPermission(exceed_entries)):
-                plugin_header(recipient=sender, name="Chat Alias")
-                msg(sender, "&7You have reached your alias limit!")
-                return True
-        except KeyError:
-            data[str(sender.getUniqueId())] = {}
-        data[str(sender.getUniqueId())][args[0]] = alias
-        save_json_file("aliases", data)
-        plugin_header(recipient=sender, name="Chat Alias")
-        msg(sender, "&7Chat Alias %s &7==> %s &7successfully created!" % (args[0], alias))
-        return True
-    else:
-        return False
+
+def help(sender, args):
+    commands = [colorify("&e/alias help [page]")]
+    if hasPerm(sender, permission_LIST):
+        commands += [colorify("&e/alias list &7- Lists all your aliases")]
+    if hasPerm(sender, permission_MODIFY):
+        commands += [colorify("&e/alias add <word> <alias> &7- Add an alias")]
+        commands += [colorify("&e/alias remove <word> &7- Remove an alias")]
+    if can_remote(sender):
+        while len(commands) < commands_per_page:
+            commands += [""]
+        commands += [colorify("&7Following commands will be executed on <player> yet all output will be redirected to you, except when you set silent to false, then <player> will see it too.")]
+    if hasPerm(sender, permission_LIST_OTHERS):
+        commands += [colorify("&e/alias player <name> list [silent]")]
+    if hasPerm(sender, permission_MODIFY_OTHERS):
+        commands += [colorify("&e/alias player <name> add <word> <alias> [silent]")]
+        commands += [colorify("&e/alias player <name> remove <word> [silent]")]
+    pages = (len(commands)-1)/commands_per_page + 1
+    page = 1
+    if len(args) != 0:
+        page = int(args[0])
+    if (page > pages):
+        page = pages
+    if page < 1:
+        page = 1
+    msg(sender, colorify("&e---- &6Help &e-- &6Page &c" + str(page) + "&6/&c" + str(pages) + " &e----"))
+    page -= 1
+    to_display = commands[5*page:5*page+5]
+    for message in to_display:
+        msg(sender, message)
+    if page+1 < pages:
+        msg(sender, colorify("&6To display the next page, type &c/help " + str(page+2)))
+    return True
+
+
+@hook.event("player.PlayerJoinEvent", "high")
+def on_join(event):
+    try:
+        if enabled:
+            t = threading.Thread(target=load_data, args=(uid(event.getPlayer()), ))
+            t.daemon = True
+            t.start()
+        else:
+            if event.getPlayer().hasPermission(permission_FINFO):
+                disabled_fallback(event.getPlayer())
+    except:
+        print(trace())
 
 
 @hook.event("player.AsyncPlayerChatEvent", "high")
 def on_player_chat(event):
-    playerid = str(event.getPlayer().getUniqueId())
-    data = safe_open_json()
-    if event.isCancelled():
-        return
-    if not playerid in data:
-        return
+    try:
+        if enabled:
+            if event.isCancelled():
+                return
+            if not hasPerm(event.getPlayer(), permission_USE):
+                return
+            for alias, value in data[str(uid(event.getPlayer()))].items():
+                if not event.getPlayer().hasPermission(permission_ALL) and len(event.getMessage()) > int(get_permission_content(event.getPlayer(), permission_LENGTH)):
+                    event.setCanceled(True)
+                    plugin_header(event.getPlayer, "Alias")
+                    msg(event.getPlayer(), "The message you wanted to generate would exceed your limit. Please make it shorter!")
+                    return
+                if event.getPlayer().hasPermission("essentials.chat.color"):
+                    event.setMessage(event.getMessage().replace(colorify(alias), colorify(value)))
+                else:
+                    event.setMessage(event.getMessage().replace(alias, value))
+    except:
+        print(trace())
 
-    event.setMessage(multiple_replace(data[playerid], event.getMessage()))
+def hasPerm(player, permission):
+    return (player.hasPermission(permission)) or (player.hasPermission(permission_ALL))
 
-    if (event.getPlayer().hasPermission("essentials.chat.color")):
-        event.setMessage(colorify(event.getMessage()))
-    if (max_overall_length >= 0) and (len(event.getMessage()) > max_overall_length) and (not event.getPlayer().hasPermission(exceed_overall_length)):
-        event.setCancelled(True)
-        plugin_header(recipient=event.getPlayer(), name="Chat Alias")
-        msg(event.getPlayer(), "&7The message generated was too long and was not sent. :/")
+
+def disabled_fallback(receiver):
+    if not hasPerm(receiver, permission_INFO):
+        msg(receiver, colorify("&cUnknown command. Use &e/help&c, &e/plugins &cor ask a mod."))
+    else:
+        msg(receiver, colorify("&cPlugin alias v" + alias_version + " has experienced an &eEMERGENCY SHUTDOWN:"))
+        msg(receiver, error)
+        msg(receiver, colorify("&cPlease contact a dev/admin (especially pep :P) about this to take a look at it."))
+
+
+def can_remote(player):
+    return hasPerm(player, permission_LIST_OTHERS) or hasPerm(player, permission_MODIFY_OTHERS)
+
+
+def add(sender, args):
+    plugin_header(sender, "Alias")
+    if not sender.hasPermission(permission_ALL) and len(data[uid(sender)]) >= int(get_permission_content(sender, permission_AMOUNT)):
+        msg(sender, "&cCould not create alias: Max_limit reached!")
+        return True
+    args = [args[0]] + [" ".join(args[1:])]
+    data[str(uid(sender))][str(args[0])] = args[1]
+    save_data(uid(sender))
+    msg(sender, colorify("&7Alias: ") + args[0] + colorify("&7 -> " + args[1] + colorify("&7 was succesfully created!")), usecolor=sender.hasPermission("essentials.chat.color"))
+    return True
+
+
+def radd(sender, args):
+    args = [args[0:1]] + [" ".join([args[2:len(args)-2]])] + [args[len(args)-1]]
+    plugin_header(sender, "Alias")
+    if args[3].lower() == "false":
+        plugin_header(target, "Alias")
+        msg(target, "&cPlayer " + sender_name + " &cis creating an alias for you!")
+    if not sender.hasPermission(permission_ALL) and len(data[uid(sender)]) >= int(get_permission_content(target, permission_AMOUNT)):
+        msg(sender, "&cCould not create alias: Max_limit reached!")
+        if args[3].lower() == "false":
+            msg(target, "&cCould not create alias: Max_limit reached!")
+        return True
+    
+    target = get_player(args[0])
+    if is_player(sender):
+        sender_name = colorify(sender.getDisplayName)
+    else:
+        sender_name = colorify("&6Console")
+    if len(args) == 3:
+        args += ["true"]
+    data[str(uid(target))][str(args[1])] = str(args[2])
+    save_data(uid(target))
+    msg(sender, colorify("&7Alias: ") + args[1] + colorify("&7 -> " + args[2] + colorify("&7 was succesfully created!")), usecolor=target.hasPermission("essentials.chat.color"))
+    if args[3].lower() == "false":
+        msg(target, colorify("&7Alias: ") + args[1] + colorify("&7 -> " + args[2] + colorify("&7 was succesfully created!")), usecolor=target.hasPermission("essentials.chat.color"))
+    return True
+
+
+def remove(sender, args):
+    plugin_header(sender, "Alias")
+    try:
+        msg(sender, colorify("&7Successfully removed alias ") + args[0] + colorify(" &7-> ") + data[uid(sender)].pop(args[0]) + colorify("&7!"), usecolor=sender.hasPermission("essentials.chat.color"))
+        save_data(uid(sender))
+    except:
+        msg(sender, colorify("&cCould not remove alias ") + args[0] + colorify(", it does not exist."), usecolor=sender.hasPermission("essentials.chat.color"))
+    return True
+
+
+def rremove(sender, args):
+    plugin_header(sender, "Alias")
+    target = get_player(args[0])
+    if is_player(sender):
+        sender_name = colorify(sender.getDisplayName)
+    else:
+        sender_name = colorify("&6Console")
+    if args[2].lower() == "false":
+        print("WTF")
+        plugin_header(target, "Alias")
+        msg(target, "&cPlayer " + sender_name + " &cis removing an alias for you!")
+    try:
+        alias = data[uid(target)].pop(args[1])
+        msg(sender, colorify("&7Successfully removed alias ") + args[1] + colorify(" &7-> ") + alias + colorify("&7!"), usecolor=sender.hasPermission("essentials.chat.color"))
+        if args[2].lower() == "false":
+            msg(target, colorify("&7Successfully removed alias ") + args[1] + colorify(" &7-> ") + alias + colorify("&7!"), usecolor=sender.hasPermission("essentials.chat.color"))
+        save_data(uid(target))
+    except:
+        msg(sender, colorify("&cCould not remove alias ") + args[1] + colorify(", it does not exist."), usecolor=sender.hasPermission("essentials.chat.color"))
+        if args[2].lower() == "false":
+            msg(target, colorify("&cCould not remove alias ") + args[1] + colorify(", it does not exist."), usecolor=sender.hasPermission("essentials.chat.color"))
+    return True
+
+
+def list_alias(sender, args):
+    plugin_header(sender, "Alias")
+    msg(sender, "&7You have a total of " + str(len(data[uid(sender)])) + " aliases:")
+    for word, alias in data[str(uid(sender))].items():
+        msg(sender, colorify("&7") + word + colorify("&7 -> ") + alias, usecolor=sender.hasPermission("essentials.chat.color"))
+    return True
+
+
+def rlist_alias(sender, args):
+    plugin_header(sender, "Alias")
+    target = get_player(args[0])
+    if is_player(sender):
+        sender_name = colorify(sender.getDisplayName)
+    else:
+        sender_name = colorify("&6Console")
+    if len(args) == 1:
+        args += ["true"]
+    msg(sender, "Player " + args[0] + " has following aliases (" + str(len(data[uid(target)])) + " in total):")
+    if args[1].lower() == "false":
+        plugin_header(target, "Alias")
+        msg(target, "&cPlayer " + sender_name + " &cis listing your aliases (" + str(len(data[uid(target)])) + " in total):")
+    for word, alias in data[str(uid(target))].items():
+        msg(sender, colorify("&7") + word + colorify("&7 -> ") + alias, usecolor=target.hasPermission("essentials.chat.color"))
+        if args[1].lower() == "false":
+            msg(target, colorify("&7") + word + colorify("&7 -> ") + alias, usecolor=target.hasPermission("essentials.chat.color"))
+    return True
+
+
+def remote(sender, args):
+    try:
+        return remotes[args[1].lower()](sender, [args[0]] + [args[2:]])
+    except:
+        print(trace())
+        return subcommands["help"](sender, ["2"])
+
+
+def load_data(uuid):
+    if use_mysql:
+        conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
+        curs = conn.cursor()
+        curs.execute("SELECT alias FROM alias WHERE uuid = ?", (uuid, ))
+        results = curs.fetchall()
+        if len(results) == 0:
+            results = global_aliases
+            curs.execute("INSERT INTO alias VALUES (?,?)", (uuid, results, ))
+        data[uuid] = results
+    else:
+        data[uuid] = safe_open_json(uuid)
+
+
+def save_data(uuid):
+    if use_mysql:
+        conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
+        curs = conn.cursor()
+        curs.execute("UPDATE alias SET alias = ? WHERE uuid = ?", (data[uuid], uuid, ))
+    else:
+        save_json_file("aliases/" + uuid, data[uuid])
+
+# Subcommands:
+
+subcommands = {
+    "help": help,
+    "add": add,
+    "remove": remove,
+    "player": remote,
+    "list": list_alias
+}
+
+remotes = {
+    "add": radd,
+    "remove": rremove,
+    "list": rlist_alias,
+}
