@@ -105,3 +105,10 @@ def on_cmd_preprocess_event(event):
             plugin_header(recipient = event.getPlayer(), name = "I'M BUSY!")
             msg(event.getPlayer(), "We are sorry, but %s is currently busy. Please try again later." % message[1])
             event.setCancelled(True)
+
+@hook.event("player.PlayerQuitEvent", "lowest")
+def on_player_leave(event):
+    try:
+        busy_players.remove(event.getPlayer().getName())
+    except:
+        pass
