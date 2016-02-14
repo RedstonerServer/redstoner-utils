@@ -98,10 +98,12 @@ shared["load_modules"] = [
     "punishments",
     # a simple replacement for the buggy essentials /vanish
     "vanish",
-    # ip-tracking utility
-    "iptracker",
+    # ip-tracking utility - disabled as of instability
+    #"iptracker",
     #server signs for everyone
-    "serversigns"
+    "serversigns",
+    # tabnames module to make players names colored on their chars and sort tab after ranks
+    "tabnames"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:
