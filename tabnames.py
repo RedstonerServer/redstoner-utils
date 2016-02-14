@@ -1,11 +1,6 @@
-import mysqlhack
 import org.bukkit as bukkit
-import json
-from java.util import UUID as UUID
 from helpers import *
 from org.bukkit import *
-from traceback import format_exc as trace
-from iptracker_secrets import *
 
 tabnames_version = "v1.0.0"
 
@@ -23,7 +18,8 @@ prefixes = {"admin":"a", "mod":"b", "modintraining":"c", "trusted":"d", "builder
 @hook.event("player.PlayerJoinEvent", "low")
 def on_player_join(event):
     scoreboard_team = prefix(get_Rank(event.getPlayer()))
-    bukkit.Bukkit.getServer().dispatchCommand(bukkit.Bukkit.getServer().getConsoleSender(), "scoreboard teams join " + scoreboard_team + " " + event.getPlayer().getName())
+    bukkit.Bukkit.getServer().dispatchCommand(bukkit.Bukkit.getServer().getConsoleSender(),
+        "scoreboard teams join " + scoreboard_team + " " + event.getPlayer().getName())
 
 def get_Rank(player):
     for i in range(0, len(ranks) - 1):
