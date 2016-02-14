@@ -1,6 +1,4 @@
-import org.bukkit as bukkit
 from helpers import *
-from org.bukkit import *
 
 tabnames_version = "v1.0.0"
 
@@ -12,20 +10,29 @@ tabnames_version = "v1.0.0"
 #                                                            #
 ##############################################################
 
-ranks = ["visitor", "member", "builder", "trusted", "modintraining", "mod", "admin", "breaker"]
+ranks = ["visitor", "member", "builder", "trusted", "modintraining", "mod", "admin"]
 prefixes = {"admin":"a", "mod":"b", "modintraining":"c", "trusted":"d", "builder":"e", "member":"f","visitor":"g"}
 
 @hook.event("player.PlayerJoinEvent", "low")
 def on_player_join(event):
-    scoreboard_team = prefix(get_Rank(event.getPlayer()))
-    bukkit.Bukkit.getServer().dispatchCommand(bukkit.Bukkit.getServer().getConsoleSender(),
-        "scoreboard teams join " + scoreboard_team + " " + event.getPlayer().getName())
+    player = event.getPlayer()
+    team = get_team(player)
+    if team:
+        cmd = "scoreboard teams join %s %s" % (team, player.getName())
+        server.dispatchCommand(server.getConsoleSender(), cmd)
 
-def get_Rank(player):
-    for i in range(0, len(ranks) - 1):
-        if not player.hasPermission("group." + ranks[i]):
+def get_rank(player):
+    player_rank = None
+    for rank in ranks:
+        if not player.hasPermission("group.%s" % rank):
             break
-    return ranks[i-1]
+        player_rank = rank
+    if not player_rank:
+        warn("Couldn't find rank for player %s" % player.getName())
+    return player_rank
 
-def prefix(rank):
-    return prefixes.get(rank) + "_" + rank
+def get_team(player):
+    rank = get_rank(player)
+    if rank:
+        prefix = prefixes.get(rank)
+        return "_".join([prefix, rank])
