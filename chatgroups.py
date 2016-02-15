@@ -21,6 +21,8 @@ def on_chatgroup_command(sender, command, label, args):
     if len(args) == 1 and args[0] == "leave":
         if sender_id in groups.keys():
             groupchat(sender, "left the group", True)
+            if sender in cg_toggle_list:
+                cg_toggle_list.remove(p)
             group = groups[sender_id]
             del(groups[sender_id])
             save_groups()
