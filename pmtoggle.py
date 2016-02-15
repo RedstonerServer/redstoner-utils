@@ -5,8 +5,8 @@ from java.util.UUID import fromString as juuid
 toggle_dict = {}
 permission = "utils.pmtoggle"
 
-@hook.command("tm",
-              aliases = ["tmsg", "mt", "msgt"],
+@hook.command("pmtoggle",
+              aliases = ["tm", "mt", "tmsg", "msgt", "pmt", "tpm"],
               usage = "/<command> [player]",
               description = "Toggle automatic sending of messages"
               )
