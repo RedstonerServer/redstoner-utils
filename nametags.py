@@ -8,9 +8,9 @@ from helpers import *
 #                                                            #
 ##############################################################
 
-ranks = ["visitor", "member", "builder", "trusted", "modintraining", "mod", "admin"]
+ranks = ["visitor", "member", "builder", "trusted", "trainingmod", "mod", "admin"]
 # prefixes are used for sorting in the tab list
-prefixes = {"admin":"a", "mod":"b", "modintraining":"c", "trusted":"d", "builder":"e", "member":"f","visitor":"g"}
+prefixes = {"admin":"a", "mod":"b", "trainingmod":"c", "trusted":"d", "builder":"e", "member":"f","visitor":"g"}
 
 @hook.event("player.PlayerJoinEvent", "low")
 def on_player_join(event):
