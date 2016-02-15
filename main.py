@@ -89,7 +89,7 @@ shared["load_modules"] = [
     # Servercontrol extension for telnet access to logs/AC
     #"servercontrol",
     # Script helper plugin
-    "scriptutils", 
+    "scriptutils",
     # Per-player notes
     "tag",
     # vanish toggle module - temporary fix
@@ -102,8 +102,8 @@ shared["load_modules"] = [
     #"iptracker",
     #server signs for everyone
     "serversigns",
-    # tabnames module to make players names colored on their chars and sort tab after ranks
-    "tabnames"
+    # Makes player's names colored, sorts tab list by rank
+    "nametags"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:

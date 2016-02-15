@@ -1,7 +1,5 @@
 from helpers import *
 
-tabnames_version = "v1.0.0"
-
 ##############################################################
 #                                                            #
 # This module automatically puts people in the corresponding #
@@ -11,6 +9,7 @@ tabnames_version = "v1.0.0"
 ##############################################################
 
 ranks = ["visitor", "member", "builder", "trusted", "modintraining", "mod", "admin"]
+# prefixes are used for sorting in the tab list
 prefixes = {"admin":"a", "mod":"b", "modintraining":"c", "trusted":"d", "builder":"e", "member":"f","visitor":"g"}
 
 @hook.event("player.PlayerJoinEvent", "low")
