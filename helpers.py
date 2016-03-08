@@ -314,3 +314,13 @@ def array_to_list(array):
     for a in array:
         return_list += [a]
     return return_list
+
+
+#debug wrapper
+def debug(func):
+    def wrap(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except:
+            print(trace())
+    return wrap
