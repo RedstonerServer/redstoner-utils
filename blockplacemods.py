@@ -150,7 +150,8 @@ def toggle_command(sender, command, label, args):
         if arg2 == "clear":
             if enabled:
                 del values[uuid]
-            return " &aDisabled " + details[1]
+            	return " &aDisabled " + details[1]
+            return " &cAlready disabled: " + details[1]
 
         if arg2 == "details":
             return " &aSetting %s:\n &9%s \n&6Accepted arguments: [<slot>|clear|details]" % (setting, details[2])
