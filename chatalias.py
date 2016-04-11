@@ -83,7 +83,6 @@ def on_alias_command(sender, cmd, label, args):
             return True
         return subcommands[args[0].lower()](sender, args[1:])
     except:
-        print(trace())
         return subcommands["help"](sender, "1")
 
 
@@ -154,7 +153,7 @@ def on_player_chat(event):
                 else:
                     event.setMessage(event.getMessage().replace(alias, value))
     except:
-        print(trace())
+        return
 
 def hasPerm(player, permission):
     return (player.hasPermission(permission)) or (player.hasPermission(permission_ALL))
@@ -278,7 +277,6 @@ def remote(sender, args):
     try:
         return remotes[args[1].lower()](sender, [args[0]] + [args[2:]])
     except:
-        print(trace())
         return subcommands["help"](sender, ["2"])
 
 
