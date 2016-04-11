@@ -36,9 +36,9 @@ def on_dammnspam_command(sender, command, label, args):
         msg(sender, "&c/damnspam <seconds after off> <seconds after on> &e(Levers only)")
         return True
         #Gittestlol
-        if not is_creative(sender):
-            msg(sender, "&cYou can only do this in Creative mode.")
-            return True
+    if not is_creative(sender):
+        msg(sender, "&cYou can only do this in Creative mode.")
+        return True
 
     # /damnspam <secs>
     if len(args) == 1:
