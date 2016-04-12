@@ -27,7 +27,7 @@ error = colorify("&cUnspecified error")
 commands_per_page = 5
 global_aliases = {"./":"/"}
 data = {}
-# DON'T SET THIS TO TRUE! MySQL requestst are NOT async yet! (And for some reason it doesn't want to store any data ._.)
+# DON'T SET THIS TO TRUE! MySQL requestst are NOT ASYNC yet! (And for some reason it doesn't want to store any data ._.)
 use_mysql = False
 
 # Permissions:
@@ -55,6 +55,7 @@ permission_FINFO = "utils.alias.finfo"
 # CODE #
 ########
 
+# OnEnable
 enabled = helpers_version in helpers_versions
 if not enabled:
     error = colorify("&6Incompatible versions detected (&chelpers.py&6)")
@@ -124,16 +125,13 @@ def help(sender, args):
 
 @hook.event("player.PlayerJoinEvent", "high")
 def on_join(event):
-    try:
-        if enabled:
-            t = threading.Thread(target=load_data, args=(uid(event.getPlayer()), ))
-            t.daemon = True
-            t.start()
-        else:
-            if event.getPlayer().hasPermission(permission_FINFO):
-                disabled_fallback(event.getPlayer())
-    except:
-        return
+    if enabled:
+        t = threading.Thread(target=load_data, args=(uid(event.getPlayer()), ))
+        t.daemon = True
+        t.start()
+    else:
+        if event.getPlayer().hasPermission(permission_FINFO):
+            disabled_fallback(event.getPlayer())
 
 
 @hook.event("player.AsyncPlayerChatEvent", "high")
@@ -155,7 +153,8 @@ def on_player_chat(event):
                 else:
                     event.setMessage(event.getMessage().replace(alias, value))
     except:
-        return
+        print(trace())
+
 
 def hasPerm(player, permission):
     return (player.hasPermission(permission)) or (player.hasPermission(permission_ALL))
@@ -279,12 +278,15 @@ def remote(sender, args):
     except:
         return subcommands["help"](sender, ["2"])
 
-def load_data(uuid):
-    load_data_thread(uuid)
-#    t = threading.Thread(target=load_data_thread, args=(uuid))
-#    t.daemon = True
-#    t.start()
 
+def load_data(uuid):
+    try:
+        load_data_thread(uuid)
+#        t = threading.Thread(target=load_data_thread, args=(uuid))
+#        t.daemon = True
+#        t.start()
+    except:
+        print(trace())
 
 def load_data_thread(uuid):
     if use_mysql:
@@ -299,11 +301,15 @@ def load_data_thread(uuid):
     else:
         data[uuid] = safe_open_json(uuid)
 
+
 def save_data(uuid):
-    save_data_thread(uuid)
-#    t = threading.Thread(target=save_data_thread, args=(uuid))
-#    t.daemon = True
-#    t.start()
+    try:
+        save_data_thread(uuid)
+#        t = threading.Thread(target=save_data_thread, args=(uuid))
+#        t.daemon = True
+#        t.start()
+    except:
+        print(trace())
 
 def save_data_thread(uuid):
     if use_mysql:
@@ -313,8 +319,8 @@ def save_data_thread(uuid):
     else:
         save_json_file("aliases/" + uuid, data[uuid])
 
-# Subcommands:
 
+# Subcommands:
 subcommands = {
     "help": help,
     "add": add,
