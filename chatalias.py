@@ -119,7 +119,7 @@ def help(sender, args):
     for message in to_display:
         msg(sender, message)
     if page+1 < pages:
-        msg(sender, colorify("&6To display the next page, type &c/help " + str(page+2)))
+        msg(sender, colorify("&6To display the next page, type &c/alias help " + str(page+2)))
     return True
 
 
