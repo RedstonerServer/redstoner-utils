@@ -11,6 +11,7 @@
 ############################################
 
 import os
+import mysqlhack
 import org.bukkit as bukkit
 from org.bukkit import *
 from helpers import *
@@ -26,6 +27,7 @@ error = colorify("&cUnspecified error")
 commands_per_page = 5
 global_aliases = {"./":"/"}
 data = {}
+# DON'T SET THIS TO TRUE! MySQL requestst are NOT ASYNC yet! (And for some reason it doesn't want to store any data ._.)
 use_mysql = False
 
 # Permissions:
@@ -53,6 +55,7 @@ permission_FINFO = "utils.alias.finfo"
 # CODE #
 ########
 
+# OnEnable
 enabled = helpers_version in helpers_versions
 if not enabled:
     error = colorify("&6Incompatible versions detected (&chelpers.py&6)")
@@ -83,7 +86,6 @@ def on_alias_command(sender, cmd, label, args):
             return True
         return subcommands[args[0].lower()](sender, args[1:])
     except:
-        print(trace())
         return subcommands["help"](sender, "1")
 
 
@@ -117,22 +119,19 @@ def help(sender, args):
     for message in to_display:
         msg(sender, message)
     if page+1 < pages:
-        msg(sender, colorify("&6To display the next page, type &c/help " + str(page+2)))
+        msg(sender, colorify("&6To display the next page, type &c/alias help " + str(page+2)))
     return True
 
 
 @hook.event("player.PlayerJoinEvent", "high")
 def on_join(event):
-    try:
-        if enabled:
-            t = threading.Thread(target=load_data, args=(uid(event.getPlayer()), ))
-            t.daemon = True
-            t.start()
-        else:
-            if event.getPlayer().hasPermission(permission_FINFO):
-                disabled_fallback(event.getPlayer())
-    except:
-        print(trace())
+    if enabled:
+        t = threading.Thread(target=load_data, args=(uid(event.getPlayer()), ))
+        t.daemon = True
+        t.start()
+    else:
+        if event.getPlayer().hasPermission(permission_FINFO):
+            disabled_fallback(event.getPlayer())
 
 
 @hook.event("player.AsyncPlayerChatEvent", "high")
@@ -155,6 +154,7 @@ def on_player_chat(event):
                     event.setMessage(event.getMessage().replace(alias, value))
     except:
         print(trace())
+
 
 def hasPerm(player, permission):
     return (player.hasPermission(permission)) or (player.hasPermission(permission_ALL))
@@ -186,8 +186,13 @@ def add(sender, args):
 
 
 def radd(sender, args):
-    args = [args[0:1]] + [" ".join([args[2:len(args)-2]])] + [args[len(args)-1]]
     plugin_header(sender, "Alias")
+    args = args[0:2] + [" ".join(args[2:len(args)-1])] + [args[len(args)-1]]
+    if is_player(sender):
+        sender_name = colorify(sender.getDisplayName())
+    else:
+        sender_name = colorify("&6Console")
+    target = get_player(args[0])
     if args[3].lower() == "false":
         plugin_header(target, "Alias")
         msg(target, "&cPlayer " + sender_name + " &cis creating an alias for you!")
@@ -196,12 +201,6 @@ def radd(sender, args):
         if args[3].lower() == "false":
             msg(target, "&cCould not create alias: Max_limit reached!")
         return True
-    
-    target = get_player(args[0])
-    if is_player(sender):
-        sender_name = colorify(sender.getDisplayName)
-    else:
-        sender_name = colorify("&6Console")
     if len(args) == 3:
         args += ["true"]
     data[str(uid(target))][str(args[1])] = str(args[2])
@@ -226,11 +225,10 @@ def rremove(sender, args):
     plugin_header(sender, "Alias")
     target = get_player(args[0])
     if is_player(sender):
-        sender_name = colorify(sender.getDisplayName)
+        sender_name = colorify(sender.getDisplayName())
     else:
         sender_name = colorify("&6Console")
     if args[2].lower() == "false":
-        print("WTF")
         plugin_header(target, "Alias")
         msg(target, "&cPlayer " + sender_name + " &cis removing an alias for you!")
     try:
@@ -276,13 +274,21 @@ def rlist_alias(sender, args):
 
 def remote(sender, args):
     try:
-        return remotes[args[1].lower()](sender, [args[0]] + [args[2:]])
+        return remotes[args[1].lower()](sender, [args[0]] + args[2:])
     except:
-        print(trace())
         return subcommands["help"](sender, ["2"])
 
 
 def load_data(uuid):
+    try:
+        load_data_thread(uuid)
+#        t = threading.Thread(target=load_data_thread, args=(uuid))
+#        t.daemon = True
+#        t.start()
+    except:
+        print(trace())
+
+def load_data_thread(uuid):
     if use_mysql:
         conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
         curs = conn.cursor()
@@ -297,6 +303,15 @@ def load_data(uuid):
 
 
 def save_data(uuid):
+    try:
+        save_data_thread(uuid)
+#        t = threading.Thread(target=save_data_thread, args=(uuid))
+#        t.daemon = True
+#        t.start()
+    except:
+        print(trace())
+
+def save_data_thread(uuid):
     if use_mysql:
         conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
         curs = conn.cursor()
@@ -304,8 +319,8 @@ def save_data(uuid):
     else:
         save_json_file("aliases/" + uuid, data[uuid])
 
-# Subcommands:
 
+# Subcommands:
 subcommands = {
     "help": help,
     "add": add,
