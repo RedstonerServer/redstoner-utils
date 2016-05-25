@@ -54,14 +54,14 @@ def on_busy_command(sender, cmd, label, args):
                 return True
             busy_players.append(sender.getName())
             plugin_header(recipient = sender, name = "I'M BUSY!")
-            broadcast(None, "%s is now SUPER busy! Don't even TRY bothering them, it will not work!" % sender.getName())
+            broadcast(None, "&c[&2Busy&c] &fNow busy: %s&f, don't even TRY bothering them!" % sender.getDisplayName())
             return True
 
         elif args[0] == "off":
             plugin_header(recipient = sender, name = "I'M BUSY!")
             try:
                 busy_players.remove(sender.getName())
-                msg(sender, "Master has sent /busy command, %s is freeee!" % sender.getName())
+                msg(sender, "Master has sent /busy command, %s&f is freeee of bothering!" % sender.getDisplayName())
                 return True
             except ValueError:
                 msg(sender, "You are not busy! You cannot be even less busy! Are you perhaps bored?")
@@ -82,7 +82,7 @@ def on_busy_command(sender, cmd, label, args):
             return False
 
     elif len(args) == 2 and args[0] == "status":
-        plugin_header(recipient = sender, name = "I'M BUSY!")        
+        plugin_header(recipient = sender, name = "I'M BUSY!")
         if args[1] in busy_players:
             msg(sender, "Yes, %s is busy. Shhh..." % args[1])
             return True
