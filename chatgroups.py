@@ -89,7 +89,7 @@ def groupchat(sender, message, ann = False):
 def do_for_chatgroup(group, func, *args, **kwargs):
     for receiver in server.getOnlinePlayers():
         if groups.get(uid(receiver)) == group:
-            func(receiver, args, kwargs)
+            func(receiver, *args, **kwargs)
 
 def send_tpa_request(receiver, sender):
     if not receiver == sender:
