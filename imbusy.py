@@ -40,34 +40,44 @@ def on_busy_command(sender, cmd, label, args):
         noperm(sender)
         return True
 
+    sender_name = sender.getName()
+
     if len(args) == 0:
-        msg(sender, "This plugin allows being busy, and when turned on you will not receive any direct messages or tpa requests.")
-        msg(sender, "\nCommands:")
-        msg(sender, "/busy on: turns on busy mode")
-        msg(sender, "/busy off: turns off busy mode")
-        msg(sender, "/busy status [player]: shows your or [player]'s current busy status.")
+        if sender_name in busy_players:
+            busy_players.remove(sender_name)
+            msg(sender, "Your busy status was removed, you can be bothered again")
+        else:
+            busy_players.append(sender_name)
+            broadcast(None, "&c[&2Busy&c] %s&r is now busy, don't even TRY bothering them!" % sender.getDisplayName())
 
     elif len(args) == 1:
-        if args[0] == "on":
-            if sender.getName() in busy_players:
+        if args[0].lower() == "on":
+            if sender_name in busy_players:
                 msg(sender, "You cannot be even more focused than this without being a jedi!")
             else:
-                busy_players.append(sender.getName())
+                busy_players.append(sender_name)
                 broadcast(None, "&c[&2Busy&c] %s&r is now busy, don't even TRY bothering them!" % sender.getDisplayName())
 
-        elif args[0] == "off":
+        elif args[0].lower() == "off":
             try:
-                busy_players.remove(sender.getName())
-                msg(sender, "Master has sent /busy command, %s&r is freeee of bothering!" % sender.getDisplayName())
+                busy_players.remove(sender_name)
+                msg(sender, "Your busy status was removed, you can be bothered again")
             except ValueError:
                 msg(sender, "You are not busy! You cannot be even less busy! Are you perhaps bored?")
 
-        elif args[0] == "status":
-            if sender.getName() in busy_players:
+        elif args[0].lower() == "status":
+            if sender_name in busy_players:
                 msg(sender, "You are super-duper busy and concentrated right now. Think, think, think!")
             else:
                 msg(sender, "You are completely unable to focus right now.")
 
+        elif args[0].lower() in ("?", "help"):
+            msg(sender, "Let's you put yourself in busy status, preventing pms and tpa requests from other players")
+            msg(sender, "\nCommands:")
+            msg(sender, "/busy: toggles busy status")
+            msg(sender, "/busy on: turns on busy status")
+            msg(sender, "/busy off: turns off busy status")
+            msg(sender, "/busy status [player]: shows your or [player]'s current busy status.")
         else:
             unclear(sender)
             return False
@@ -75,7 +85,7 @@ def on_busy_command(sender, cmd, label, args):
     elif len(args) == 2 and args[0] == "status":
         target = server.getPlayer(args[1])
         if target is None:
-            msg(sender, "That player is not online, I doubt they are busy.")
+            msg(sender, "That player is not online, they may be busy IRL, we never know")
         elif target.getName() in busy_players:
             msg(sender, "Yes, %s&r is busy. Shhh..." % target.getDisplayName())
         else:
