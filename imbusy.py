@@ -48,7 +48,7 @@ def on_busy_command(sender, cmd, label, args):
             msg(sender, "Your busy status was removed, you can be bothered again")
         else:
             busy_players.append(sender_name)
-            broadcast(None, "&c[&2Busy&c] %s&r is now busy, don't even TRY bothering them!" % sender.getDisplayName())
+            broadcast(None, "&c[&fBUSY&c] %s&r is now busy, don't even TRY bothering them!" % sender.getDisplayName())
 
     elif len(args) == 1:
         if args[0].lower() == "on":
@@ -56,7 +56,7 @@ def on_busy_command(sender, cmd, label, args):
                 msg(sender, "You cannot be even more focused than this without being a jedi!")
             else:
                 busy_players.append(sender_name)
-                broadcast(None, "&c[&2Busy&c] %s&r is now busy, don't even TRY bothering them!" % sender.getDisplayName())
+                broadcast(None, "&c[&fBUSY&c] %s&r is now busy, don't even TRY bothering them!" % sender.getDisplayName())
 
         elif args[0].lower() == "off":
             try:
@@ -184,6 +184,7 @@ def tpahere_command_checker(sender, args):
     return tpa_command_checker(sender, args)
 
 def mail_command_checker(sender, args):
+    info("Mail command executed")
     if len(args) < 3 or args[0].lower() != "send":
         return True
     target = server.getPlayer(args[1])
@@ -225,24 +226,26 @@ def replace_ess_commands():
         mail_cmd_wrapper = CommandWrapper(ess_mail_cmd, mail_command_checker)
 
         iterator = map.entrySet().iterator()
+        wrapped_commands = []
         while iterator.hasNext():
             entry = iterator.next()
             value = entry.getValue()
+            changed = True
             if value is ess_msg_cmd:
                 entry.setValue(msg_cmd_wrapper)
-                info("[imbusy] wrapped /" + entry.getKey())
             elif value is ess_reply_cmd:
                 entry.setValue(reply_cmd_wrapper)
-                info("[imbusy] wrapped /" + entry.getKey())
             elif value is ess_tpa_cmd:
                 entry.setValue(tpa_cmd_wrapper)
-                info("[imbusy] wrapped /" + entry.getKey())
             elif value is ess_tpahere_cmd:
                 entry.setValue(tpahere_cmd_wrapper)
-                info("[imbusy] wrapped /" + entry.getKey())
             elif value is ess_mail_cmd:
                 entry.setValue(mail_cmd_wrapper)
-                info("[imbusy] wrapped /" + entry.getKey())
+            else:
+                changed = False
+            if changed:
+                wrapped_commands.append(entry.getKey())
+        info("[imbusy] wrapped commands: /" + ", /".join(wrapped_commands))
 
     except:
         error("[Imbusy] Failed to wrap essentials commands")
