@@ -154,6 +154,7 @@ class CommandWrapper(Command):
     def tabComplete(self, sender, alias, args):
         return self.wrapped.tabComplete(sender, alias, args)
 
+
 def msg_command_checker(sender, args):
     return len(args) <= 1 or whisper(sender, args[0])
 
@@ -171,6 +172,15 @@ def tpa_command_checker(sender, args):
 
 def tpahere_command_checker(sender, args):
     return tpa_command_checker(sender, args)
+
+def mail_command_checker(sender, args):
+    if len(args) < 3 or args[0].lower() != "send":
+        return True
+    target = server.getPlayer(args[1])
+    if target is not None and target is not sender and not sender.hasPermission(override_perm) and target.getName() in busy_players:
+        msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
+        return False
+    return True
 
 
 @hook.event("player.PlayerCommandPreprocessEvent", "monitor")
@@ -196,11 +206,13 @@ def replace_ess_commands():
         ess_reply_cmd = map.get("essentials:reply")
         ess_tpa_cmd = map.get("essentials:tpa")
         ess_tpahere_cmd = map.get("essentials:tpahere")
+        ess_mail_cmd = map.get("essentials:mail")
 
         msg_cmd_wrapper = CommandWrapper(ess_msg_cmd, msg_command_checker)
         reply_cmd_wrapper = CommandWrapper(ess_reply_cmd, reply_command_checker)
         tpa_cmd_wrapper = CommandWrapper(ess_tpa_cmd, tpa_command_checker)
         tpahere_cmd_wrapper = CommandWrapper(ess_tpahere_cmd, tpahere_command_checker)
+        mail_cmd_wrapper = CommandWrapper(ess_mail_cmd, mail_command_checker)
 
         iterator = map.entrySet().iterator()
         while iterator.hasNext():
@@ -217,6 +229,9 @@ def replace_ess_commands():
                 info("[imbusy] wrapped /" + entry.getKey())
             elif value is ess_tpahere_cmd:
                 entry.setValue(tpahere_cmd_wrapper)
+                info("[imbusy] wrapped /" + entry.getKey())
+            elif value is ess_mail_cmd:
+                entry.setValue(mail_cmd_wrapper)
                 info("[imbusy] wrapped /" + entry.getKey())
 
     except:
