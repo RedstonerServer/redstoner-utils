@@ -17,8 +17,8 @@ from traceback import format_exc as trace
 busy_players = []
 
 
-def unclear():
-    msg(sender, "Umm, what? Sorry, directions unlclear, got head stuck in washing machine")
+def unclear(sender):
+    msg(sender, "Umm, what? Sorry, directions unclear, got head stuck in washing machine")
 
 
 @hook.command("busy",
@@ -39,7 +39,7 @@ def on_busy_command(sender, cmd, label, args):
 
     if len(args) == 0:
         plugin_header(recipient = sender, name = "I'M BUSY!")
-        msg(sender, "This plugin allows being busy, and when turned on you will not recieve any direct messages or tpa requests.")
+        msg(sender, "This plugin allows being busy, and when turned on you will not receive any direct messages or tpa requests.")
         msg(sender, "\nCommands:")
         msg(sender, "/busy on: turns on busy mode")
         msg(sender, "/busy off: turns off busy mode")
@@ -78,7 +78,7 @@ def on_busy_command(sender, cmd, label, args):
 
         else:
             plugin_header(recipient = sender, name = "I'M BUSY!")
-            unclear()
+            unclear(sender)
             return False
 
     elif len(args) == 2 and args[0] == "status":
@@ -92,7 +92,7 @@ def on_busy_command(sender, cmd, label, args):
 
     else:
         plugin_header(recipient = sender, name = "I'M BUSY!")
-        unclear()
+        unclear(sender)
         return False
 
 
