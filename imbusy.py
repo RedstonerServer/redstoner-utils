@@ -53,7 +53,7 @@ def on_busy_command(sender, cmd, label, args):
                 msg(sender, "You cannot be even more focused than this without being a jedi!")
             else:
                 busy_players.append(sender.getName())
-                broadcast(None, "&c[&2Busy&c] &fNow busy: %s&r, don't even TRY bothering them!" % sender.getDisplayName())
+                broadcast(None, "&c[&2Busy&c] %s&r is now busy, don't even TRY bothering them!" % sender.getDisplayName())
 
         elif args[0] == "off":
             try:
@@ -144,7 +144,6 @@ class CommandWrapper(Command):
         self.checker = checker
 
     def execute(self, sender, label, args):
-        info("/" + self.getLabel() + " executed by " + sender.getName())
         try:
             if self.checker(sender, args):
                 return self.wrapped.execute(sender, label, args)
@@ -185,7 +184,6 @@ def on_player_command_preprocess(event):
 def replace_ess_commands():
 
     try:
-        info("[imbusy] Wrapping ess commands")
         map_field = server.getPluginManager().getClass().getDeclaredField("commandMap")
         map_field.setAccessible(True)
         command_map = map_field.get(server.getPluginManager())
