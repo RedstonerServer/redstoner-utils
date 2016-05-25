@@ -44,49 +44,45 @@ def on_busy_command(sender, cmd, label, args):
         msg(sender, "/busy on: turns on busy mode")
         msg(sender, "/busy off: turns off busy mode")
         msg(sender, "/busy status [player]: shows your or [player]'s current busy status.")
-        return True
 
     elif len(args) == 1:
         if args[0] == "on":
             if sender.getName() in busy_players:
                 msg(sender, "You cannot be even more focused than this without being a jedi!")
-                return True
-            busy_players.append(sender.getName())
-            broadcast(None, "&c[&2Busy&c] &fNow busy: %s&f, don't even TRY bothering them!" % sender.getDisplayName())
-            return True
+            else:
+                busy_players.append(sender.getName())
+                broadcast(None, "&c[&2Busy&c] &fNow busy: %s&r, don't even TRY bothering them!" % sender.getDisplayName())
 
         elif args[0] == "off":
             try:
                 busy_players.remove(sender.getName())
-                msg(sender, "Master has sent /busy command, %s&f is freeee of bothering!" % sender.getDisplayName())
-                return True
+                msg(sender, "Master has sent /busy command, %s&r is freeee of bothering!" % sender.getDisplayName())
             except ValueError:
                 msg(sender, "You are not busy! You cannot be even less busy! Are you perhaps bored?")
-                return True
 
         elif args[0] == "status":
             if sender.getName() in busy_players:
                 msg(sender, "You are super-duper busy and concentrated right now. Think, think, think!")
-                return True
             else:
                 msg(sender, "You are completely unable to focus right now.")
-                return True
 
         else:
             unclear(sender)
             return False
 
     elif len(args) == 2 and args[0] == "status":
-        if args[1] in busy_players:
-            msg(sender, "Yes, %s is busy. Shhh..." % args[1])
-            return True
+        target = server.getPlayer(args[1])
+        if target is None:
+            msg(sender, "That player is not online, I doubt they are busy.")
+        elif target.getName() in busy_players:
+            msg(sender, "Yes, %s&r is busy. Shhh..." % target.getDisplayName())
         else:
-            msg(sender, "No, you're good. Feel free to chat with %s!" % args[1])
-            return True
+            msg(sender, "No, you're good. Feel free to chat with %s&r!" % target.getDisplayName())
 
     else:
         unclear(sender)
         return False
+    return True
 
 
 @hook.event("player.PlayerCommandPreprocessEvent", "monitor")
