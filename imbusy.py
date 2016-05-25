@@ -144,6 +144,7 @@ class CommandWrapper(Command):
         self.checker = checker
 
     def execute(self, sender, label, args):
+        info("/" + self.getLabel() + " executed by " + sender.getName())
         try:
             if self.checker(sender, args):
                 return self.wrapped.execute(sender, label, args)
@@ -184,39 +185,40 @@ def on_player_command_preprocess(event):
 def replace_ess_commands():
 
     try:
-        mapField = server.getPluginManager().getClass().getDeclaredField("commandMap")
-        mapField.setAccessible(True)
-        commandMap = mapField.get(server.getPluginManager())
+        info("[imbusy] Wrapping ess commands")
+        map_field = server.getPluginManager().getClass().getDeclaredField("commandMap")
+        map_field.setAccessible(True)
+        command_map = map_field.get(server.getPluginManager())
 
-        commandsField = commandMap.getClass().getDeclaredField("knownCommands")
-        commandsField.setAccessible(True)
-        map = commandsField.get(commandMap)
+        commands_field = command_map.getClass().getDeclaredField("knownCommands")
+        commands_field.setAccessible(True)
+        map = commands_field.get(command_map)
 
-        essMsgCmd = map.get("essentials:msg")
-        essReplyCmd = map.get("essentials:reply")
-        essTpaCmd = map.get("essentials:tpa")
-        essTpahereCmd = map.get("essentials:tpahere")
+        ess_msg_cmd = map.get("essentials:msg")
+        ess_reply_cmd = map.get("essentials:reply")
+        ess_tpa_cmd = map.get("essentials:tpa")
+        ess_tpahere_cmd = map.get("essentials:tpahere")
 
-        msgCmdWrapper = CommandWrapper(essMsgCmd, msg_command_checker)
-        replyCmdWrapper = CommandWrapper(essReplyCmd, reply_command_checker)
-        tpaCmdWrapper = CommandWrapper(essTpaCmd, tpa_command_checker)
-        tpahereCmdWrapper = CommandWrapper(essTpahereCmd, tpahere_command_checker)
+        msg_cmd_wrapper = CommandWrapper(ess_msg_cmd, msg_command_checker)
+        reply_cmd_wrapper = CommandWrapper(ess_reply_cmd, reply_command_checker)
+        tpa_cmd_wrapper = CommandWrapper(ess_tpa_cmd, tpa_command_checker)
+        tpahere_cmd_wrapper = CommandWrapper(ess_tpahere_cmd, tpahere_command_checker)
 
         iterator = map.entrySet().iterator()
         while iterator.hasNext():
             entry = iterator.next()
             value = entry.getValue()
-            if value is essMsgCmd:
-                entry.setValue(msgCmdWrapper)
+            if value is ess_msg_cmd:
+                entry.setValue(msg_cmd_wrapper)
                 info("[imbusy] wrapped /" + entry.getKey())
-            elif value is essReplyCmd:
-                entry.setValue(replyCmdWrapper)
+            elif value is ess_reply_cmd:
+                entry.setValue(reply_cmd_wrapper)
                 info("[imbusy] wrapped /" + entry.getKey())
-            elif value is essTpaCmd:
-                entry.setValue(tpaCmdWrapper)
+            elif value is ess_tpa_cmd:
+                entry.setValue(tpa_cmd_wrapper)
                 info("[imbusy] wrapped /" + entry.getKey())
-            elif value is essTpahereCmd:
-                entry.setValue(tpahereCmdWrapper)
+            elif value is ess_tpahere_cmd:
+                entry.setValue(tpahere_cmd_wrapper)
                 info("[imbusy] wrapped /" + entry.getKey())
 
     except:
