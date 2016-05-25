@@ -86,7 +86,6 @@ def on_alias_command(sender, cmd, label, args):
             return True
         return subcommands[args[0].lower()](sender, args[1:])
     except:
-        print(trace())
         return subcommands["help"](sender, "1")
 
 
