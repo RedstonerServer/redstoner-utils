@@ -227,7 +227,7 @@ def add_alias_data(puuid, aliased, new_alias):
 
     # prevent 1 -> 2 if there is 2 -> 3
     for sequence in prior:
-        if sequence in new alias:
+        if sequence in new_alias:
             return False
 
     prior[aliased] = new_alias
