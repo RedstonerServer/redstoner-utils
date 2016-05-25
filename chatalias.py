@@ -1,3 +1,19 @@
+Skip to content
+This repository
+Search
+Pull requests
+Issues
+Gist
+ @Dico200
+ Unwatch 13
+  Star 5
+ Fork 3 RedstonerServer/redstoner-utils
+ Code  Issues 8  Pull requests 3  Wiki  Pulse  Graphs  Settings
+Tree: cb1a333a56 Find file Copy pathredstoner-utils/chatalias.py
+07039b3  15 hours ago
+@Dico200 Dico200 Fix command given for next help page in chatalias.py
+5 contributors @PixelSergey @Pepich @NEMESIS13cz @Dico200 @invalid-email-address
+RawBlameHistory     337 lines (290 sloc)  12.9 KB
 ############################################
 # Alias v2.0 by Pepich                     #
 # Changes to previous version from curs3d: #
@@ -179,9 +195,8 @@ def add(sender, args):
         msg(sender, "&cCould not create alias: Max_limit reached!")
         return True
     args = [args[0]] + [" ".join(args[1:])]
-    if not add_alias_data(uid(sender), str(args[0]), args[1]):
-        msg(sender, colorify("&c") + "Could not add an alias for this sequence because a priorly added alias contains it")
-        return True
+    data[str(uid(sender))][str(args[0])] = args[1]
+    save_data(uid(sender))
     msg(sender, colorify("&7Alias: ") + args[0] + colorify("&7 -> " + args[1] + colorify("&7 was succesfully created!")), usecolor=sender.hasPermission("essentials.chat.color"))
     return True
 
@@ -204,26 +219,11 @@ def radd(sender, args):
         return True
     if len(args) == 3:
         args += ["true"]
-    if not add_alias_data(uid(target), str(args[1]), str(args[2])):
-        message = colorify("&c") + "Could not add an alias for this sequence because a priorly added alias contains it"
-        msg(sender, message)
-        if args[3].lower() == "false":
-            msg(target, message)
-        return True
+    data[str(uid(target))][str(args[1])] = str(args[2])
+    save_data(uid(target))
     msg(sender, colorify("&7Alias: ") + args[1] + colorify("&7 -> " + args[2] + colorify("&7 was succesfully created!")), usecolor=target.hasPermission("essentials.chat.color"))
     if args[3].lower() == "false":
         msg(target, colorify("&7Alias: ") + args[1] + colorify("&7 -> " + args[2] + colorify("&7 was succesfully created!")), usecolor=target.hasPermission("essentials.chat.color"))
-    return True
-
-
-def add_alias_data(puuid, aliased, new_alias):
-    prior = data[puuid]
-    if aliased not in prior:
-        for alias in prior.values():
-            if aliased in alias:
-                return False
-    prior[aliased] = new_alias
-    save_data(puuid)
     return True
 
 
@@ -350,3 +350,5 @@ remotes = {
     "remove": rremove,
     "list": rlist_alias,
 }
+Status API Training Shop Blog About
+© 2016 GitHub, Inc. Terms Privacy Security Contact Help
