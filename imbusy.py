@@ -32,13 +32,13 @@ def on_busy_command(sender, cmd, label, args):
        msg(sender, "Sorry, Console cannot be busy")
        return True
 
+    plugin_header(recipient = sender, name = "I'M BUSY!")
+
     if not sender.hasPermission("utils.busy.allowed"):
-        plugin_header(recipient = sender, name = "I'M BUSY!")
         noperm(sender)
         return True
 
     if len(args) == 0:
-        plugin_header(recipient = sender, name = "I'M BUSY!")
         msg(sender, "This plugin allows being busy, and when turned on you will not receive any direct messages or tpa requests.")
         msg(sender, "\nCommands:")
         msg(sender, "/busy on: turns on busy mode")
@@ -49,16 +49,13 @@ def on_busy_command(sender, cmd, label, args):
     elif len(args) == 1:
         if args[0] == "on":
             if sender.getName() in busy_players:
-                plugin_header(recipient = sender, name = "I'M BUSY!")
                 msg(sender, "You cannot be even more focused than this without being a jedi!")
                 return True
             busy_players.append(sender.getName())
-            plugin_header(recipient = sender, name = "I'M BUSY!")
             broadcast(None, "&c[&2Busy&c] &fNow busy: %s&f, don't even TRY bothering them!" % sender.getDisplayName())
             return True
 
         elif args[0] == "off":
-            plugin_header(recipient = sender, name = "I'M BUSY!")
             try:
                 busy_players.remove(sender.getName())
                 msg(sender, "Master has sent /busy command, %s&f is freeee of bothering!" % sender.getDisplayName())
@@ -68,7 +65,6 @@ def on_busy_command(sender, cmd, label, args):
                 return True
 
         elif args[0] == "status":
-            plugin_header(recipient = sender, name = "I'M BUSY!")
             if sender.getName() in busy_players:
                 msg(sender, "You are super-duper busy and concentrated right now. Think, think, think!")
                 return True
@@ -77,12 +73,10 @@ def on_busy_command(sender, cmd, label, args):
                 return True
 
         else:
-            plugin_header(recipient = sender, name = "I'M BUSY!")
             unclear(sender)
             return False
 
     elif len(args) == 2 and args[0] == "status":
-        plugin_header(recipient = sender, name = "I'M BUSY!")
         if args[1] in busy_players:
             msg(sender, "Yes, %s is busy. Shhh..." % args[1])
             return True
@@ -91,7 +85,6 @@ def on_busy_command(sender, cmd, label, args):
             return True
 
     else:
-        plugin_header(recipient = sender, name = "I'M BUSY!")
         unclear(sender)
         return False
 
