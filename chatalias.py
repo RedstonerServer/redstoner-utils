@@ -180,7 +180,7 @@ def add(sender, args):
         return True
     args = [args[0]] + [" ".join(args[1:])]
     if not add_alias_data(uid(sender), str(args[0]), args[1]):
-        msg(sender, colorify("&c") + "Could not add this alias because it would cause some sequences to be replaced multiple times"
+        msg(sender, colorify("&c") + "Could not add this alias because it would cause some sequences to be replaced multiple times", usecolor = False)
         return True
     msg(sender, colorify("&7Alias: ") + args[0] + colorify("&7 -> " + args[1] + colorify("&7 was succesfully created!")), usecolor=sender.hasPermission("essentials.chat.color"))
     return True
