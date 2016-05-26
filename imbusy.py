@@ -1,99 +1,126 @@
-# I'M BUSY! Plugin by Curs3d #
-##############################
-# Concept by CookieManors :D #
-# http://bit.ly/1GnNPW8      #
-##############################
-# This plugin permits users to
-# send a command that renders
-# them "busy", not letting them
-# to get tpa requests or direct
-# messages, except from console.
-# On restart, all busy data will
-# be cleared.
+##################################
+# I'M BUSY! Plugin by Curs3d     #
+# Concept by CookieManors :D     #
+##################################
+# This plugin permits users to   #
+# send a command that renders    #
+# them "busy", not letting them  #
+# to get tpa requests or direct  #
+# messages, except from console. #
+# On restart, all busy data will #
+# be cleared.                    #
+##################################
 
 from helpers import *
-from basecommands import simplecommand
 import org.bukkit.command.Command as Command
-from traceback import format_exc as trace
+
+imbusy_version = "v1.1.0"
+
+base_permission = "utils.busy" # for /busy status
+use_permission = "utils.busy.use" # for being busy
+override_permission = "utils.busy.override" # for being able to bother busy people
+
 
 busy_players = []
 
 
-def unclear(sender):
-    msg(sender, "Umm, what? Sorry, directions unclear, got head stuck in washing machine")
-
-
-@hook.command("busy",
-    aliases = ["focus"],
-    usage = "/<command> <on|off|status>",
-    description = "Sets busy mode on, you cannot recieve tpas and MSGs"
+@hook.command("imbusy",
+    aliases = ["busy"],
+    usage = "/<command> [on, off, status/check]",
+    description = "Offers control over your busy status"
     )
 def on_busy_command(sender, cmd, label, args):
-
     if not is_player(sender):
-       msg(sender, "Sorry, Console cannot be busy")
-       return True
+        msg(sender, "&7Sorry, Console cannot be busy")
+        return True
 
     plugin_header(recipient = sender, name = "I'M BUSY!")
 
-    if not sender.hasPermission("utils.busy.allowed"):
+    #args = array_to_list(args)
+    if not sender.hasPermission(base_permission):
         noperm(sender)
         return True
 
-    sender_name = sender.getName()
-
     if len(args) == 0:
-        if sender_name in busy_players:
-            busy_players.remove(sender_name)
-            msg(sender, "Your busy status was removed, you can be bothered again")
-        else:
-            busy_players.append(sender_name)
-            broadcast(None, "&c[&fBUSY&c] %s&r is now busy, don't even TRY bothering them!" % sender.getDisplayName())
+        return toggle(sender)
 
-    elif len(args) == 1:
-        if args[0].lower() == "on":
-            if sender_name in busy_players:
-                msg(sender, "You cannot be even more focused than this without being a jedi!")
-            else:
-                busy_players.append(sender_name)
-                broadcast(None, "&c[&fBUSY&c] %s&r is now busy, don't even TRY bothering them!" % sender.getDisplayName())
+    arg0 = args[0].lower()
+    if arg0 == "on":
+        return on(sender)
+    if arg0 == "off":
+        return off(sender)
+    if arg0 in ("status", "check"):
+        return status(sender, args[1:])
+    return help(sender)
 
-        elif args[0].lower() == "off":
-            try:
-                busy_players.remove(sender_name)
-                msg(sender, "Your busy status was removed, you can be bothered again")
-            except ValueError:
-                msg(sender, "You are not busy! You cannot be even less busy! Are you perhaps bored?")
 
-        elif args[0].lower() == "status":
-            if sender_name in busy_players:
-                msg(sender, "You are super-duper busy and concentrated right now. Think, think, think!")
-            else:
-                msg(sender, "You are completely unable to focus right now.")
-
-        elif args[0].lower() in ("?", "help"):
-            msg(sender, "Let's you put yourself in busy status, preventing pms and tpa requests from other players")
-            msg(sender, "\nCommands:")
-            msg(sender, "/busy: toggles busy status")
-            msg(sender, "/busy on: turns on busy status")
-            msg(sender, "/busy off: turns off busy status")
-            msg(sender, "/busy status [player]: shows your or [player]'s current busy status.")
-        else:
-            unclear(sender)
-            return False
-
-    elif len(args) == 2 and args[0] == "status":
-        target = server.getPlayer(args[1])
-        if target is None:
-            msg(sender, "That player is not online, they may be busy IRL, we never know")
-        elif target.getName() in busy_players:
-            msg(sender, "Yes, %s&r is busy. Shhh..." % target.getDisplayName())
-        else:
-            msg(sender, "No, you're good. Feel free to chat with %s&r!" % target.getDisplayName())
-
+def toggle(sender):
+    if not sender.hasPermission(use_permission):
+        noperm(sender)
+        return True
+    sender_name = sender.getName()
+    if sender_name in busy_players:
+        busy_players.remove(sender_name)
+        broadcast(None, colorify(sender.getDisplayName() + " &7is no longer busy..."))
     else:
-        unclear(sender)
-        return False
+        busy_players.append(sender_name)
+        broadcast(None, colorify(sender.getDisplayName() + " &7is now busy..."))
+    return True
+
+
+def help(sender):
+    msg(sender, "Let's you put yourself in busy status, preventing pms and tpa requests from other players")
+    msg(sender, "\n&eCommands:")
+    msg(sender, "&e/busy &7- Toggles busy status")
+    msg(sender, "&e/busy on &7- Turns on busy status")
+    msg(sender, "&e/busy off &7- Turns off busy status")
+    msg(sender, "&e/busy status [player] &7- shows your or [player]'s current busy status")
+    return True
+
+
+def on(sender):
+    if not sender.hasPermission(use_permission):
+        noperm(sender)
+        return True
+    sender_name = sender.getName()
+    if sender_name in busy_players:
+        msg(sender, "&7You are already busy!")
+        return True
+    busy_players.append(sender_name)
+    broadcast(None, colorify(sender.getDisplayName() + " &7is now busy..."))
+    return True
+
+
+def off(sender):
+    if not sender.hasPermission(use_permission):
+        noperm(sender)
+        return True
+    sender_name = sender.getName()
+    if sender_name not in busy_players:
+        msg(sender, "&7You are not busy! You cannot be even less busy! Are you perhaps bored?")
+        return True
+    busy_players.remove(sender_name)
+    broadcast(None, colorify(sender.getDisplayName() + " &7is no longer busy..."))
+    return True
+
+
+def status(sender, args):
+    if not sender.hasPermission(base_permission):
+        noperm(sender)
+        return True
+    if len(args) == 0:
+        if sender.getName() in busy_players:
+            msg(sender, "&7You are currently busy.")
+        else:
+            msg(sender, "&7You are currently not busy.")
+    else:
+        target = server.getPlayer(args[0])
+        if target is None:
+            msg(sender, "&7That player is not online")
+        elif target.getName() in busy_players:
+            msg(sender, "&7Player &e" + args[0] +  " &7is currently busy.")
+        else:
+            msg(sender, "&7Player &e" + args[0] +  " &7is currently not busy.")
     return True
 
 
@@ -109,14 +136,13 @@ def on_player_leave(event):
 
 
 reply_targets = {}
-override_perm = "utils.imbusy.override"
 
 
 def whisper(sender, target_name):
     target = server.getPlayer(target_name)
 
     if target is not None:
-        if target is not sender and not sender.hasPermission(override_perm) and target.getName() in busy_players:
+        if target is not sender and not sender.hasPermission(override_permission) and target.getName() in busy_players:
             msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
             return False
 
@@ -132,7 +158,7 @@ def reply(sender):
     if sender.getName() in reply_targets:
         target = server.getPlayer(reply_targets[sender.getName()])
         if target is not None: 
-            if target is not sender and not sender.hasPermission(override_perm) and target.getName() in busy_players:
+            if target is not sender and not sender.hasPermission(override_permission) and target.getName() in busy_players:
                 msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
                 return False
 
@@ -175,7 +201,7 @@ def tpa_command_checker(sender, args):
     if len(args) == 0:
         return True
     target = server.getPlayer(args[0])
-    if target is not None and target is not sender and not sender.hasPermission(override_perm) and target.getName() in busy_players:
+    if target is not None and target is not sender and not sender.hasPermission(override_permission) and target.getName() in busy_players:
         msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
         return False
     return True
@@ -188,7 +214,7 @@ def mail_command_checker(sender, args):
     if len(args) < 3 or args[0].lower() != "send":
         return True
     target = server.getPlayer(args[1])
-    if target is not None and target is not sender and not sender.hasPermission(override_perm) and target.getName() in busy_players:
+    if target is not None and target is not sender and not sender.hasPermission(override_permission) and target.getName() in busy_players:
         msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
         return False
     return True
