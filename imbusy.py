@@ -1,112 +1,178 @@
-# I'M BUSY! Plugin by Curs3d #
-##############################
-# Concept by CookieManors :D #
-# http://bit.ly/1GnNPW8      #
-##############################
-# This plugin permits users to
-# send a command that renders
-# them "busy", not letting them
-# to get tpa requests or direct
-# messages, except from console.
-# On restart, all busy data will
-# be cleared.
+##################################
+# I'M BUSY! Plugin by Curs3d     #
+# Concept by CookieManors :D     #
+##################################
+# This plugin permits users to   #
+# send a command that renders    #
+# them "busy", not letting them  #
+# to get tpa requests or direct  #
+# messages, except from console. #
+# On restart, all busy data will #
+# be cleared.                    #
+##################################
 
 from helpers import *
-from basecommands import simplecommand
+from friends import is_friend_of
 import org.bukkit.command.Command as Command
-from traceback import format_exc as trace
 
-busy_players = []
+imbusy_version = "v1.1.0"
+
+base_permission = "utils.busy" # for /busy status
+use_permission = "utils.busy.use" # for being busy
+override_permission = "utils.busy.override" # for being able to bother busy people
 
 
-def unclear(sender):
-    msg(sender, "Umm, what? Sorry, directions unclear, got head stuck in washing machine")
+busy_players = {} # name : false/true where false is normal busy and true is super busy
 
 
-@hook.command("busy",
-    aliases = ["focus"],
-    usage = "/<command> <on|off|status>",
-    description = "Sets busy mode on, you cannot recieve tpas and MSGs"
+@hook.command("imbusy",
+    aliases = ["busy"],
+    usage = "/<command> [on, off, status/check]",
+    description = "Offers control over your busy status"
     )
 def on_busy_command(sender, cmd, label, args):
-
     if not is_player(sender):
-       msg(sender, "Sorry, Console cannot be busy")
-       return True
+        msg(sender, "&7Sorry, Console cannot be busy")
+        return True
 
     plugin_header(recipient = sender, name = "I'M BUSY!")
 
-    if not sender.hasPermission("utils.busy.allowed"):
+    #args = array_to_list(args)
+    if not sender.hasPermission(base_permission):
         noperm(sender)
         return True
 
     if len(args) == 0:
-        msg(sender, "This plugin allows being busy, and when turned on you will not receive any direct messages or tpa requests.")
-        msg(sender, "\nCommands:")
-        msg(sender, "/busy on: turns on busy mode")
-        msg(sender, "/busy off: turns off busy mode")
-        msg(sender, "/busy status [player]: shows your or [player]'s current busy status.")
+        return toggle(sender)
 
-    elif len(args) == 1:
-        if args[0] == "on":
-            if sender.getName() in busy_players:
-                msg(sender, "You cannot be even more focused than this without being a jedi!")
-            else:
-                busy_players.append(sender.getName())
-                broadcast(None, "&c[&2Busy&c] &fNow busy: %s&r, don't even TRY bothering them!" % sender.getDisplayName())
+    arg0 = args[0].lower()
+    if arg0 == "on":
+        return on(sender)
+    if arg0 == "off":
+        return off(sender)
+    if arg0 in ("status", "check"):
+        return status(sender, args[1:])
+    if arg0 == "super":
+        return super_cmd(sender)
+    return help(sender)
 
-        elif args[0] == "off":
-            try:
-                busy_players.remove(sender.getName())
-                msg(sender, "Master has sent /busy command, %s&r is freeee of bothering!" % sender.getDisplayName())
-            except ValueError:
-                msg(sender, "You are not busy! You cannot be even less busy! Are you perhaps bored?")
 
-        elif args[0] == "status":
-            if sender.getName() in busy_players:
-                msg(sender, "You are super-duper busy and concentrated right now. Think, think, think!")
-            else:
-                msg(sender, "You are completely unable to focus right now.")
-
-        else:
-            unclear(sender)
-            return False
-
-    elif len(args) == 2 and args[0] == "status":
-        target = server.getPlayer(args[1])
-        if target is None:
-            msg(sender, "That player is not online, I doubt they are busy.")
-        elif target.getName() in busy_players:
-            msg(sender, "Yes, %s&r is busy. Shhh..." % target.getDisplayName())
-        else:
-            msg(sender, "No, you're good. Feel free to chat with %s&r!" % target.getDisplayName())
-
+def toggle(sender):
+    if not sender.hasPermission(use_permission):
+        noperm(sender)
+        return True
+    sender_name = sender.getName()
+    if sender_name in busy_players:
+        del busy_players[sender_name]
+        broadcast(None, sender.getDisplayName() + " &7is no longer busy...")
     else:
-        unclear(sender)
-        return False
+        busy_players.append(sender_name)
+        broadcast(None, sender.getDisplayName() + " &7is now busy...")
+    return True
+
+
+def help(sender):
+    msg(sender, "Let's you put yourself in busy status, preventing pms and tpa requests from other players")
+    msg(sender, "\n&eCommands:")
+    msg(sender, "&e/busy &7- Toggles busy status")
+    msg(sender, "&e/busy on &7- Turns on busy status")
+    msg(sender, "&e/busy off &7- Turns off busy status")
+    msg(sender, "&e/busy status [player] &7- shows your or [player]'s current busy status")
+    msg(sender, "&e/busy super &7- sets your status to SUPER busy such that even friends can not bother you")
+    return True
+
+
+def on(sender):
+    if not sender.hasPermission(use_permission):
+        noperm(sender)
+        return True
+    sender_name = sender.getName()
+    if busy_players.get(sender_name) is False: # can be None, False or True
+        msg(sender, "&7You are already busy!")
+    else:
+        busy_players[sender_name] = False # busy but not super busy
+        broadcast(None, sender.getDisplayName() + " &7is now busy...")
+    return True
+
+
+def off(sender):
+    if not sender.hasPermission(use_permission):
+        noperm(sender)
+        return True
+    sender_name = sender.getName()
+    if sender_name not in busy_players:
+        msg(sender, "&7You are not busy! You cannot be even less busy! Are you perhaps bored?")
+        return True
+    del busy_players[sender_name]
+    broadcast(None, sender.getDisplayName() + " &7is no longer busy...")
+    return True
+
+
+def status(sender, args):
+    if not sender.hasPermission(base_permission):
+        noperm(sender)
+        return True
+    if len(args) == 0:
+        if sender.getName() in busy_players:
+            if busy_players[sender_name] is False:
+                msg(sender, "&7You are currently busy.")
+            else:
+                msg(sender, "&7You are currently SUPER busy.")
+        else:
+            msg(sender, "&7You are currently not busy.")
+    else:
+        target = server.getPlayer(args[0])
+        if target is None:
+            msg(sender, "&7That player is not online")
+        elif target.getName() in busy_players:
+            if busy_players[target.getName()] is False:
+                msg(sender, "&7Player %s &7is currently busy." % target.getDisplayName())
+            else:
+                msg(sender, "&7Player %s &7is currently SUPER busy." % target.getDisplayName())
+        else:
+            msg(sender, "&7Player %s &7is currently not busy." % target.getDisplayName())
+    return True
+
+
+def super_cmd(sender):
+    if not sender.hasPermission(use_permission):
+        noperm(sender)
+        return True
+    sender_name = sender.getName()
+    if busy_players.get(sender_name) is True:
+        msg(sender, "&7You are already SUPER busy!")
+    else:
+        busy_players[sender_name] = True # SUPER busy
+        broadcast(None, sender.getDisplayName() + " &7is now SUPER busy...")
     return True
 
 
 @hook.event("player.PlayerQuitEvent", "lowest")
 def on_player_leave(event):
-    try:
-        busy_players.remove(event.getPlayer().getName())
-    except:
-        pass
+    player_name = event.getPlayer().getName()
+    if player_name in busy_players:
+        del busy_players[player_name]
 
 
 #---- Dicode for catching any bothering of busy people ----
 
 
 reply_targets = {}
-override_perm = "utils.imbusy.override"
+
+
+def can_send(sender, target):
+    if not target.getName() in busy_players:
+        return True
+    if target is sender or sender.hasPermission(override_permission):
+        return True
+    return busy_players[target.getName()] is False and is_friend_of(target, sender)
 
 
 def whisper(sender, target_name):
     target = server.getPlayer(target_name)
 
     if target is not None:
-        if target is not sender and not sender.hasPermission(override_perm) and target.getName() in busy_players:
+        if not can_send(sender, target):
             msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
             return False
 
@@ -122,7 +188,7 @@ def reply(sender):
     if sender.getName() in reply_targets:
         target = server.getPlayer(reply_targets[sender.getName()])
         if target is not None: 
-            if target is not sender and not sender.hasPermission(override_perm) and target.getName() in busy_players:
+            if not can_send(sender, target):
                 msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
                 return False
 
@@ -145,7 +211,7 @@ class CommandWrapper(Command):
 
     def execute(self, sender, label, args):
         try:
-            if self.checker(sender, args):
+            if not is_player(sender) or self.checker(sender, args):
                 return self.wrapped.execute(sender, label, args)
         except:
             error(trace())
@@ -153,6 +219,7 @@ class CommandWrapper(Command):
 
     def tabComplete(self, sender, alias, args):
         return self.wrapped.tabComplete(sender, alias, args)
+
 
 def msg_command_checker(sender, args):
     return len(args) <= 1 or whisper(sender, args[0])
@@ -164,13 +231,23 @@ def tpa_command_checker(sender, args):
     if len(args) == 0:
         return True
     target = server.getPlayer(args[0])
-    if target is not None and target is not sender and not sender.hasPermission(override_perm) and target.getName() in busy_players:
+    if target is not None and not can_send(sender, target):
         msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
         return False
     return True
 
 def tpahere_command_checker(sender, args):
     return tpa_command_checker(sender, args)
+
+def mail_command_checker(sender, args):
+    info("Mail command executed")
+    if len(args) < 3 or args[0].lower() != "send":
+        return True
+    target = server.getPlayer(args[1])
+    if target is not None and not can_send(sender, target):
+        msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
+        return False
+    return True
 
 
 @hook.event("player.PlayerCommandPreprocessEvent", "monitor")
@@ -184,40 +261,47 @@ def on_player_command_preprocess(event):
 def replace_ess_commands():
 
     try:
-        mapField = server.getPluginManager().getClass().getDeclaredField("commandMap")
-        mapField.setAccessible(True)
-        commandMap = mapField.get(server.getPluginManager())
+        map_field = server.getPluginManager().getClass().getDeclaredField("commandMap")
+        map_field.setAccessible(True)
+        command_map = map_field.get(server.getPluginManager())
 
-        commandsField = commandMap.getClass().getDeclaredField("knownCommands")
-        commandsField.setAccessible(True)
-        map = commandsField.get(commandMap)
+        commands_field = command_map.getClass().getDeclaredField("knownCommands")
+        commands_field.setAccessible(True)
+        map = commands_field.get(command_map)
 
-        essMsgCmd = map.get("essentials:msg")
-        essReplyCmd = map.get("essentials:reply")
-        essTpaCmd = map.get("essentials:tpa")
-        essTpahereCmd = map.get("essentials:tpahere")
+        ess_msg_cmd = map.get("essentials:msg")
+        ess_reply_cmd = map.get("essentials:reply")
+        ess_tpa_cmd = map.get("essentials:tpa")
+        ess_tpahere_cmd = map.get("essentials:tpahere")
+        ess_mail_cmd = map.get("essentials:mail")
 
-        msgCmdWrapper = CommandWrapper(essMsgCmd, msg_command_checker)
-        replyCmdWrapper = CommandWrapper(essReplyCmd, reply_command_checker)
-        tpaCmdWrapper = CommandWrapper(essTpaCmd, tpa_command_checker)
-        tpahereCmdWrapper = CommandWrapper(essTpahereCmd, tpahere_command_checker)
+        msg_cmd_wrapper = CommandWrapper(ess_msg_cmd, msg_command_checker)
+        reply_cmd_wrapper = CommandWrapper(ess_reply_cmd, reply_command_checker)
+        tpa_cmd_wrapper = CommandWrapper(ess_tpa_cmd, tpa_command_checker)
+        tpahere_cmd_wrapper = CommandWrapper(ess_tpahere_cmd, tpahere_command_checker)
+        mail_cmd_wrapper = CommandWrapper(ess_mail_cmd, mail_command_checker)
 
         iterator = map.entrySet().iterator()
+        wrapped_commands = []
         while iterator.hasNext():
             entry = iterator.next()
             value = entry.getValue()
-            if value is essMsgCmd:
-                entry.setValue(msgCmdWrapper)
-                info("[imbusy] wrapped /" + entry.getKey())
-            elif value is essReplyCmd:
-                entry.setValue(replyCmdWrapper)
-                info("[imbusy] wrapped /" + entry.getKey())
-            elif value is essTpaCmd:
-                entry.setValue(tpaCmdWrapper)
-                info("[imbusy] wrapped /" + entry.getKey())
-            elif value is essTpahereCmd:
-                entry.setValue(tpahereCmdWrapper)
-                info("[imbusy] wrapped /" + entry.getKey())
+            changed = True
+            if value is ess_msg_cmd:
+                entry.setValue(msg_cmd_wrapper)
+            elif value is ess_reply_cmd:
+                entry.setValue(reply_cmd_wrapper)
+            elif value is ess_tpa_cmd:
+                entry.setValue(tpa_cmd_wrapper)
+            elif value is ess_tpahere_cmd:
+                entry.setValue(tpahere_cmd_wrapper)
+            elif value is ess_mail_cmd:
+                entry.setValue(mail_cmd_wrapper)
+            else:
+                changed = False
+            if changed:
+                wrapped_commands.append(entry.getKey())
+        info("[imbusy] wrapped commands: /" + ", /".join(wrapped_commands))
 
     except:
         error("[Imbusy] Failed to wrap essentials commands")
