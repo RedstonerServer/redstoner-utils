@@ -12,6 +12,7 @@
 ##################################
 
 from helpers import *
+from friends import is_friend_of
 import org.bukkit.command.Command as Command
 
 imbusy_version = "v1.1.0"
@@ -21,7 +22,7 @@ use_permission = "utils.busy.use" # for being busy
 override_permission = "utils.busy.override" # for being able to bother busy people
 
 
-busy_players = []
+busy_players = {} # name : false/true where false is normal busy and true is super busy
 
 
 @hook.command("imbusy",
@@ -51,6 +52,8 @@ def on_busy_command(sender, cmd, label, args):
         return off(sender)
     if arg0 in ("status", "check"):
         return status(sender, args[1:])
+    if arg0 == "super":
+        return super_cmd(sender)
     return help(sender)
 
 
@@ -60,11 +63,11 @@ def toggle(sender):
         return True
     sender_name = sender.getName()
     if sender_name in busy_players:
-        busy_players.remove(sender_name)
-        broadcast(None, colorify(sender.getDisplayName() + " &7is no longer busy..."))
+        del busy_players[sender_name]
+        broadcast(None, sender.getDisplayName() + " &7is no longer busy...")
     else:
         busy_players.append(sender_name)
-        broadcast(None, colorify(sender.getDisplayName() + " &7is now busy..."))
+        broadcast(None, sender.getDisplayName() + " &7is now busy...")
     return True
 
 
@@ -75,6 +78,7 @@ def help(sender):
     msg(sender, "&e/busy on &7- Turns on busy status")
     msg(sender, "&e/busy off &7- Turns off busy status")
     msg(sender, "&e/busy status [player] &7- shows your or [player]'s current busy status")
+    msg(sender, "&e/busy super &7- sets your status to SUPER busy such that even friends can not bother you")
     return True
 
 
@@ -83,11 +87,11 @@ def on(sender):
         noperm(sender)
         return True
     sender_name = sender.getName()
-    if sender_name in busy_players:
+    if busy_players.get(sender_name) is False: # can be None, False or True
         msg(sender, "&7You are already busy!")
-        return True
-    busy_players.append(sender_name)
-    broadcast(None, colorify(sender.getDisplayName() + " &7is now busy..."))
+    else:
+        busy_players[sender_name] = False # busy but not super busy
+        broadcast(None, sender.getDisplayName() + " &7is now busy...")
     return True
 
 
@@ -99,8 +103,8 @@ def off(sender):
     if sender_name not in busy_players:
         msg(sender, "&7You are not busy! You cannot be even less busy! Are you perhaps bored?")
         return True
-    busy_players.remove(sender_name)
-    broadcast(None, colorify(sender.getDisplayName() + " &7is no longer busy..."))
+    del busy_players[sender_name]
+    broadcast(None, sender.getDisplayName() + " &7is no longer busy...")
     return True
 
 
@@ -110,7 +114,10 @@ def status(sender, args):
         return True
     if len(args) == 0:
         if sender.getName() in busy_players:
-            msg(sender, "&7You are currently busy.")
+            if busy_players[sender_name] is False:
+                msg(sender, "&7You are currently busy.")
+            else:
+                msg(sender, "&7You are currently SUPER busy.")
         else:
             msg(sender, "&7You are currently not busy.")
     else:
@@ -118,18 +125,33 @@ def status(sender, args):
         if target is None:
             msg(sender, "&7That player is not online")
         elif target.getName() in busy_players:
-            msg(sender, "&7Player &e" + args[0] +  " &7is currently busy.")
+            if busy_players[target.getName()] is False:
+                msg(sender, "&7Player %s &7is currently busy." % target.getDisplayName())
+            else:
+                msg(sender, "&7Player %s &7is currently SUPER busy." % target.getDisplayName())
         else:
-            msg(sender, "&7Player &e" + args[0] +  " &7is currently not busy.")
+            msg(sender, "&7Player %s &7is currently not busy." % target.getDisplayName())
+    return True
+
+
+def super_cmd(sender):
+    if not sender.hasPermission(use_permission):
+        noperm(sender)
+        return True
+    sender_name = sender.getName()
+    if busy_players.get(sender_name) is True:
+        msg(sender, "&7You are already SUPER busy!")
+    else:
+        busy_players[sender_name] = True # SUPER busy
+        broadcast(None, sender.getDisplayName() + " &7is now SUPER busy...")
     return True
 
 
 @hook.event("player.PlayerQuitEvent", "lowest")
 def on_player_leave(event):
-    try:
-        busy_players.remove(event.getPlayer().getName())
-    except:
-        pass
+    player_name = event.getPlayer().getName()
+    if player_name in busy_players:
+        del busy_players[player_name]
 
 
 #---- Dicode for catching any bothering of busy people ----
@@ -138,11 +160,19 @@ def on_player_leave(event):
 reply_targets = {}
 
 
+def can_send(sender, target):
+    if not target.getName() in busy_players:
+        return True
+    if target is sender or sender.hasPermission(override_permission):
+        return True
+    return busy_players[target.getName()] is False and is_friend_of(target, sender)
+
+
 def whisper(sender, target_name):
     target = server.getPlayer(target_name)
 
     if target is not None:
-        if target is not sender and not sender.hasPermission(override_permission) and target.getName() in busy_players:
+        if not can_send(sender, target):
             msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
             return False
 
@@ -158,7 +188,7 @@ def reply(sender):
     if sender.getName() in reply_targets:
         target = server.getPlayer(reply_targets[sender.getName()])
         if target is not None: 
-            if target is not sender and not sender.hasPermission(override_permission) and target.getName() in busy_players:
+            if not can_send(sender, target):
                 msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
                 return False
 
@@ -181,7 +211,7 @@ class CommandWrapper(Command):
 
     def execute(self, sender, label, args):
         try:
-            if self.checker(sender, args):
+            if not is_player(sender) or self.checker(sender, args):
                 return self.wrapped.execute(sender, label, args)
         except:
             error(trace())
@@ -201,7 +231,7 @@ def tpa_command_checker(sender, args):
     if len(args) == 0:
         return True
     target = server.getPlayer(args[0])
-    if target is not None and target is not sender and not sender.hasPermission(override_permission) and target.getName() in busy_players:
+    if target is not None and not can_send(sender, target):
         msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
         return False
     return True
@@ -214,7 +244,7 @@ def mail_command_checker(sender, args):
     if len(args) < 3 or args[0].lower() != "send":
         return True
     target = server.getPlayer(args[1])
-    if target is not None and target is not sender and not sender.hasPermission(override_permission) and target.getName() in busy_players:
+    if target is not None and not can_send(sender, target):
         msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
         return False
     return True
