@@ -191,6 +191,8 @@ def radd(sender, args):
     if args[3].lower() == "false":
         plugin_header(target, "Alias")
         msg(target, "&cPlayer " + sender_name + " &cis creating an alias for you!")
+    elif args[3].lower() != "true":
+        args[2] += " " + args[3]
     if not sender.hasPermission(permission_ALL) and len(data[uid(sender)]) >= int(get_permission_content(target, permission_AMOUNT)):
         msg(sender, "&cCould not create alias: Max_limit reached!")
         if args[3].lower() == "false":
@@ -274,7 +276,7 @@ def rlist_alias(sender, args):
     plugin_header(sender, "Alias")
     target = get_player(args[0])
     if is_player(sender):
-        sender_name = colorify(sender.getDisplayName)
+        sender_name = colorify(sender.getDisplayName())
     else:
         sender_name = colorify("&6Console")
     if len(args) == 1:
@@ -282,11 +284,9 @@ def rlist_alias(sender, args):
     msg(sender, "Player " + args[0] + " has following aliases (" + str(len(data[uid(target)])) + " in total):")
     if args[1].lower() == "false":
         plugin_header(target, "Alias")
-        msg(target, "&cPlayer " + sender_name + " &cis listing your aliases (" + str(len(data[uid(target)])) + " in total):")
+        msg(target, "&cPlayer " + sender_name + " &cis listing your aliases")
     for word, alias in data[str(uid(target))].items():
         msg(sender, colorify("&7") + word + colorify("&7 -> ") + alias, usecolor=target.hasPermission("essentials.chat.color"))
-        if args[1].lower() == "false":
-            msg(target, colorify("&7") + word + colorify("&7 -> ") + alias, usecolor=target.hasPermission("essentials.chat.color"))
     return True
 
 
@@ -341,15 +341,21 @@ def save_data_thread(uuid):
 # Subcommands:
 subcommands = {
     "help": help,
+    "?": help,
     "add": add,
     "remove": remove,
+    "del": remove,
+    "delete": remove,
     "player": remote,
+    "remote": remote,
     "list": list_alias
 }
 
 remotes = {
     "add": radd,
     "remove": rremove,
+    "del": rremove,
+    "delete": rremove,
     "list": rlist_alias,
 }
 
@@ -360,9 +366,9 @@ if not enabled:
     error = colorify("&6Incompatible versions detected (&chelpers.py&6)")
 for player in server.getOnlinePlayers():
     if enabled:
-        t = threading.Thread(target=load_data, args=(uid(event.getPlayer()), ))
+        t = threading.Thread(target=load_data, args=(uid(player), ))
         t.daemon = True
         t.start()
     else:
-        if event.getPlayer().hasPermission(permission_FINFO):
-            disabled_fallback(event.getPlayer())
+        if player.hasPermission(permission_FINFO):
+            disabled_fallback(player)
