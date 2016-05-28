@@ -59,7 +59,7 @@ permission_FINFO = "utils.alias.finfo"
 enabled = helpers_version in helpers_versions
 if not enabled:
     error = colorify("&6Incompatible versions detected (&chelpers.py&6)")
-for player in Server.getOnlinePlayers():
+for player in server.getOnlinePlayers():
     if enabled:
         t = threading.Thread(target=load_data, args=(uid(event.getPlayer()), ))
         t.daemon = True
