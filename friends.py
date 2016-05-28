@@ -5,6 +5,10 @@ friends           = open_json_file("friends", {}) # {Player_UUID:[List_of_friend
 friend_join_sound = "random.orb"
 
 
+def is_friend_of(player, other):
+    lst = friends.get(uid(player))
+    return lst is not None and uid(other) in lst
+
 
 @hook.event("player.PlayerJoinEvent", "high") # creates sound and sends a bold message on friend join
 def fjm(event): # friend join message

@@ -44,6 +44,8 @@ shared["load_modules"] = [
     "calc",
     # Adds aliasing of chat words
     "chatalias",
+    # For players to point friends
+    "friends",
     # Plugin to locate laggy chunks. /lc <n> lists chunks with more than n entities
     "lagchunks",
     # Adds /report and /rp, Stores reports with time and location
