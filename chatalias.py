@@ -55,12 +55,6 @@ permission_FINFO = "utils.alias.finfo"
 # CODE #
 ########
 
-# OnEnable
-enabled = helpers_version in helpers_versions
-if not enabled:
-    error = colorify("&6Incompatible versions detected (&chelpers.py&6)")
-
-
 def safe_open_json(uuid):
     if not os.path.exists("plugins/redstoner-utils.py.dir/files/aliases"):
         os.makedirs("plugins/redstoner-utils.py.dir/files/aliases")
@@ -180,7 +174,7 @@ def add(sender, args):
         return True
     args = [args[0]] + [" ".join(args[1:])]
     if not add_alias_data(uid(sender), str(args[0]), args[1]):
-        msg(sender, colorify("&c") + "Could not add this alias because it would cause some sequences to be replaced multiple times"
+        msg(sender, colorify("&c") + "Could not add this alias because it would cause some sequences to be replaced multiple times", usecolor = False)
         return True
     msg(sender, colorify("&7Alias: ") + args[0] + colorify("&7 -> " + args[1] + colorify("&7 was succesfully created!")), usecolor=sender.hasPermission("essentials.chat.color"))
     return True
@@ -197,6 +191,8 @@ def radd(sender, args):
     if args[3].lower() == "false":
         plugin_header(target, "Alias")
         msg(target, "&cPlayer " + sender_name + " &cis creating an alias for you!")
+    elif args[3].lower() != "true":
+        args[2] += " " + args[3]
     if not sender.hasPermission(permission_ALL) and len(data[uid(sender)]) >= int(get_permission_content(target, permission_AMOUNT)):
         msg(sender, "&cCould not create alias: Max_limit reached!")
         if args[3].lower() == "false":
@@ -227,7 +223,7 @@ def add_alias_data(puuid, aliased, new_alias):
 
     # prevent 1 -> 2 if there is 2 -> 3
     for sequence in prior:
-        if sequence in new alias:
+        if sequence in new_alias:
             return False
 
     prior[aliased] = new_alias
@@ -280,7 +276,7 @@ def rlist_alias(sender, args):
     plugin_header(sender, "Alias")
     target = get_player(args[0])
     if is_player(sender):
-        sender_name = colorify(sender.getDisplayName)
+        sender_name = colorify(sender.getDisplayName())
     else:
         sender_name = colorify("&6Console")
     if len(args) == 1:
@@ -288,11 +284,9 @@ def rlist_alias(sender, args):
     msg(sender, "Player " + args[0] + " has following aliases (" + str(len(data[uid(target)])) + " in total):")
     if args[1].lower() == "false":
         plugin_header(target, "Alias")
-        msg(target, "&cPlayer " + sender_name + " &cis listing your aliases (" + str(len(data[uid(target)])) + " in total):")
+        msg(target, "&cPlayer " + sender_name + " &cis listing your aliases")
     for word, alias in data[str(uid(target))].items():
         msg(sender, colorify("&7") + word + colorify("&7 -> ") + alias, usecolor=target.hasPermission("essentials.chat.color"))
-        if args[1].lower() == "false":
-            msg(target, colorify("&7") + word + colorify("&7 -> ") + alias, usecolor=target.hasPermission("essentials.chat.color"))
     return True
 
 
@@ -347,14 +341,34 @@ def save_data_thread(uuid):
 # Subcommands:
 subcommands = {
     "help": help,
+    "?": help,
     "add": add,
     "remove": remove,
+    "del": remove,
+    "delete": remove,
     "player": remote,
+    "remote": remote,
     "list": list_alias
 }
 
 remotes = {
     "add": radd,
     "remove": rremove,
+    "del": rremove,
+    "delete": rremove,
     "list": rlist_alias,
 }
+
+# OnModuleLoad
+
+enabled = helpers_version in helpers_versions
+if not enabled:
+    error = colorify("&6Incompatible versions detected (&chelpers.py&6)")
+for player in server.getOnlinePlayers():
+    if enabled:
+        t = threading.Thread(target=load_data, args=(uid(player), ))
+        t.daemon = True
+        t.start()
+    else:
+        if player.hasPermission(permission_FINFO):
+            disabled_fallback(player)
