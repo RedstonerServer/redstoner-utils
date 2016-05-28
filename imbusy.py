@@ -17,9 +17,9 @@ import org.bukkit.command.Command as Command
 
 imbusy_version = "v1.1.0"
 
-base_permission = "utils.busy" # for /busy status
-use_permission = "utils.busy.use" # for being busy
-override_permission = "utils.busy.override" # for being able to bother busy people
+base_permission = "utils.imbusy" # for /busy status
+use_permission = "utils.imbusy.use" # for being busy
+override_permission = "utils.imbusy.override" # for being able to bother busy people
 
 
 busy_players = {} # name : false/true where false is normal busy and true is super busy
