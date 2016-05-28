@@ -55,19 +55,6 @@ permission_FINFO = "utils.alias.finfo"
 # CODE #
 ########
 
-# OnModuleLoad
-enabled = helpers_version in helpers_versions
-if not enabled:
-    error = colorify("&6Incompatible versions detected (&chelpers.py&6)")
-for player in server.getOnlinePlayers():
-    if enabled:
-        t = threading.Thread(target=load_data, args=(uid(event.getPlayer()), ))
-        t.daemon = True
-        t.start()
-    else:
-        if event.getPlayer().hasPermission(permission_FINFO):
-            disabled_fallback(event.getPlayer())
-
 def safe_open_json(uuid):
     if not os.path.exists("plugins/redstoner-utils.py.dir/files/aliases"):
         os.makedirs("plugins/redstoner-utils.py.dir/files/aliases")
@@ -365,3 +352,17 @@ remotes = {
     "remove": rremove,
     "list": rlist_alias,
 }
+
+# OnModuleLoad
+
+enabled = helpers_version in helpers_versions
+if not enabled:
+    error = colorify("&6Incompatible versions detected (&chelpers.py&6)")
+for player in server.getOnlinePlayers():
+    if enabled:
+        t = threading.Thread(target=load_data, args=(uid(event.getPlayer()), ))
+        t.daemon = True
+        t.start()
+    else:
+        if event.getPlayer().hasPermission(permission_FINFO):
+            disabled_fallback(event.getPlayer())
