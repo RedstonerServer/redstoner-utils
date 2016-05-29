@@ -1,15 +1,12 @@
-##################################
-# I'M BUSY! Plugin by Curs3d     #
-# Concept by CookieManors :D     #
-##################################
-# This plugin permits users to   #
-# send a command that renders    #
-# them "busy", not letting them  #
-# to get tpa requests or direct  #
-# messages, except from console. #
-# On restart, all busy data will #
-# be cleared.                    #
-##################################
+"""
+This plugin permits users to   
+send a command that renders    
+them "busy", not letting them  
+to get tpa requests or direct 
+messages, except from console. 
+On restart, all busy data will 
+be cleared.                    
+"""
 
 from helpers import *
 from friends import is_friend_of
@@ -37,7 +34,6 @@ def on_busy_command(sender, cmd, label, args):
 
     plugin_header(recipient = sender, name = "I'M BUSY!")
 
-    #args = array_to_list(args)
     if not sender.hasPermission(base_permission):
         noperm(sender)
         return True
