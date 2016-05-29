@@ -5,7 +5,23 @@ import java.util.UUID as UUID
 import org.bukkit.Material as Material
 import org.bukkit.block.BlockFace as BlockFace
 
-blocked_cmds = tuple(shared["modules"]["misc"].sudo_blacklist) + ("pex", "kick", "ban", "tempban", "reload", "op", "deop", "whitelist")
+commands_whitelist = (
+    "mail", "email", "memo",
+    "echo", "ping", 
+    "cg join",
+    "cg info",
+    "chatgroup join",
+    "chatgroup info",
+    "i",
+    "item",
+    "p h", "plot home", "plot h", "p home", "plotme home", "plotme h",
+    "up",
+    "tppos",
+    "seen"
+)
+
+max_line_length = 256
+max_lines = 20
 
 def load_signs():
     signs_obj = open_json_file("serversigns", [])
@@ -20,9 +36,11 @@ def save_signs():
         signs_obj.append(key + tuple(value))
     save_json_file("serversigns", signs_obj)
 
-signs = load_signs() # {("world", x, y, z): ["owner_id", "msg1", "msg2"]}
+# {("world", x, y, z): ["owner_id", "msg1", "msg2"]}
+signs = load_signs() 
 
-lines = {} # Accumulated messages so players can have longer messages: {"Dico200": "Message...........", ""}
+# Accumulated messages so players can have longer messages: {"Dico200": "Message...........", ""}
+lines = {}
 
 def fromLoc(bLoc):
     """
@@ -92,7 +110,8 @@ def signsMsg(msg, colour = '4'):
     senderLimit = 0)
 def svs_command(sender, command, label, args):
     arg1 = args[0].lower()
-    Validate.isTrue(arg1 in ("claim", "reset", "add", "remove", "info", "clear", "help", "switch", "reverse", "unclaim"), 
+    Validate.isTrue(arg1 in ("claim", "reset", "add", "remove", "rem", "del", "delete", "info", "lines", 
+        "clear", "help", "switch", "reverse", "unclaim", "commands", "whitelist", "wl"), 
         signsMsg("That argument could not be recognized, use &o/svs help &4for expected arguments"))
     Validate.isAuthorized(sender, "utils.serversigns." + arg1)
 
@@ -105,7 +124,7 @@ def svs_command(sender, command, label, args):
         msg += "\nHow to use &b/serversigns&a:"
         msg += "\n&b/svs claim" + ("" if not sender.hasPermission("utils.serversigns.admin") else " [owner]")
         msg += "\n&a- Claims the sign so that you can add messages to it"
-        msg += "\n&b/svs info"
+        msg += "\n&b/svs info|lines"
         msg += "\n&a- Displays information about the (claimed) sign"
         msg += "\n&b/svs add <message>[++]"
         msg += "\n&a- Adds the message to the sign. Use ++ at the end"
@@ -120,7 +139,12 @@ def svs_command(sender, command, label, args):
         msg += "\n&a- Removes all messages from the sign."
         msg += "\n&b/svs reset|unclaim"
         msg += "\n&a- Resets the sign, removing all messages and its owner."
+        msg += "\n&b/svs commands|whitelist|wl"
+        msg += "\n&a- Shows a list of whitelisted commands"
         return msg
+
+    if arg1 in ("commands", "whitelist", "wl"):
+        return signsMsg("Whitelisted commands: &3" + ", ".join(commands_whitelist), 'a')
     #-------------------------------------------------------------------------------------------
 
     block = sender.getTargetBlock(None, 5)
@@ -144,7 +168,7 @@ def svs_command(sender, command, label, args):
         uuid = uid(target)
         if sign != None:
             if sign[0] == uuid:
-                return signsMsg("The" + signName + " was already owned by that player")
+                return signsMsg("The " + signName + " was already owned by that player")
             else:
                 sign[0] = uuid
         else:
@@ -156,7 +180,7 @@ def svs_command(sender, command, label, args):
     Validate.notNone(sign, signsMsg("The %s has not been claimed" % signName))
 
     #----------------------Sub commands that require the sign to be claimed as well------------------------------------
-    if arg1 == "info":
+    if arg1 in ("info", "lines"):
         sign_lines = ""
         for id, line in enumerate(sign[1:]):
             sign_lines += ("\n &a%s: \"&f%s&a\"" % (id + 1, line))
@@ -167,25 +191,43 @@ def svs_command(sender, command, label, args):
 
     #---------------------- Sub commands that require you to own targeted sign as well -------------------------
     if arg1 == "add":
+        Validate.isTrue(len(sign) - 1 <= max_lines, signsMsg("This sign already has the maximum amount of lines, you cannot add more"))
+
         line = " ".join(args[1:])
         Validate.isTrue(line != "" and line != None, signsMsg("You have to enter a message to add or accumulate"))
         key  = sender.getName()
         global lines
         Validate.isTrue(key in lines or line[:1] != "/" or sender.hasPermission("utils.serversigns.command"), signsMsg("You cannot add commands to a sign!"))
+
         if line[-2:] == "++":
             if key not in lines:
                 lines[key] = ""
+            Validate.isTrue(len(lines[key]) + len(line[:-2]) + 1 <= max_line_length, signsMsg("This line would be too long, so the given message was not added to the accumulated message"))
             lines[key] += " " + line[:-2]
             return signsMsg("Added given message to the message you're accumulating. \nYour accumulated message is now as follows: \n&f%s" % lines[key], 'a')
+
         if key in lines:
             line = (lines[key] + " " + line)[1:]
-        Validate.isTrue(line[0] != "/" or line.split(" ")[0][1:] not in blocked_cmds, signsMsg("Usage of that command with server signs is prohibited"))
+            Validate.isTrue(len(line) <= max_line_length, signsMsg("This line would be too long, so it was not added to the sign. It is however still accumulated."))
+
+        if line[0] == "/":
+            cmd = line[1:].lower()
+            whitelisted = False
+            for wl_cmd in commands_whitelist:
+                if cmd[:len(wl_cmd)] == wl_cmd:
+                    whitelisted = True
+                    break
+            Validate.isTrue(whitelisted, signsMsg("That command is not whitelisted for use with serversigns"))
+
+        if key in lines:
+            del lines[key]
+
         sign.append(colorify(line) if line[0] != "/" else line)
         save_signs()
         return signsMsg("Added line \"&f%s&a\" to the %s" % (line, signName), 'a')
 
 
-    if arg1 == "remove":
+    if arg1 in ("remove", "rem", "del", "delete"):
         Validate.notNone(arg2, signsMsg("You have to enter the ID of the message to remove!"))
         try:
             id = int(arg2)
@@ -220,6 +262,7 @@ def svs_command(sender, command, label, args):
         del signs[loc]
         save_signs()
         return signsMsg("Removed all messages and the owner from the %s, it can now be claimed" % signName, 'a')
+
     #-------------------------------------------------------------------------------------------------------
 
 
