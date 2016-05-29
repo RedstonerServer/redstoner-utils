@@ -1,14 +1,4 @@
-############################################
-# Alias v2.0 by Pepich                     #
-# Changes to previous version from curs3d: #
-# Dynamic alias limit from permissions     #
-# AC/CG/MSG support                        #
-# Color support                            #
-# Bugfixes                                 #
-#                                          #
-#                  TODO:                   #
-# Add command support...                   #
-############################################
+# TODO: Add cg/ac/msg support
 
 import os
 import mysqlhack
@@ -20,15 +10,14 @@ from secrets import *
 
 # Version number and requirements
 
-alias_version = "2.0.0"
+alias_version = "2.1.0"
 helpers_versions = ["1.1.0", "2.0.0"]
 enabled = False
-error = colorify("&cUnspecified error")
+error_msg = colorify("&cUnspecified error")
 commands_per_page = 5
 global_aliases = {"./":"/"}
 data = {}
-# DON'T SET THIS TO TRUE! MySQL requestst are NOT ASYNC yet! (And for some reason it doesn't want to store any data ._.)
-use_mysql = False
+use_mysql = True
 
 # Permissions:
 
@@ -60,8 +49,8 @@ def safe_open_json(uuid):
         os.makedirs("plugins/redstoner-utils.py.dir/files/aliases")
     value = open_json_file("aliases/" + uuid)
     if value is None:
-        value = global_aliases
-    save_json_file("aliases/" + uuid, value)
+        value = dict(global_aliases)
+        save_json_file("aliases/" + uuid, value)
     return value
 
 
@@ -69,6 +58,9 @@ def safe_open_json(uuid):
               usage="/<command> <add, remove, list, help> [...]",
               desc="Allows aliasing of words")
 def on_alias_command(sender, cmd, label, args):
+    if not is_player(sender):
+        msg(sender, "&cThe console cannot use aliases!")
+        return True
     try:
         args = array_to_list(args)
         if not enabled:
@@ -130,24 +122,23 @@ def on_join(event):
 
 @hook.event("player.AsyncPlayerChatEvent", "high")
 def on_player_chat(event):
-    try:
-        if enabled:
-            if event.isCancelled():
+    if enabled:
+        if event.isCancelled():
+            return
+        player = event.getPlayer() 
+        if not hasPerm(player, permission_USE):
+            return
+        msg_limit = int(get_permission_content(player, permission_LENGTH))
+        for alias, value in data[str(uid(player))].items():
+            if player.hasPermission("essentials.chat.color"):
+                event.setMessage(event.getMessage().replace(colorify(alias), colorify(value)))
+            else:
+                event.setMessage(event.getMessage().replace(alias, value))
+            if not player.hasPermission(permission_ALL) and len(event.getMessage()) > msg_limit:
+                event.setCancelled(True)
+                plugin_header(player, "Alias")
+                msg(player, "The message you wanted to generate would exceed the length limit limit of %d. Please make it shorter!" % msg_limit)
                 return
-            if not hasPerm(event.getPlayer(), permission_USE):
-                return
-            for alias, value in data[str(uid(event.getPlayer()))].items():
-                if not event.getPlayer().hasPermission(permission_ALL) and len(event.getMessage()) > int(get_permission_content(event.getPlayer(), permission_LENGTH)):
-                    event.setCanceled(True)
-                    plugin_header(event.getPlayer, "Alias")
-                    msg(event.getPlayer(), "The message you wanted to generate would exceed your limit. Please make it shorter!")
-                    return
-                if event.getPlayer().hasPermission("essentials.chat.color"):
-                    event.setMessage(event.getMessage().replace(colorify(alias), colorify(value)))
-                else:
-                    event.setMessage(event.getMessage().replace(alias, value))
-    except:
-        print(trace())
 
 
 def hasPerm(player, permission):
@@ -159,7 +150,7 @@ def disabled_fallback(receiver):
         msg(receiver, colorify("&cUnknown command. Use &e/help&c, &e/plugins &cor ask a mod."))
     else:
         msg(receiver, colorify("&cPlugin alias v" + alias_version + " has experienced an &eEMERGENCY SHUTDOWN:"))
-        msg(receiver, error)
+        msg(receiver, error_msg)
         msg(receiver, colorify("&cPlease contact a dev/admin (especially pep :P) about this to take a look at it."))
 
 
@@ -169,11 +160,11 @@ def can_remote(player):
 
 def add(sender, args):
     plugin_header(sender, "Alias")
-    if not sender.hasPermission(permission_ALL) and len(data[uid(sender)]) >= int(get_permission_content(sender, permission_AMOUNT)):
-        msg(sender, "&cCould not create alias: Max_limit reached!")
-        return True
+    uuid = uid(sender)
     args = [args[0]] + [" ".join(args[1:])]
-    if not add_alias_data(uid(sender), str(args[0]), args[1]):
+    if (args[0] not in data[uuid]) and is_alias_limit_reached(sender, sender):
+        return True
+    if not add_alias_data(uuid, str(args[0]), args[1]):
         msg(sender, colorify("&c") + "Could not add this alias because it would cause some sequences to be replaced multiple times", usecolor = False)
         return True
     msg(sender, colorify("&7Alias: ") + args[0] + colorify("&7 -> " + args[1] + colorify("&7 was succesfully created!")), usecolor=sender.hasPermission("essentials.chat.color"))
@@ -187,20 +178,21 @@ def radd(sender, args):
         sender_name = colorify(sender.getDisplayName())
     else:
         sender_name = colorify("&6Console")
-    target = get_player(args[0])
+    target = server.getPlayer(args[0])
+    if target == None:
+        msg(sender, "&cThat player is not online")
+        return True
+    uuid = uid(target)
     if args[3].lower() == "false":
         plugin_header(target, "Alias")
         msg(target, "&cPlayer " + sender_name + " &cis creating an alias for you!")
     elif args[3].lower() != "true":
         args[2] += " " + args[3]
-    if not sender.hasPermission(permission_ALL) and len(data[uid(sender)]) >= int(get_permission_content(target, permission_AMOUNT)):
-        msg(sender, "&cCould not create alias: Max_limit reached!")
-        if args[3].lower() == "false":
-            msg(target, "&cCould not create alias: Max_limit reached!")
+    if (args[1] not in data[uuid]) and is_alias_limit_reached(target, sender, args[3].lower() == "false"):
         return True
     if len(args) == 3:
         args += ["true"]
-    if not add_alias_data(uid(target), str(args[1]), str(args[2])):
+    if not add_alias_data(uuid, str(args[1]), str(args[2])):
         message = colorify("&c") + "Could not add this alias because it would cause some sequences to be replaced multiple times"
         msg(sender, message)
         if args[3].lower() == "false":
@@ -210,6 +202,19 @@ def radd(sender, args):
     if args[3].lower() == "false":
         msg(target, colorify("&7Alias: ") + args[1] + colorify("&7 -> " + args[2] + colorify("&7 was succesfully created!")), usecolor=target.hasPermission("essentials.chat.color"))
     return True
+
+
+def is_alias_limit_reached(player, recipient, not_silent = False):
+    if player.hasPermission(permission_ALL):
+        return False
+    alias_limit = int(get_permission_content(player, permission_AMOUNT))
+    if len(data[uid(player)]) > alias_limit:
+        message = ("&cYour limit of %d has been reached" if player is recipient else "&cThe limit of %d has been reached for that player") % alias_limit
+        msg(recipient, message)
+        if not_silent:
+            msg(player, message)
+        return True
+    return False
 
 
 def add_alias_data(puuid, aliased, new_alias):
@@ -298,44 +303,53 @@ def remote(sender, args):
 
 
 def load_data(uuid):
-    try:
-        load_data_thread(uuid)
-#        t = threading.Thread(target=load_data_thread, args=(uuid))
-#        t.daemon = True
-#        t.start()
-    except:
-        print(trace())
-
-def load_data_thread(uuid):
     if use_mysql:
-        conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
-        curs = conn.cursor()
-        curs.execute("SELECT alias FROM alias WHERE uuid = ?", (uuid, ))
-        results = curs.fetchall()
-        if len(results) == 0:
-            results = global_aliases
-            curs.execute("INSERT INTO alias VALUES (?,?)", (uuid, results, ))
-        data[uuid] = results
+        try:
+            t = threading.Thread(target=load_data_thread, args=(uuid,))
+            t.daemon = True
+            t.start()
+        except:
+            error(trace())
     else:
         data[uuid] = safe_open_json(uuid)
 
+def load_data_thread(uuid):
+    conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
+    curs = conn.cursor()
+    curs.execute("SELECT `alias` FROM `chatalias` WHERE `uuid` = ?;", (uuid, ))
+    results = curs.fetchall()
+    if len(results) == 0:
+        value = dict(global_aliases)
+        curs.execute("INSERT INTO `chatalias` VALUES (?,?);", (uuid, json_dumps(results), ))
+        conn.commit()
+    else:
+        value = json_loads(results[0][0])
+    curs.close()
+    conn.close()
+    data[uuid] = value
+
 
 def save_data(uuid):
-    try:
-        save_data_thread(uuid)
-#        t = threading.Thread(target=save_data_thread, args=(uuid))
-#        t.daemon = True
-#        t.start()
-    except:
-        print(trace())
-
-def save_data_thread(uuid):
     if use_mysql:
-        conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
-        curs = conn.cursor()
-        curs.execute("UPDATE alias SET alias = ? WHERE uuid = ?", (data[uuid], uuid, ))
+        try:
+            t = threading.Thread(target=save_data_thread, args=(uuid,))
+            t.daemon = True
+            t.start()
+        except:
+            error(trace())
     else:
         save_json_file("aliases/" + uuid, data[uuid])
+
+def save_data_thread(uuid):
+    conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
+    curs = conn.cursor()
+    try:
+        curs.execute("UPDATE `chatalias` SET `alias` = ? WHERE `uuid` = ?;", (json_dumps(data[uuid]), uuid, ))
+    except:
+        error(trace())
+    conn.commit()
+    curs.close()
+    conn.close()
 
 
 # Subcommands:
@@ -363,7 +377,7 @@ remotes = {
 
 enabled = helpers_version in helpers_versions
 if not enabled:
-    error = colorify("&6Incompatible versions detected (&chelpers.py&6)")
+    error_msg = colorify("&6Incompatible versions detected (&chelpers.py&6)")
 for player in server.getOnlinePlayers():
     if enabled:
         t = threading.Thread(target=load_data, args=(uid(player), ))
