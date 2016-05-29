@@ -11,8 +11,6 @@ import org.bukkit.block as bblock
 import org.bukkit.event.entity as entity
 import org.bukkit.command.ConsoleCommandSender
 from org.bukkit.entity import *
-from player import get_py_player
-from player import py_players
 
 #Imports for async query
 from secrets import *
@@ -22,7 +20,7 @@ import threading
 
 from traceback import format_exc as trace
 
-
+helpers_version = "2.0.0"
 shared = {} # this dict can be used to share stuff across modules
 
 server = bukkit.Bukkit.getServer()
@@ -87,7 +85,7 @@ def colorify(text):
     """
     replace &-codes with real color codes
     """
-    return sub("&" + u"\u00A7", "&", "%s" % sub("&(?=[?\\da-fk-or])", u"\u00A7", "%s" % text))
+    return sub("&(?=[?\\da-fk-or])", u"\u00A7", "%s" % text)
 
 
 def stripcolors(text):
@@ -254,24 +252,12 @@ def save_json_file(filename, obj):
         error("Failed to write to %s: %s" % (filename, e))
 
 
-def toggle(player, ls, name = "Toggle", add = None):
-    """
-    Toggles presence of a player's UUID in a list
-    If add is given, True explicitely adds it whereas False removes it
-    """
-    pid = uid(player)
-    if pid in ls or add == False:
-        ls.remove(pid)
-        msg(player, "&a%s turned off!" % name)
-    elif add != False:
-        ls.append(pid)
-        msg(player, "&a%s turned on!" % name)
-
 def send_JSON_message(playername, message):
     bukkit.Bukkit.getServer().dispatchCommand(bukkit.Bukkit.getServer().getConsoleSender(), "tellraw " + playername + " " + message)
 
 
-def isIP(tocheck):
+# Allows to check if a String is a valid IPv4 or not. Accepts any string, returns true if the String is a valid IPv4
+def is_ip(tocheck):
     subsets = ["","","",""]
     i = 0
     for j in range(0,len(tocheck)):
@@ -289,3 +275,29 @@ def isIP(tocheck):
         if not ((int(subsets[j]) >= 0) & (int(subsets[j]) <= 255)):
             return False
     return True
+
+
+# Allows the use of e.g. numeric permission nodes like "permission.amount.5" and similar.
+# To get the data fetch the player and the start of the permission node, looking like "permission.amount."
+def get_permission_content(player, permnode):
+    perms = player.getEffectivePermissions()
+    for perm in perms:
+        if str(perm.getPermission()).startswith(permnode):
+               return str(perm.getPermission())[len(permnode):]
+
+
+def array_to_list(array):
+    return_list = []
+    for a in array:
+        return_list.append(a)
+    return return_list
+
+
+#debug wrapper
+def debug(func):
+    def wrap(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except:
+            print(trace())
+    return wrap

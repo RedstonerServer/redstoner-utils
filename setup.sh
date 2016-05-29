@@ -25,7 +25,7 @@ mkdir -v "build"
 cd "build"
 
 echo -e "\n> Downloading Spigot build tools"
-curl --progress-bar -Lo "buildtools.jar" "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
+curl --progress-bar -Lo "BuildTools.jar" "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
 
 echo -e "\n> Building Spigot, this will take a while ..."
 java -jar BuildTools.jar > /dev/null
@@ -91,7 +91,7 @@ echo -e "\n> All plugins downloaded"
 
 cd "redstoner-utils.py.dir"
 echo -e "\n> Duplicating sample files"
-for file in ls ./*.example; do
+for file in ./*.example; do
   cp -v "$file" "$(echo "$file" | rev | cut -d "." -f 2- | rev)"
 done
 

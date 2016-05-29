@@ -36,9 +36,9 @@ def on_dammnspam_command(sender, command, label, args):
         msg(sender, "&c/damnspam <seconds after off> <seconds after on> &e(Levers only)")
         return True
         #Gittestlol
-        if not is_creative(sender):
-            msg(sender, "&cYou can only do this in Creative mode.")
-            return True
+    if not is_creative(sender):
+        msg(sender, "&cYou can only do this in Creative mode.")
+        return True
 
     # /damnspam <secs>
     if len(args) == 1:
@@ -47,8 +47,6 @@ def on_dammnspam_command(sender, command, label, args):
             timeout_on  = round(float(timeout_on), 2)
             timeout_off = timeout_on
             if 60 >= timeout_on <= -2 or timeout_on == 0:
-                timeout_on = False
-            if timeout_on == False:
                 msg(sender, "&cThe timeout must be within 0-60 or -1.")
                 return True
         except ValueError:

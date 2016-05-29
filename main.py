@@ -19,12 +19,17 @@ except:
 
 @hook.enable
 def on_enable():
+    if "blockplacemods" in shared["modules"]:
+        shared["modules"]["blockplacemods"].schedule_torch_breaker()
+    if "imbusy" in shared["modules"]:
+        shared["modules"]["imbusy"].replace_ess_commands()
     info("RedstonerUtils enabled!")
 
 
 @hook.disable
 def on_disable():
-    shared["modules"]["reports"].stop_reporting()
+    if "reports" in shared["modules"]:
+        shared["modules"]["reports"].stop_reporting()
     info("RedstonerUtils disabled!")
 
 
@@ -44,6 +49,8 @@ shared["load_modules"] = [
     "calc",
     # Adds aliasing of chat words
     "chatalias",
+    # For players to point friends
+    "friends",
     # Plugin to locate laggy chunks. /lc <n> lists chunks with more than n entities
     "lagchunks",
     # Adds /report and /rp, Stores reports with time and location
@@ -89,7 +96,7 @@ shared["load_modules"] = [
     # Servercontrol extension for telnet access to logs/AC
     #"servercontrol",
     # Script helper plugin
-    "scriptutils", 
+    "scriptutils",
     # Per-player notes
     "tag",
     # vanish toggle module - temporary fix
@@ -98,8 +105,12 @@ shared["load_modules"] = [
     "punishments",
     # a simple replacement for the buggy essentials /vanish
     "vanish",
-    # ip-tracking utility
-    "iptracker"
+    # ip-tracking utility - disabled as of instability
+    #"iptracker",
+    #server signs for everyone
+    "serversigns",
+    # Makes player's names colored, sorts tab list by rank
+    "nametags"
 ]
 shared["modules"] = {}
 for module in shared["load_modules"]:

@@ -7,6 +7,7 @@ import thread
 import org.bukkit.inventory.ItemStack as ItemStack
 import org.bukkit.Bukkit as Bukkit
 from basecommands import simplecommand, Validate
+import java.util.Arrays as Arrays
 
 
 
@@ -113,9 +114,20 @@ def rs_material_broken_by_flow(material):
     length = len(parts)
     return length > 1 and (parts[0] == "DIODE" or parts[1] in ("TORCH", "WIRE", "BUTTON", "HOOK") or (length == 3 and parts[1] == "COMPARATOR"))
 
+
+@hook.event("player.PlayerInteractEvent")
+def on_interact(event):
+    if (not event.isCancelled()
+        and str(event.getAction()) == "RIGHT_CLICK_BLOCK"
+        and str(event.getMaterial()) in ("REDSTONE_COMPARATOR_OFF", "REDSTONE_COMPARATOR_ON")
+        and not can_build(player, event.getClickedBlock())
+    ):
+        event.setCancelled(True)
+
+
 sudo_blacklist = ["pyeval", "script_backup_begin", "script_backup_end", "script_backup_error", "script_backup_database_begin", "script_backup_database_dumps", "script_backup_database_end",
 "script_backup_database_error", "script_backup_database_abort", "script_trim", "script_trim_result", "script_spigot_update", "script_disk_filled", "script_restart", "script_restart_abort",
-"script_stop", "script_stop_abort", "script_shutdown", "stop", "esudo", "essentials:sudo"]
+"script_stop", "script_stop_abort", "script_shutdown", "stop", "esudo", "essentials:sudo", "sudo", "essentials:esudo"]
 
 @simplecommand("sudo",
         usage        = "<player> [cmd..]",
@@ -161,7 +173,8 @@ def on_pluginversions_command(sender, command, label, args):
     """
     try:
         plugin_header(sender, "Plugin versions")
-        plugins = [pl.getDescription() for pl in list(ArrayList(java_array_to_list(server.getPluginManager().getPlugins())))]
+        raw_plugins = server.getPluginManager().getPlugins() # Plugin[]
+        plugins = [raw_plugins[i].getDescription() for i in range(len(raw_plugins))]
         info(type(plugins[0]).__name__)
         plugins.sort(key = lambda pl: pl.getDescription().getName())
         msg(sender, "&3Listing all " + str(len(plugins)) + " plugins and their version:")
@@ -199,12 +212,12 @@ def eval_thread(sender, code):
         msg(sender, ">>> %s: %s" % (eclass.__name__, e) + "\n ", False, "c")
     thread.exit()
 
-pythoners = [
-"e452e012-2c82-456d-853b-3ac8e6b581f5", # Nemes
-"ae795aa8-6327-408e-92ab-25c8a59f3ba1", # jomo
-"305ccbd7-0589-403e-a45b-d791dcfdee7d", # PanFritz
-"51f2ad3c-6cc8-40ea-aa2b-f25970316921"  # Dico
-]
+pythoners = (
+    "e452e012-2c82-456d-853b-3ac8e6b581f5", # Nemes
+    "ae795aa8-6327-408e-92ab-25c8a59f3ba1", # jomo
+    "d2693e91-93e1-4e3f-929f-f38e1ce8df03", # Pepich1851
+    "51f2ad3c-6cc8-40ea-aa2b-f25970316921"  # Dico200
+)
 
 @simplecommand("pyeval",
         usage       = "[code..]",

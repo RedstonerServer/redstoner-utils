@@ -5,7 +5,11 @@ from java.util.UUID import fromString as juuid
 toggle_dict = {}
 permission = "utils.pmtoggle"
 
-@hook.command("tm")
+@hook.command("pmtoggle",
+              aliases = ["tm", "mt", "tmsg", "msgt", "pmt", "tpm"],
+              usage = "/<command> [player]",
+              description = "Toggle automatic sending of messages"
+              )
 def on_toggle_message_command(sender, command, label, args):
     if not sender.hasPermission(permission) or not is_player(sender):
         noperm(sender)

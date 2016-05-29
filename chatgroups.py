@@ -21,6 +21,8 @@ def on_chatgroup_command(sender, command, label, args):
     if len(args) == 1 and args[0] == "leave":
         if sender_id in groups.keys():
             groupchat(sender, "left the group", True)
+            if sender in cg_toggle_list:
+                cg_toggle_list.remove(p)
             group = groups[sender_id]
             del(groups[sender_id])
             save_groups()
@@ -43,11 +45,18 @@ def on_chatgroup_command(sender, command, label, args):
         msg(sender, "&aUse chat like '&e%s<message>' to send messages to this group." % get_key(sender_id))
     elif len(args) == 1 and args[0] == "key":
         msg(sender, "&aYour chatgroup key is currently: '&c%s&a'" % get_key(sender_id))
+    elif len(args) == 1 and args[0] == "tpahere":
+        if sender_id in groups.keys():
+            do_for_chatgroup(groups[sender_id], send_tpa_request, sender)
+            msg(sender, "&aSent a tpahere request to all users in your chatgroup")
+        else:
+            msg(sender, "&cYou have to be in a chatgroup to do that")
     else:
         msg(sender, "&e/chatgroup join <name>")
         msg(sender, "&e/chatgroup leave")
         msg(sender, "&e/chatgroup info")
         msg(sender, "&e/chatgroup key")
+        msg(sender, "&e/chatgroup tpahere")
 
 
 @hook.command("cgt")
@@ -72,11 +81,19 @@ def groupchat(sender, message, ann = False):
         mesg = "&8[&bCG&8] &e&o%s&e&o %s" % (name, message)
     else:
         mesg = "&8[&bCG&8] &f%s&f: &6%s" % (name, message)
+    mesg = colorify(mesg)
+    
     info("[ChatGroups] %s (%s): %s" % (sender.getDisplayName(), group, message))
+    do_for_chatgroup(group, msg, mesg, usecolor = False)
+
+def do_for_chatgroup(group, func, *args, **kwargs):
     for receiver in server.getOnlinePlayers():
-        groups.get(uid(receiver)) == group and msg(receiver, mesg)
+        if groups.get(uid(receiver)) == group:
+            func(receiver, *args, **kwargs)
 
-
+def send_tpa_request(receiver, sender):
+    if not receiver == sender:
+        runas(sender, "/tpahere " + receiver.getName())
 
 def save_groups():
     save_json_file("chatgroups", groups)
@@ -114,6 +131,7 @@ def chatgroupkey_command(sender, command, label, args):
     cg_keys[uid(sender)] = key
     save_keys()
     return "&aYour chatgroup key was set to: '&c%s&a'" % key
+
 
 def save_keys():
     save_json_file("chatgroup_keys", cg_keys)
