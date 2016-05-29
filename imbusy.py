@@ -257,7 +257,6 @@ def on_player_command_preprocess(event):
         event.setCancelled(True)
 
 
-@hook.enable
 def replace_ess_commands():
 
     try:

@@ -19,12 +19,17 @@ except:
 
 @hook.enable
 def on_enable():
+    if "blockplacemods" in shared["modules"]:
+        shared["modules"]["blockplacemods"].schedule_torch_breaker()
+    if "imbusy" in shared["modules"]:
+        shared["modules"]["imbusy"].replace_ess_commands()
     info("RedstonerUtils enabled!")
 
 
 @hook.disable
 def on_disable():
-    shared["modules"]["reports"].stop_reporting()
+    if "reports" in shared["modules"]:
+        shared["modules"]["reports"].stop_reporting()
     info("RedstonerUtils disabled!")
 
 
