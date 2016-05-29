@@ -279,11 +279,15 @@ def is_ip(tocheck):
 
 # Allows the use of e.g. numeric permission nodes like "permission.amount.5" and similar.
 # To get the data fetch the player and the start of the permission node, looking like "permission.amount."
-def get_permission_content(player, permnode):
-    perms = player.getEffectivePermissions()
-    for perm in perms:
-        if str(perm.getPermission()).startswith(permnode):
-               return str(perm.getPermission())[len(permnode):]
+def get_permission_content(player, permnode, default_value = None):
+    try:
+        perms = player.getEffectivePermissions()
+        for perm in perms:
+            if str(perm.getPermission()).startswith(permnode):
+                   return str(perm.getPermission())[len(permnode):]
+        return default_value
+    except:
+        error(trace())
 
 
 def array_to_list(array):

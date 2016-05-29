@@ -120,23 +120,26 @@ def on_join(event):
 
 @hook.event("player.AsyncPlayerChatEvent", "high")
 def on_player_chat(event):
-    if enabled:
-        if event.isCancelled():
-            return
-        player = event.getPlayer() 
-        if not hasPerm(player, permission_USE):
-            return
-        msg_limit = int(get_permission_content(player, permission_LENGTH))
-        for alias, value in data[str(uid(player))].items():
-            if player.hasPermission("essentials.chat.color"):
-                event.setMessage(event.getMessage().replace(colorify(alias), colorify(value)))
-            else:
-                event.setMessage(event.getMessage().replace(alias, value))
-            if not player.hasPermission(permission_ALL) and len(event.getMessage()) > msg_limit:
-                event.setCancelled(True)
-                plugin_header(player, "Alias")
-                msg(player, "The message you wanted to generate would exceed the length limit limit of %d. Please make it shorter!" % msg_limit)
+    try:
+        if enabled:
+            if event.isCancelled():
                 return
+            player = event.getPlayer() 
+            if not hasPerm(player, permission_USE):
+                return
+            msg_limit = int(get_permission_content(player, permission_LENGTH))
+            for alias, value in data[uid(player)].iteritems():
+                if player.hasPermission("essentials.chat.color"):
+                    event.setMessage(event.getMessage().replace(colorify(alias), colorify(value)))
+                else:
+                    event.setMessage(event.getMessage().replace(alias, value))
+                if not player.hasPermission(permission_ALL) and len(event.getMessage()) > msg_limit:
+                    event.setCancelled(True)
+                    plugin_header(player, "Alias")
+                    msg(player, "The message you wanted to generate would exceed the length limit limit of %d. Please make it shorter!" % msg_limit)
+                    return
+    except:
+        error(trace())
 
 
 def hasPerm(player, permission):
@@ -316,14 +319,12 @@ def load_data_thread(uuid):
     curs = conn.cursor()
     curs.execute("SELECT `alias` FROM `chatalias` WHERE `uuid` = ?;", (uuid, ))
     results = curs.fetchall()
-    if len(results) == 0:
-        value = dict(global_aliases)
-        curs.execute("INSERT INTO `chatalias` VALUES (?,?);", (uuid, json_dumps(results), ))
-        conn.commit()
-    else:
-        value = json_loads(results[0][0])
     curs.close()
     conn.close()
+    if len(results) == 0:
+        value = dict(global_aliases)
+    else:
+        value = json_loads(results[0][0])
     data[uuid] = value
 
 
@@ -341,10 +342,9 @@ def save_data(uuid):
 def save_data_thread(uuid):
     conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs = conn.cursor()
-    try:
-        curs.execute("UPDATE `chatalias` SET `alias` = ? WHERE `uuid` = ?;", (json_dumps(data[uuid]), uuid, ))
-    except:
-        error(trace())
+    value = json_dumps(data[uuid])
+    curs.execute("INSERT INTO `chatalias` VALUES (?, ?) ON DUPLICATE KEY UPDATE `alias` = ?;", 
+        (uuid, value, value))
     conn.commit()
     curs.close()
     conn.close()
