@@ -5,8 +5,6 @@ import mysqlhack
 import org.bukkit as bukkit
 from org.bukkit import *
 from helpers import *
-from traceback import format_exc as trace
-from secrets import *
 
 # Version number and requirements
 
@@ -208,7 +206,7 @@ def is_alias_limit_reached(player, recipient, not_silent = False):
     if player.hasPermission(permission_ALL):
         return False
     alias_limit = int(get_permission_content(player, permission_AMOUNT))
-    if len(data[uid(player)]) > alias_limit:
+    if len(data[uid(player)]) >= alias_limit:
         message = ("&cYour limit of %d has been reached" if player is recipient else "&cThe limit of %d has been reached for that player") % alias_limit
         msg(recipient, message)
         if not_silent:

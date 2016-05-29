@@ -7,6 +7,7 @@ from login_secrets import * #Don't forget to make login_secrets aswell
 import mysqlhack
 from com.ziclix.python.sql import zxJDBC
 from java.lang import Runnable
+from player import get_py_player, py_players
 
 wait_time = 30 #seconds
 admin_perm = "utils.loginsecurity.admin"

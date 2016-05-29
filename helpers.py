@@ -11,8 +11,6 @@ import org.bukkit.block as bblock
 import org.bukkit.event.entity as entity
 import org.bukkit.command.ConsoleCommandSender
 from org.bukkit.entity import *
-from player import get_py_player
-from player import py_players
 
 #Imports for async query
 from secrets import *
@@ -254,19 +252,6 @@ def save_json_file(filename, obj):
         error("Failed to write to %s: %s" % (filename, e))
 
 
-def toggle(player, ls, name = "Toggle", add = None):
-    """
-    Toggles presence of a player's UUID in a list
-    If add is given, True explicitely adds it whereas False removes it
-    """
-    pid = uid(player)
-    if pid in ls or add == False:
-        ls.remove(pid)
-        msg(player, "&a%s turned off!" % name)
-    elif add != False:
-        ls.append(pid)
-        msg(player, "&a%s turned on!" % name)
-
 def send_JSON_message(playername, message):
     bukkit.Bukkit.getServer().dispatchCommand(bukkit.Bukkit.getServer().getConsoleSender(), "tellraw " + playername + " " + message)
 
@@ -298,21 +283,13 @@ def get_permission_content(player, permnode):
     perms = player.getEffectivePermissions()
     for perm in perms:
         if str(perm.getPermission()).startswith(permnode):
-               return str(perm.getPermission()).replace(permnode, "")
-
-
-# Gets an online player from their name
-def get_player(name):
-    for p in bukkit.Bukkit.getServer().getOnlinePlayers():
-        if p.getName().lower() == name.lower():
-            return p
-    return None
+               return str(perm.getPermission())[len(permnode):]
 
 
 def array_to_list(array):
     return_list = []
     for a in array:
-        return_list += [a]
+        return_list.append(a)
     return return_list
 
 
