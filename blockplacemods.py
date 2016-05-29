@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack as ItemStack
 import org.bukkit.Material as Material
 import org.bukkit.event.block.Action as Action
 import org.bukkit.block.BlockFace as BlockFace
-import org.bukkit.scheduler.BukkitRunnable as Runnable
+import org.bukkit.scheduler.BukkitRunnable as BukkitRunnable
 
 """
   # Permissions:
@@ -38,11 +38,11 @@ settingInformation = dict( #[setting type, identifying description, detailed des
         "Sets your preferred default furnace contents to your currently held itemstack. Use an empty hand to empty a slot, or /toggle furnace clear to clear all slots.",
         ["cooker", "fillf"], 2
     ],
-    #torch = [0,
-    #    "removal of torches you place on redstone blocks",
-    #    "Toggles whether redstone torches which you place on redstone blocks will be deleted after a short amount of delay.",
-    #    ["redstonetorch", "tor"]
-    #],
+    torch = [0,
+        "removal of torches you place on redstone blocks",
+        "Toggles whether redstone torches which you place on redstone blocks will be deleted after a short amount of delay.",
+        ["redstonetorch", "tor"]
+    ],
     piston = [2,
         "rotating pistons, droppers and hoppers to face the block you place them against",
         "Toggles whether pistons or sticky pistons which you place will be rotated to face the block which you placed them against.",
@@ -66,13 +66,21 @@ defaults = {
     2: list
 }
 
-faces = {
+piston_faces = {
     BlockFace.DOWN  : 0,
     BlockFace.UP    : 1,
     BlockFace.NORTH : 2,
     BlockFace.SOUTH : 3,
     BlockFace.WEST  : 4,
     BlockFace.EAST  : 5
+}
+
+torch_faces = {
+    1: BlockFace.WEST,
+    2: BlockFace.EAST,
+    3: BlockFace.NORTH,
+    4: BlockFace.SOUTH,
+    5: BlockFace.DOWN
 }
 
 playerSettings = open_json_file("blockplacemods", {})
@@ -128,14 +136,14 @@ def toggle_command(sender, command, label, args):
             elif arg2 in ("toggle", "switch"):
                 new = not enabled
             elif arg2 in ("on", "enable"):
-                new = not default
+                new = True
             elif arg2 in ("off", "disable"):
-                new = default
+                new = False
             else:
                 return " &cArgument '%s' was not recognized. \n Use &o/toggle %s info &cfor more information" % (arg2, setting)
-        if enabled == new:
+        if enabled is new:
             return " &cAlready %s: &a%s" % ("enabled" if enabled else "disabled", details[1])
-        if new == default:
+        if new is default:
             values.remove(uuid)
         else:
             values.append(uuid)
@@ -150,10 +158,11 @@ def toggle_command(sender, command, label, args):
         if arg2 == "clear":
             if enabled:
                 del values[uuid]
+                saveSettings()
                 return " &aDisabled " + details[1]
             return " &cAlready disabled: " + details[1]
 
-        if arg2 == "details":
+        if arg2 == "info":
             return " &aSetting %s:\n &9%s \n&6Accepted arguments: [<slot>|clear|details]" % (setting, details[2])
 
         slot = int(arg2) if arg2.isdigit() else 0
@@ -166,10 +175,11 @@ def toggle_command(sender, command, label, args):
                 items = values[uuid]
                 if slot in items:
                     del items[slot]
-                    saveSettings()
                     if len(items) == 0:
                         del items
+                        saveSettings()
                         return " &aDisabled " + details[1]
+                    saveSettings()
                     return " &aCleared slot %s of setting %s" % (slot, setting)
                 return " &cSlot %s of setting %s was already cleared!" % (slot, setting)
             return " &cAlready disabled: " + details[1]
@@ -198,59 +208,63 @@ def isEnabled(toggleSetting, uuid):
 
 @hook.event("block.BlockPlaceEvent", "monitor")
 def on_block_place(event):
-    if event.isCancelled():
-        return
-    player = event.getPlayer()
-    if not is_creative(player):
-        return
+    try:
 
-    uuid     = uid(player)
-    block    = event.getBlockPlaced()
-    material = block.getType()
+        if event.isCancelled():
+            return
+        player = event.getPlayer()
+        if not is_creative(player):
+            return
 
-
-    if (material in (Material.WOOD_STEP, Material.STEP)
-        and isEnabled("slab", uuid)
-        and player.hasPermission("utils.toggle.slab")
-        and block.getData() < 8
-        ):
-        block.setData(block.getData() + 8) # Flip upside down
+        uuid     = uid(player)
+        block    = event.getBlockPlaced()
+        material = block.getType()
 
 
-    elif (material == Material.CAULDRON
-        and isEnabled("cauldron", uuid)
-        and player.hasPermission("utils.toggle.cauldron")
-        ):
-        block.setData(3) #3 layers of water, 3 signal strength
+        if (material in (Material.WOOD_STEP, Material.STEP)
+            and isEnabled("slab", uuid)
+            and player.hasPermission("utils.toggle.slab")
+            and block.getData() < 8
+            ):
+            block.setData(block.getData() + 8) # Flip upside down
 
 
-    elif ((material == Material.FURNACE and player.hasPermission("utils.toggle.furnace"))
-        or (material == Material.DROPPER and player.hasPermission("utils.toggle.dropper"))
-        or (material == Material.HOPPER and player.hasPermission("utils.toggle.hopper"))
-        ):
-        stacks = get(str(material).lower()).get(uuid)
-        if stacks != None: # Enabled
-            state = block.getState()
-            inv = state.getInventory()
-            for slot, stack in stacks.iteritems():
-                inv.setItem(int(slot), toStack(stack))
-            state.update()
-
-    """
-    elif (material == Material.REDSTONE_TORCH_ON
-        and event.getBlockAgainst().getType() == Material.REDSTONE_BLOCK
-        and isEnabled("torch", uuid)
-        and player.hasPermission("utils.toggle.torch")
-        ):
-        torches_to_break.append(block)
-    """
+        elif (material == Material.CAULDRON
+            and isEnabled("cauldron", uuid)
+            and player.hasPermission("utils.toggle.cauldron")
+            ):
+            block.setData(3) #3 layers of water, 3 signal strength
 
 
-    if (material in (Material.PISTON_BASE, Material.PISTON_STICKY_BASE)
-        and isEnabled("piston", uuid)
-        and player.hasPermission("utils.toggle.piston")
-        ):
-        block.setData(faces[block.getFace(event.getBlockAgainst())])
+        elif ((material == Material.FURNACE and player.hasPermission("utils.toggle.furnace"))
+            or (material == Material.DROPPER and player.hasPermission("utils.toggle.dropper"))
+            or (material == Material.HOPPER and player.hasPermission("utils.toggle.hopper"))
+            ):
+            stacks = get(str(material).lower()).get(uuid)
+            if stacks != None: # Enabled
+                state = block.getState()
+                inv = state.getInventory()
+                for slot, stack in stacks.iteritems():
+                    inv.setItem(int(slot), toStack(stack))
+                state.update()
+
+
+        elif (material == Material.REDSTONE_TORCH_ON
+            and isEnabled("torch", uuid)
+            and player.hasPermission("utils.toggle.torch")
+            and block.getData() in torch_faces
+            and block.getRelative(torch_faces[block.getData()]).getType() is Material.REDSTONE_BLOCK
+            ):
+            torches_to_break.append(block)
+
+
+        elif (material in (Material.PISTON_BASE, Material.PISTON_STICKY_BASE)
+            and isEnabled("piston", uuid)
+            and player.hasPermission("utils.toggle.piston")
+            ):
+            block.setData(piston_faces[block.getFace(event.getBlockAgainst())])
+    except:
+        error(trace())
 
 
 @hook.event("player.PlayerInteractEvent", "monitor")
@@ -269,29 +283,36 @@ def on_interact(event):
         if not event2.isCancelled():
             block.setData(block.getData() - 1 if block.getData() > 0 else 3)
 
-"""
+
 break_torches = True
 torches_to_break = deque()
 
 def stop_breaking_torches():
     break_torches = False
-    info("Interrupted torch breaking thread")
+    info("[BlockPlaceMods] Interrupted torch breaking thread")
 
 
-class torch_breaker(Runnable):
+class JBukkitRunnable(BukkitRunnable):
 
-    def run():
+    def __init__(self, func):
+        self.run = func
 
-        try:
-            if break_torches:
-                for i in range(len(torches_to_break)):
-                    block = torches_to_break.popleft()
-                    mat = block.getType()
-                    if mat == Material.REDSTONE_TORCH_OFF:
-                        block.setTypeId(0)
-                    elif mat == Material.REDSTONE_TORCH_ON:
+
+def torch_breaker():
+
+    try:
+        if break_torches:
+            for i in range(len(torches_to_break)):
+                block = torches_to_break.popleft()
+                mat = block.getType()
+                if mat == Material.REDSTONE_TORCH_OFF:
+                    block.setTypeId(0)
+                elif mat == Material.REDSTONE_TORCH_ON:
+                    if block.getData() in torch_faces and block.getRelative(torch_faces[block.getData()]).getType() is Material.REDSTONE_BLOCK:
                         torches_to_break.append(block)
-        except:
-            error(trace())
-"""
+    except:
+        error(trace())
 
+
+def schedule_torch_breaker():
+    JBukkitRunnable(torch_breaker).runTaskTimer(server.getPluginManager().getPlugin("RedstonerUtils"), 0, 1)
