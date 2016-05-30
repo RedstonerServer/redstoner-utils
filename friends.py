@@ -29,6 +29,13 @@ def friendmessage(player, message): # sends a message with a prefix
     msg(player, "&7[&aFriends&7] " + message)
 
 
+def get_player(name):
+    result = server.getOfflinePlayer(name)
+    if result is not None and (result.hasPlayedBefore() or result.isOnline()):
+        return result
+    return None
+
+
 def ls(sender):
     try:
         sender_friends = friends.get(uid(sender), False)
@@ -59,21 +66,25 @@ def add(sender, names):
     added         = []
     notfound      = []
     friendalready = []
+    added_self    = False
 
     if not sender_id in friends:
         friends[sender_id] = []
 
     for name in names:
-        player = server.getPlayer(name)
+        player = get_player(name)
         if player:
             player_id = uid(player)
-            not_yourself = player != sender
+            not_yourself = sender != player
 
             if not player_id in friends[sender_id]:
                 if not_yourself:
                     friends[sender_id].append(player_id)
                     added.append(player.getName())
-                    friendmessage(player.getPlayer(), "&a&o%s &aadded you to their friends list" % stripcolors(sender.getDisplayName()))
+                    if player.isOnline():
+                        friendmessage(player.getPlayer(), "&a&o%s &aadded you to their friends list" % stripcolors(sender.getDisplayName()))
+                else:
+                    added_self = True
             else:
                 friendalready.append(player.getName())
 
@@ -84,10 +95,10 @@ def add(sender, names):
     if added:
         friendmessage(sender, "&a&o%s&a added." % ", ".join(added))
     if notfound:
-        friendmessage(sender, "&c&o%s&c not found. (must be online)" % ", ".join(notfound))
+        friendmessage(sender, "&c&o%s&c not found." % ", ".join(notfound))
     if friendalready:
         friendmessage(sender, "&c&o%s&c is/are already your friend." % ", ".join(friendalready))
-    if not not_yourself:
+    if added_self:
         friendmessage(sender, "&cYou can't add yourself to your friends list.")
 
 
@@ -98,18 +109,21 @@ def rem(sender, names):
     notafriend = []
 
     for name in names:
-        player = server.getPlayer(name)
+        player = get_player(name)
         if player:
             player_id = uid(player)
             if player_id in friends.get(sender_id, []):
                 friends[sender_id].remove(player_id)
                 removed.append(player.getName())
-                friendmessage(player.getPlayer(), "&c&o%s &cremoved you from their friends list" % stripcolors(sender.getDisplayName()))
+                if player.isOnline():
+                    friendmessage(player.getPlayer(), "&c&o%s &cremoved you from their friends list" % stripcolors(sender.getDisplayName()))
             else:
                 notafriend.append(player.getName())
         else:
             notfound.append(name)
 
+    if not friends.get(sender_id, False):
+        del friends[sender_id]
     save_friends()
     if removed:
         friendmessage(sender, "&a&o%s&a removed." % ", ".join(removed))
@@ -130,35 +144,38 @@ def fhelp(sender):
 
 @hook.command("friends")
 def on_friend_command(sender, command, label, args):
-    if not is_player(sender):
-        friendmessage(sender, "&c&lYou can't have friends!")
+    try:
+        if not is_player(sender):
+            friendmessage(sender, "&c&lYou can't have friends!")
+            return True
+
+        cmd   = args[0] if args else None
+        fargs = args[1:]
+
+        # /friends list
+        if cmd in ["list", "lst", "*"]:
+            thread.start_new_thread(ls, (sender,))
+
+        # /friends clear
+        elif cmd in ["clear", "/"]:
+            clear(sender)
+
+        # /friends add <names>
+        elif cmd in ["add", "+"]:
+            if fargs:
+                add(sender, fargs)
+            else:
+                fhelp(sender)
+
+        # /friends remove <names>
+        elif cmd in ["remove", "rem", "delete", "del", "-"]:
+            if fargs:
+                rem(sender, fargs)
+            else:
+                fhelp(sender)
+
+        else:
+            fhelp(sender)
         return True
-
-    cmd   = args[0] if args else None
-    fargs = args[1:]
-
-    # /friends list
-    if cmd in ["list", "lst", "*"]:
-        thread.start_new_thread(ls, (sender,))
-
-    # /friends clear
-    elif cmd in ["clear", "/"]:
-        clear(sender)
-
-    # /friends add <names>
-    elif cmd in ["add", "+"]:
-        if fargs:
-            add(sender, fargs)
-        else:
-            fhelp(sender)
-
-    # /friends remove <names>
-    elif cmd in ["remove", "rem", "delete", "del", "-"]:
-        if fargs:
-            rem(sender, fargs)
-        else:
-            fhelp(sender)
-
-    else:
-        fhelp(sender)
-    return True
+    except:
+        error(trace())
