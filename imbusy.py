@@ -109,7 +109,8 @@ def status(sender, args):
         noperm(sender)
         return True
     if len(args) == 0:
-        if sender.getName() in busy_players:
+        sender_name = sender.getName()
+        if sender_name in busy_players:
             if busy_players[sender_name] is False:
                 msg(sender, "&7You are currently busy.")
             else:
@@ -120,8 +121,9 @@ def status(sender, args):
         target = server.getPlayer(args[0])
         if target is None:
             msg(sender, "&7That player is not online")
-        elif target.getName() in busy_players:
-            if busy_players[target.getName()] is False:
+        target_name = target.getName()
+        elif target_name in busy_players:
+            if busy_players[target_name] is False:
                 msg(sender, "&7Player %s &7is currently busy." % target.getDisplayName())
             else:
                 msg(sender, "&7Player %s &7is currently SUPER busy." % target.getDisplayName())
