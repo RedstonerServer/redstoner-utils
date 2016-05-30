@@ -62,7 +62,7 @@ def toggle(sender):
         del busy_players[sender_name]
         broadcast(None, sender.getDisplayName() + " &7is no longer busy...")
     else:
-        busy_players.append(sender_name)
+        busy_players[sender_name] = False
         broadcast(None, sender.getDisplayName() + " &7is now busy...")
     return True
 
