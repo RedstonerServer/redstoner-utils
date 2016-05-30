@@ -304,4 +304,5 @@ def debug(func):
             return func(*args, **kwargs)
         except:
             error(trace())
+            return None
     return wrap
