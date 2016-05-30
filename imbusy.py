@@ -236,7 +236,6 @@ def tpahere_command_checker(sender, args):
     return tpa_command_checker(sender, args)
 
 def mail_command_checker(sender, args):
-    info("Mail command executed")
     if len(args) < 3 or args[0].lower() != "send":
         return True
     target = server.getPlayer(args[1])
