@@ -301,7 +301,7 @@ def array_to_list(array):
 def debug(func):
     def wrap(*args, **kwargs):
         try:
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
         except:
-            print(trace())
+            error(trace())
     return wrap
