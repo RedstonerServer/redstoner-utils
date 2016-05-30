@@ -161,15 +161,12 @@ def get_attached_blocks(block):
 
 @hook.event("block.BlockBreakEvent", "highest")
 def on_block_break(event):
-    try:
-        if removing_input or changing_input or event.isCancelled():
-            return
-        block = event.getBlock()
-        check_block_break(event, event.getBlock())
-        for affected_block in get_attached_blocks(block):
-            check_block_break(event, affected_block)
-    except:
-        error(trace())
+    if removing_input or changing_input or event.isCancelled():
+        return
+    block = event.getBlock()
+    check_block_break(event, event.getBlock())
+    for affected_block in get_attached_blocks(block):
+        check_block_break(event, affected_block)
 
 
 @hook.event("player.PlayerInteractEvent", "normal")
