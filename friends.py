@@ -98,7 +98,7 @@ def rem(sender, names):
     notafriend = []
 
     for name in names:
-        player = server.Player(name)
+        player = server.getPlayer(name)
         if player:
             player_id = uid(player)
             if player_id in friends.get(sender_id, []):
