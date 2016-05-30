@@ -23,6 +23,8 @@ def on_enable():
         shared["modules"]["blockplacemods"].schedule_torch_breaker()
     if "imbusy" in shared["modules"]:
         shared["modules"]["imbusy"].replace_ess_commands()
+    if "serversigns" in shared["modules"]:
+        shared["modules"]["serversigns"].check_all_signs()
     info("RedstonerUtils enabled!")
 
 

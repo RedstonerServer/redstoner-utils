@@ -266,8 +266,6 @@ def svs_command(sender, command, label, args):
     #-------------------------------------------------------------------------------------------------------
 
 
-
-
 @hook.event("player.PlayerInteractEvent")
 def on_click(event):
     if str(event.getAction()) != "RIGHT_CLICK_BLOCK":
@@ -297,38 +295,36 @@ faces = {
 
 @hook.event("block.BlockBreakEvent", "monitor")
 def on_break(event):
-    try:
-        global checking_block
-        if checking_block or event.isCancelled():
-            return
+    if checking_block or event.isCancelled():
+        return
 
-        block = event.getBlock()
-        if block.getType() in (Material.SIGN_POST, Material.WALL_SIGN):
-            check_sign(event, block, attached = False)
+    block = event.getBlock()
+    if block.getType() in (Material.SIGN_POST, Material.WALL_SIGN):
+        check_sign(event, block, attached = False)
 
-        for block_face, data_values in faces.iteritems():
-            block2 = block.getRelative(block_face)
-            if block2.getType() == Material.WALL_SIGN and block2.getData() in data_values:
-                check_sign(event, block2)
+    for block_face, data_values in faces.iteritems():
+        block2 = block.getRelative(block_face)
+        if block2.getType() == Material.WALL_SIGN and block2.getData() in data_values:
+            check_sign(event, block2)
 
-        block3 = block.getRelative(BlockFace.UP)
-        if block3.getType() == Material.SIGN_POST:
-            check_sign(event, block3)
-    except:
-        error(trace())
+    block3 = block.getRelative(BlockFace.UP)
+    if block3.getType() == Material.SIGN_POST:
+        check_sign(event, block3)
 
 
 def check_sign(event, block, attached = True):
     player = event.getPlayer()
-    sign = getSign(fromLoc(block.getLocation()))
+    loc = fromLoc(block.getLocation())
+    if block.getType() not in (Material.WALL_SIGN, Material.SIGN_POST) or getSign(loc) is None:
+        return
     if not can_build2(player, block):
         event.setCancelled(True)
         msg(event.getPlayer(), signsMsg("You cannot break %s" % ("the sign attached to that block" if attached else "that sign")))
     else:
-        loc = fromLoc(block.getLocation())
         del signs[loc]
         save_signs()
         msg(player, signsMsg("Reset the %s which you just broke" % identifySign(loc)))
+
 
 def can_build2(player, block):
     global checking_block
@@ -338,3 +334,8 @@ def can_build2(player, block):
     checking_block = False
     return not event.isCancelled()
 
+
+def check_all_signs():
+    for loc in signs:
+        if server.getWorld(loc[0]).getBlockAt(loc[1], loc[2], loc[3]).getType() not in (Material.WALL_SIGN, Material.SIGN_POST):
+            del signs[loc]
