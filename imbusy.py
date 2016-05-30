@@ -19,7 +19,7 @@ base_permission = "utils.imbusy" # for /busy status
 use_permission = "utils.imbusy.use" # for being busy
 override_permission = "utils.imbusy.override" # for being able to bother busy people
 
-busy_status_change_timeout = 2 # seconds
+busy_status_change_timeout = 15 # seconds
 
 busy_players = {} # name : (status, timeout_expire)
 # possible statuses: True if SUPER busy, False if normal busy, None if not busy
