@@ -11,6 +11,7 @@ be cleared.
 from helpers import *
 from friends import is_friend_of
 import org.bukkit.command.Command as Command
+from time import time as now
 
 imbusy_version = "v1.1.0"
 
@@ -18,8 +19,10 @@ base_permission = "utils.imbusy" # for /busy status
 use_permission = "utils.imbusy.use" # for being busy
 override_permission = "utils.imbusy.override" # for being able to bother busy people
 
+busy_status_change_timeout = 2 # seconds
 
-busy_players = {} # name : false/true where false is normal busy and true is super busy
+busy_players = {} # name : (status, timeout_expire)
+# possible statuses: True if SUPER busy, False if normal busy, None if not busy
 
 
 @hook.command("imbusy",
@@ -27,6 +30,7 @@ busy_players = {} # name : false/true where false is normal busy and true is sup
     usage = "/<command> [on, off, status/check]",
     description = "Offers control over your busy status"
     )
+@debug
 def on_busy_command(sender, cmd, label, args):
     if not is_player(sender):
         msg(sender, "&7Sorry, Console cannot be busy")
@@ -53,17 +57,47 @@ def on_busy_command(sender, cmd, label, args):
     return help(sender)
 
 
+def change_status(target, status):
+    target_name = target.getName()
+    old_status = None
+    if target_name in busy_players:
+        value = busy_players[target_name]
+        time_left = value[1] - now()
+        if time_left > 0:
+            msg(target, "&cYou must wait %.2fs untill you can change your status" % time_left)
+            return
+        old_status = value[0]
+
+    if old_status is status:
+        if status is True:
+            msg(target, "&cYou are already SUPER busy")
+        elif status is False:
+            msg(target, "&cYou are already busy")
+        else:
+            msg(target, "&cYou weren't busy yet")
+        return
+
+    busy_players[target_name] = (status, now() + busy_status_change_timeout)
+    if status is True:
+        broadcast(None, target.getDisplayName() + " &7is now SUPER busy")
+    elif status is False:
+        broadcast(None, target.getDisplayName() + " &7is now busy")
+    else:
+        broadcast(None, target.getDisplayName() + " &7is not busy anymore")
+
+
+def get_status(target):
+    return busy_players.get(target.getName(), (None,))[0]
+
+
 def toggle(sender):
     if not sender.hasPermission(use_permission):
         noperm(sender)
         return True
-    sender_name = sender.getName()
-    if sender_name in busy_players:
-        del busy_players[sender_name]
-        broadcast(None, sender.getDisplayName() + " &7is no longer busy...")
+    if get_status(sender) is None:
+        change_status(sender, False)
     else:
-        busy_players[sender_name] = False
-        broadcast(None, sender.getDisplayName() + " &7is now busy...")
+        change_status(sender, None)
     return True
 
 
@@ -82,12 +116,7 @@ def on(sender):
     if not sender.hasPermission(use_permission):
         noperm(sender)
         return True
-    sender_name = sender.getName()
-    if busy_players.get(sender_name) is False: # can be None, False or True
-        msg(sender, "&7You are already busy!")
-    else:
-        busy_players[sender_name] = False # busy but not super busy
-        broadcast(None, sender.getDisplayName() + " &7is now busy...")
+    change_status(sender, False)
     return True
 
 
@@ -95,12 +124,7 @@ def off(sender):
     if not sender.hasPermission(use_permission):
         noperm(sender)
         return True
-    sender_name = sender.getName()
-    if sender_name not in busy_players:
-        msg(sender, "&7You are not busy! You cannot be even less busy! Are you perhaps bored?")
-        return True
-    del busy_players[sender_name]
-    broadcast(None, sender.getDisplayName() + " &7is no longer busy...")
+    change_status(sender, None)
     return True
 
 
@@ -109,26 +133,20 @@ def status(sender, args):
         noperm(sender)
         return True
     if len(args) == 0:
-        sender_name = sender.getName()
-        if sender_name in busy_players:
-            if busy_players[sender_name] is False:
-                msg(sender, "&7You are currently busy.")
-            else:
-                msg(sender, "&7You are currently SUPER busy.")
-        else:
-            msg(sender, "&7You are currently not busy.")
+        target = sender
     else:
         target = server.getPlayer(args[0])
         if target is None:
-            msg(sender, "&7That player is not online")
-        target_name = target.getName()
-        elif target_name in busy_players:
-            if busy_players[target_name] is False:
-                msg(sender, "&7Player %s &7is currently busy." % target.getDisplayName())
-            else:
-                msg(sender, "&7Player %s &7is currently SUPER busy." % target.getDisplayName())
-        else:
-            msg(sender, "&7Player %s &7is currently not busy." % target.getDisplayName())
+            msg(sender, "&cThat player is not online")
+            return True
+    status = get_status(target)
+    if status is True:
+        status_str = "SUPER busy"
+    elif status is False:
+        status_str = "busy"
+    else:
+        status_str = "not busy"
+    msg(sender, "&7%s currently %s" % ("You are" if target is sender else "Player %s&7 is" % target.getDisplayName()), status_str)
     return True
 
 
@@ -136,12 +154,7 @@ def super_cmd(sender):
     if not sender.hasPermission(use_permission):
         noperm(sender)
         return True
-    sender_name = sender.getName()
-    if busy_players.get(sender_name) is True:
-        msg(sender, "&7You are already SUPER busy!")
-    else:
-        busy_players[sender_name] = True # SUPER busy
-        broadcast(None, sender.getDisplayName() + " &7is now SUPER busy...")
+    change_status(sender, True)
     return True
 
 
@@ -152,47 +165,48 @@ def on_player_leave(event):
         del busy_players[player_name]
 
 
-#---- Dicode for catching any bothering of busy people ----
+# Block any bothering if should be. If a busy player msgs someone else, they can be replied to and /msg'd as well.
+# It's not entirely perfect in that regard as the ability to reply is lost when you are /msg'd by someone else. 
 
-
-reply_targets = {}
+reply_targets = {} # name : (reply_target_name, true if initiated by target)
 
 
 def can_send(sender, target):
-    if not target.getName() in busy_players:
-        return True
     if target is sender or sender.hasPermission(override_permission):
         return True
-    return busy_players[target.getName()] is False and is_friend_of(target, sender)
+    status = get_status(target)
+    if status is None:
+        return True
+    return status is False and is_friend_of(target, sender)
 
 
 def whisper(sender, target_name):
     target = server.getPlayer(target_name)
 
     if target is not None:
+        sender_name = sender.getName()
         if not can_send(sender, target):
-            msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
-            return False
+            value = reply_targets[sender_name]
+            if value[0] != target_name or value[1] is False:
+                msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
+                return False
 
-        reply_targets[sender.getName()] = target.getName()
-
-        # allow the target to reply regardless of sender being busy
-        if target.getName() in reply_targets:
-            del reply_targets[target.getName()]
+        reply_targets[sender_name] = (target_name, False)
+        reply_targets[target_name] = (sender_name, True)
     return True
 
 
 def reply(sender):
-    if sender.getName() in reply_targets:
-        target = server.getPlayer(reply_targets[sender.getName()])
+    sender_name = sender.getName()
+    if sender_name in reply_targets:
+        value = reply_targets[sender_name]
+        target = server.getPlayer(value[0])
         if target is not None: 
-            if not can_send(sender, target):
+            if not value[1] and not can_send(sender, target):
                 msg(sender, "&c[&fBUSY&c] %s&r is busy!" % target.getDisplayName())
                 return False
 
-            # allow the target to reply regardless of sender being busy
-            if target.getName() in reply_targets:
-                del reply_targets[target.getName()]
+            reply_targets[target.getName()] = (sender_name, True)
     return True
 
 
