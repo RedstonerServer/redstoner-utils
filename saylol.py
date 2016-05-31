@@ -77,6 +77,7 @@ def on_lol_command(sender, command, label, args):
             return True
         if int(arg1) == 0:
             msg(sender, "&cPage 0 does not exist")
+            return True
         arg1 = int(arg1) - 1
         offset = list_limit * arg1
         if offset > len(lols):
