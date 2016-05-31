@@ -24,7 +24,7 @@ def on_enable():
     if "imbusy" in shared["modules"]:
         shared["modules"]["imbusy"].replace_ess_commands()
     if "serversigns" in shared["modules"]:
-        shared["modules"]["serversigns"].check_all_signs()
+        shared["modules"]["serversigns"].check_all_signs_and_force_commands()
     info("RedstonerUtils enabled!")
 
 

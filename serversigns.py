@@ -335,7 +335,25 @@ def can_build2(player, block):
     return not event.isCancelled()
 
 
-def check_all_signs():
+def check_all_signs_and_force_commands():
     for loc in signs:
         if server.getWorld(loc[0]).getBlockAt(loc[1], loc[2], loc[3]).getType() not in (Material.WALL_SIGN, Material.SIGN_POST):
             del signs[loc]
+
+    try:
+        map_field = server.getPluginManager().getClass().getDeclaredField("commandMap")
+        map_field.setAccessible(True)
+        command_map = map_field.get(server.getPluginManager())
+
+        commands_field = command_map.getClass().getDeclaredField("knownCommands")
+        commands_field.setAccessible(True)
+        map = commands_field.get(command_map)
+
+        rsutils_cmd = map.get("redstonerutils:serversigns")
+        map.put("svs", rsutils_cmd)
+        map.put("serversigns", rsutils_cmd)
+        map.put("signsmsg", rsutils_cmd)
+
+    except:
+        error("[Serversigns] failed to force commands")
+        error(trace())
