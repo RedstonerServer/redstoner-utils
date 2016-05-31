@@ -350,7 +350,6 @@ def check_all_signs_and_force_commands():
         map = commands_field.get(command_map)
 
         rsutils_cmd = map.get("redstonerutils:serversigns")
-        info(str(rsutils_cmd))
         map.put("svs", rsutils_cmd)
         map.put("serversigns", rsutils_cmd)
         map.put("signsmsg", rsutils_cmd)
