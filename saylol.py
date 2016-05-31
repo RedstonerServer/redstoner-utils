@@ -5,7 +5,7 @@ from random import randrange
 lols     = open_json_file("lol", [])
 timeout  = 15
 last_msg = 0
-
+list_limit = 20
 
 
 def save_lols():
@@ -69,8 +69,23 @@ def on_lol_command(sender, command, label, args):
             noperm(sender)
 
     elif cmd == "list":
-        for i in range(len(lols)):
+        arg1 = args[1] if len(args) > 1 else None
+        if not arg1:
+            arg1 = "1"        
+        if not arg1.isdigit() or arg1 == "0":
+            msg(sender, "&cUwot m8 putting invalid data here")
+            return True
+        arg1 = int(arg1) - 1
+        offset = list_limit * arg1
+        if offset > len(lols):
+            msg(sender, "&cNot enough lol to display. Please pick a smaller page number.")
+            return True
+        msg(sender, "    &9&nLol list page %s" % str(arg1 + 1)) #"\t" symbol displays weirdly, hence the 4 spaces
+        for i in range(offset, min(offset + list_limit, len(lols))):
             msg(sender, "&a%s: &e%s" % (str(i).rjust(3), lols[i]))
+        msg(sender, "")        
+        msg(sender, "&eFor a specific page, type &a/lol list <page>&e.")
+        msg(sender, "") #emptyline
 
     elif cmd == "search":
         if sender.hasPermission("utils.lol.search"):
@@ -95,9 +110,9 @@ def on_lol_command(sender, command, label, args):
                 msg(sender, "&cInvalid number '&e%s&c'" % args[1])
 
     else:
-        msg(sender, "&a/lol            &eSay random message")
-        msg(sender, "&a/lol list       &eList all messages")
-        msg(sender, "&a/lol id <id>    &eSay specific message")
-        msg(sender, "&a/lol add <text> &eAdd message")
-        msg(sender, "&a/lol del <id>   &eDelete message")
+        msg(sender, "&a/lol               &eSay random message")
+        msg(sender, "&a/lol list [page]   &eList messages")
+        msg(sender, "&a/lol id <id>       &eSay specific message")
+        msg(sender, "&a/lol add <text>    &eAdd message")
+        msg(sender, "&a/lol del <id>      &eDelete message")
     return True
