@@ -72,9 +72,11 @@ def on_lol_command(sender, command, label, args):
         arg1 = args[1] if len(args) > 1 else None
         if not arg1:
             arg1 = "1"        
-        if not arg1.isdigit() or arg1 == "0":
+        if not arg1.isdigit():
             msg(sender, "&cInvalid argument \"%s\"" % arg1)
             return True
+        if int(arg1) == 0:
+            msg(sender, "&cPage 0 does not exist")
         arg1 = int(arg1) - 1
         offset = list_limit * arg1
         if offset > len(lols):
