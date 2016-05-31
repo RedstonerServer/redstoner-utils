@@ -73,12 +73,12 @@ def on_lol_command(sender, command, label, args):
         if not arg1:
             arg1 = "1"        
         if not arg1.isdigit() or arg1 == "0":
-            msg(sender, "&cUwot m8 putting invalid data here")
+            msg(sender, "&cInvalid argument \"%s\"" % arg1)
             return True
         arg1 = int(arg1) - 1
         offset = list_limit * arg1
         if offset > len(lols):
-            msg(sender, "&cNot enough lol to display. Please pick a smaller page number.")
+            msg(sender, "&cNot a valid page (too high).")
             return True
         msg(sender, "    &9&nLol list page %s" % str(arg1 + 1)) #"\t" symbol displays weirdly, hence the 4 spaces
         for i in range(offset, min(offset + list_limit, len(lols))):
