@@ -252,6 +252,21 @@ def save_json_file(filename, obj):
         error("Failed to write to %s: %s" % (filename, e))
 
 
+def toggle(player, ls, name = "Toggle", add = None):
+    """
+    Toggles presence of a player's UUID in a list
+    If add is given, True explicitely adds it whereas False removes it
+    """
+    pid = uid(player)
+    if pid in ls or add is False:
+        ls.remove(pid)
+        msg(player, "&a%s turned off!" % name)
+    elif add is not False:
+        ls.append(pid)
+        msg(player, "&a%s turned on!" % name)
+
+
+
 def send_JSON_message(playername, message):
     bukkit.Bukkit.getServer().dispatchCommand(bukkit.Bukkit.getServer().getConsoleSender(), "tellraw " + playername + " " + message)
 
