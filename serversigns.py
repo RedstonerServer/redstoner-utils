@@ -17,7 +17,8 @@ commands_whitelist = (
     "p h", "plot home", "plot h", "p home", "plotme home", "plotme h",
     "up",
     "tppos",
-    "seen"
+    "seen",
+    "clear",
 )
 
 max_line_length = 256
