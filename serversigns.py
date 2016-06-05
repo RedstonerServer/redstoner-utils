@@ -18,7 +18,6 @@ commands_whitelist = (
     "up",
     "tppos",
     "seen",
-    "clear",
 )
 
 max_line_length = 256
