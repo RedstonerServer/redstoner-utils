@@ -4,6 +4,7 @@ import org.bukkit.Material as Material
 import java.util.UUID as UUID
 import org.bukkit.Material as Material
 import org.bukkit.block.BlockFace as BlockFace
+from math import ceil
 
 commands_whitelist = (
     "mail", "email", "memo",
@@ -22,6 +23,7 @@ commands_whitelist = (
 
 max_line_length = 256
 max_lines = 20
+help_page_size = 12
 
 def load_signs():
     signs_obj = open_json_file("serversigns", [])
@@ -103,6 +105,46 @@ def signsMsg(msg, colour = '4'):
     return "&c[Signs] &" + colour + msg
 
 
+# /svs command
+
+
+subcommand_info = (
+
+    (("claim",), (
+        "Claims the sign so that you can add messages to it", 
+    ), (("[owner]", "claims.other"),)),
+    (("info", "lines"), (
+        "Displays information about the (claimed) sign",
+    )),
+    (("add",), (
+        "Adds the message to the sign. Use ++ at the end",
+        "to add the message to your buffer. You can then use",
+        "the same command again to create a longer message",
+    ), (("<message>[++]", None),)),
+    (("remove", "rem", "del", "delete"), (
+        "Removes the message with the given ID from the sign.",
+        "The ID is given before each message by &b/svs info&a.",
+    ), (("<message ID>", None),)),
+    (("switch", "reverse"), (
+        "Reverses the order in which the given messages are shown.",
+    ), (("<message ID 1> <message ID 2>", None),)),
+    (("clear",), (
+        "Removes all messages from the sign.",
+    )),
+    (("reset", "unclaim"), (
+        "Resets the sign, removing all messages and its owner.",
+    )),
+    (("whitelist", "commands", "wl"), (
+        "Displays a list of whitelisted commands",
+    )),
+    (("help",), (
+        "Displays this help page",
+    ), (("[page]", None),)),
+
+)
+
+
+
 @simplecommand(cmd = "serversigns", aliases = ["svs", "signmsg"],
     description = "Makes something happen when you right click signs. \nUse /svs help for more details.",
     usage = "<claim|reset|add <msg>[++]|remove <ID>|clear|info|help>",
@@ -110,40 +152,55 @@ def signsMsg(msg, colour = '4'):
     senderLimit = 0)
 def svs_command(sender, command, label, args):
     arg1 = args[0].lower()
-    Validate.isTrue(arg1 in ("claim", "reset", "add", "remove", "rem", "del", "delete", "info", "lines", 
-        "clear", "help", "switch", "reverse", "unclaim", "commands", "whitelist", "wl"), 
-        signsMsg("That argument could not be recognized, use &o/svs help &4for expected arguments"))
-    Validate.isAuthorized(sender, "utils.serversigns." + arg1)
+
+    cmd_info = None
+    for cmd in subcommand_info:
+        if arg1 in cmd[0]:
+            cmd_info = cmd
+            break
+
+    Validate.notNone(cmd_info, signsMsg("That command could not be recognized, use &o/svs help &4for expected arguments"))
+    cmd = cmd_info[0][0]
+    Validate.isAuthorized(sender, "utils.serversigns." + cmd)
 
     #-------------------- Sub commands that don't require any conditions -----------------------
-    if arg1 == "help":
-        admin = sender.hasPermission("utils.serversigns.admin")
-        msg = signsMsg("Server signs lets you add messages to a sign.", 'a')
-        msg += "\nRight clicking the sign will display all the messages. Commands"
-        msg += "\ncan also be added, by prefixing the message with a '/'."
-        msg += "\nHow to use &b/serversigns&a:"
-        msg += "\n&b/svs claim" + ("" if not sender.hasPermission("utils.serversigns.admin") else " [owner]")
-        msg += "\n&a- Claims the sign so that you can add messages to it"
-        msg += "\n&b/svs info|lines"
-        msg += "\n&a- Displays information about the (claimed) sign"
-        msg += "\n&b/svs add <message>[++]"
-        msg += "\n&a- Adds the message to the sign. Use ++ at the end"
-        msg += "\n&a- to add the message to your buffer. You can then use"
-        msg += "\n&a- the same command again to create a longer message."
-        msg += "\n&b/svs remove <message ID>"
-        msg += "\n&a- Removes the message with the given ID from the sign."
-        msg += "\n&a- The ID is given before each message by &b/svs info&a."
-        msg += "\n&b/svs switch|reverse <message ID 1> <message ID 2>"
-        msg += "\n&a- Reverses the order in which the given messages are shown."
-        msg += "\n&b/svs clear"
-        msg += "\n&a- Removes all messages from the sign."
-        msg += "\n&b/svs reset|unclaim"
-        msg += "\n&a- Resets the sign, removing all messages and its owner."
-        msg += "\n&b/svs commands|whitelist|wl"
-        msg += "\n&a- Shows a list of whitelisted commands"
-        return msg
+    if cmd == "help":
+        all_lines = [
+            "&aServer signs let's you add messages to a sign.",
+            "Right clicking the sign will display all the messages. Commands",
+            "can also be added, by prefixing the message with a '/'.",
+            "How to use &b/serversigns&a:",
+        ]
 
-    if arg1 in ("commands", "whitelist", "wl"):
+        for cmd in subcommand_info:
+            if sender.hasPermission("utils.serversigns." + cmd[0][0]):
+                params = ""
+                if len(cmd) == 3:
+                    for param, perm in cmd[2]:
+                        if perm is None or sender.hasPermission("utils.serversigns." + perm):
+                            params += param + " "
+                all_lines.append("&b/svs %s %s" % ("|".join(cmd[0]), params))
+                for info_line in cmd[1]:
+                    all_lines.append("&a- " + info_line)
+
+        last_page = int(ceil(len(all_lines) / help_page_size))
+        info("last page: %d" % last_page)
+        page = 1
+        if len(args) > 1 and args[1].isdigit():
+            page = int(args[1])
+            if page <= 0:
+                page = 1
+            elif page > last_page:
+                page = last_page
+
+        first_line = signsMsg("Serversigns help page %d" % page, '6')
+        if page < last_page:
+            first_line += ", &e/svs help %d&6 for the next" % (page + 1)
+        page_lines = [first_line] + all_lines[(page - 1) * help_page_size : min(page * help_page_size, len(all_lines))]
+        return "\n".join(page_lines)
+
+
+    if cmd == "whitelist":
         return signsMsg("Whitelisted commands: &3" + ", ".join(commands_whitelist), 'a')
     #-------------------------------------------------------------------------------------------
 
@@ -156,7 +213,7 @@ def svs_command(sender, command, label, args):
     arg2     = args[1].lower() if len(args) > 1 else None
 
     #------------------------ Sub commands that require the block to be a sign -------------------------------
-    if arg1 == "claim":
+    if cmd == "claim":
         Validate.isTrue(not sign, signsMsg("The %s was already claimed" % signName))
         Validate.isTrue(can_build2(sender, block), signsMsg("You are not permitted to claim signs here"))
         target = sender
@@ -180,7 +237,7 @@ def svs_command(sender, command, label, args):
     Validate.notNone(sign, signsMsg("The %s has not been claimed" % signName))
 
     #----------------------Sub commands that require the sign to be claimed as well------------------------------------
-    if arg1 in ("info", "lines"):
+    if cmd == "info":
         sign_lines = ""
         for id, line in enumerate(sign[1:]):
             sign_lines += ("\n &a%s: \"&f%s&a\"" % (id + 1, line))
@@ -190,7 +247,7 @@ def svs_command(sender, command, label, args):
     Validate.isTrue(canEdit(sign, sender), signsMsg("You do not own the %s!" % signName))
 
     #---------------------- Sub commands that require you to own targeted sign as well -------------------------
-    if arg1 == "add":
+    if cmd == "add":
         Validate.isTrue(len(sign) - 1 <= max_lines, signsMsg("This sign already has the maximum amount of lines, you cannot add more"))
 
         line = " ".join(args[1:])
@@ -227,7 +284,7 @@ def svs_command(sender, command, label, args):
         return signsMsg("Added line \"&f%s&a\" to the %s" % (line, signName), 'a')
 
 
-    if arg1 in ("remove", "rem", "del", "delete"):
+    if cmd == "remove":
         Validate.notNone(arg2, signsMsg("You have to enter the ID of the message to remove!"))
         try:
             id = int(arg2)
@@ -238,7 +295,7 @@ def svs_command(sender, command, label, args):
         return signsMsg("Removed message with id %s from the %s" % (id, signName), 'a')
 
 
-    if arg1 in ("switch", "reverse"):
+    if cmd == "switch":
         Validate.isTrue(len(args) == 3, signsMsg("You have to enter the 2 IDs of the messages to reverse"))
         try:
             id1 = int(args[1])
@@ -252,13 +309,13 @@ def svs_command(sender, command, label, args):
         return signsMsg("Reversed the messages with IDs %s and %s of the %s" % (id1, id2, signName), 'a')
 
 
-    if arg1 == "clear":
+    if cmd == "clear":
         signs[loc] = [sign[0]]
         save_signs()
         return signsMsg("Removed all messages from the %s" % signName, 'a')
 
 
-    if arg1 in ("reset", "unclaim"):
+    if cmd == "reset":
         del signs[loc]
         save_signs()
         return signsMsg("Removed all messages and the owner from the %s, it can now be claimed" % signName, 'a')
