@@ -35,11 +35,11 @@ def get_website_data(player):
     conn    = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs    = conn.cursor()
     uuid = str(uid(player)).replace("-", "")
-    curs.execute("SELECT DISTINCT `id`, `email` FROM users WHERE `uuid` = ? LIMIT 1", (uuid,))
+    curs.execute("SELECT DISTINCT `id`, `email`, `confirmed` FROM users WHERE `uuid` = ? LIMIT 1", (uuid,))
     results = curs.fetchall()
     curs.close()
     conn.close()
-    return ("http://redstoner.com/users/%s" % results[0][0], results[0][1]) if results else (None, None)
+    return ("http://redstoner.com/users/%s" % results[0][0], results[0][1], False if results[0][2] == 0 else True) if results else (None, None, True)
 
 
 # receive country based on the user's IP
@@ -68,6 +68,8 @@ def get_all_data(sender, player):
         website = get_website_data(player)
         msg(sender, "&6>  Website account: &e%s" % website[0])
         msg(sender, "&6>    email: &e%s" % website[1])
+        if not website[2]:
+            msg(sender, "&6>    &cEmail NOT Confirmed!")
         msg(sender, "&7   -- Data provided by ipinfo.io")
         msg(sender, "&6>  Country: &e%s" % get_country(data))
         msg(sender, "&7   -- Data provided by Mojang")
