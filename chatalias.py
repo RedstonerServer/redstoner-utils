@@ -6,6 +6,7 @@ import org.bukkit as bukkit
 from org.bukkit import *
 from helpers import *
 
+
 # Version number and requirements
 
 alias_version = "2.1.0"
@@ -131,7 +132,7 @@ def on_alias_command(sender, cmd, label, args):
             return
         if args[0].lower() != "player" and not is_player(sender):
             msg(sender, "&cThe console cannot have aliases")
-            return
+            return True
         subcommands[args[0].lower()](sender, args[1:])
     except:
         subcommands["help"](sender, "1")
@@ -381,9 +382,8 @@ def save_data(uuid):
 def save_data_thread(uuid):
     conn = zxJDBC.connect(mysql_database, mysql_user, mysql_pass, "com.mysql.jdbc.Driver")
     curs = conn.cursor()
-    value = json_dumps(data[uuid])
-    curs.execute("INSERT INTO `chatalias` VALUES (?, ?) ON DUPLICATE KEY UPDATE `alias` = ?;", 
-        (uuid, value, value))
+    curs.execute("INSERT INTO `chatalias` (`uuid`, `alias`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `alias` = VALUES(`alias`);", 
+        (uuid, json_dumps(data[uuid])))
     conn.commit()
     curs.close()
     conn.close()
