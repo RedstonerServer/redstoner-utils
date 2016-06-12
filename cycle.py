@@ -56,7 +56,7 @@ def on_slot_change(event):
 
 def do_cycle(player, down):
     inv   = player.getInventory()
-    items = inv.getContents()
+    items = inv.getStorageContents()
     shift = -9 if down else 9
     shift = shift % len(items)
     for _ in range(4):
@@ -64,7 +64,7 @@ def do_cycle(player, down):
         uniq_items = sorted(set(list(items)[:9]))  # get unique inventory
         if uniq_items != [None]: # row not empty
             break
-    inv.setContents(items)
+    inv.setStorageContents(items)
 
 def save_cyclers():
     save_json_file("cycle", no_cyclers)
