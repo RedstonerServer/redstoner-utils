@@ -185,7 +185,7 @@ def toggle_command(sender, command, label, args):
             return " &cAlready disabled: " + details[1]
 
         if arglen == 2 and not arg2.isdigit():
-            return " &cArgument '%s' was not recognized. \nUse &o/toggle %s details &cfor more detailsrmation." % (arg2, setting)
+            return " &cArgument '%s' was not recognized. \nUse &o/toggle %s info &cfor more information." % (arg2, setting)
 
         if not enabled:
             values[uuid] = {}
