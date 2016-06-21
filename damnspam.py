@@ -173,8 +173,6 @@ def on_block_break(event):
 def on_interact(event):
     if (str(event.getAction()) == "RIGHT_CLICK_BLOCK") and not event.isCancelled():
         sender = event.getPlayer()
-        if sender.isSneaking():
-            return
         block   = event.getClickedBlock()
         pos_str = location_str(block)
         data    = inputs.get(pos_str)
