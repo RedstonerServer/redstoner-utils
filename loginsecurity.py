@@ -12,7 +12,7 @@ from player import get_py_player, py_players
 wait_time = 30 #seconds
 admin_perm = "utils.loginsecurity.admin"
 min_pass_length = 8
-blocked_events = ["block.BlockBreakEvent", "block.BlockPlaceEvent", "player.PlayerMoveEvent","player.AsyncPlayerChatEvent"]
+blocked_events = ["block.BlockBreakEvent", "block.BlockPlaceEvent", "player.AsyncPlayerChatEvent"]
 
 
 
@@ -274,3 +274,9 @@ def pre_command_proccess(event):
         if not args[0].lower() == "/login":
             msg(player.player, "&4You need to login before you do that!")
             event.setCancelled(True)
+    
+@hook.event("player.PlayerMoveEvent","normal")
+def player_move(event):
+    user = get_py_player(event.getPlayer())
+    if user.logging_in:
+        event.setTo(event.getFrom())
