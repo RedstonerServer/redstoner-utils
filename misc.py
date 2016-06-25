@@ -8,7 +8,135 @@ import org.bukkit.inventory.ItemStack as ItemStack
 import org.bukkit.Bukkit as Bukkit
 from basecommands import simplecommand, Validate
 import java.util.Arrays as Arrays
+import org.bukkit.command.Command as Command
+import java.util.HashMap as HashMap
 
+
+"""
+This section is a little tool to intercept commands. 
+It can intercept any aliases of the command, which it does by default.
+
+An intercepter is a function that is run before the command is executed,
+which takes the parameters: sender, args
+It should return a boolean value to specify whether it should be executed.
+
+The optional tab completer is a function that takes the following parameters:
+  original_completions (List<String>), sender, alias, args
+and it should return a List<String>. By default it returns the original completions.
+"""
+
+class CommandInterceptions:
+
+    def __init__(self):
+        raise Exception("Instances of 'CommandInterceptions' are not meant to exist")
+
+    registrations = {} # cmd : (intercepter, tab_completer)
+    interceptions = {} # original_obj : replacement_obj
+    cmd_map = None     # CustomHashMap
+
+    @staticmethod
+    def register(plugin_name, command, intercepter, tab_completer = None):
+        key = (plugin_name + ":" + command if plugin_name else command).lower()
+        CommandInterceptions.registrations[key] = (intercepter, tab_completer)
+        if CommandInterceptions.cmd_map.containsKey(key):
+            CommandInterceptions.add_interception(key, CommandInterceptions.cmd_map.get(key))
+
+
+    class Intercepter(Command):
+
+        def __init__(self, wrapped, intercepter, tab_completer):
+            try:
+                Command.__init__(self, wrapped.getName())
+                self.setDescription(wrapped.getDescription())
+                self.setPermission(wrapped.getPermission())
+                self.setUsage(wrapped.getUsage())
+
+                # I had to dig deep in spigot code to find out what's happening
+                # But without this snippet, the server shuts itself down because 
+                # commands can't be aliases for themselves (shrug) :)
+                aliases = wrapped.getAliases()
+                aliases.remove(wrapped.getLabel())
+                self.setAliases(aliases)
+                self.wrapped = wrapped
+                self.intercepter = intercepter
+                self.tab_completer = tab_completer
+            except:
+                error(trace())
+
+        def execute(self, sender, label, args):
+            if self.intercepter(sender, args):
+                return self.wrapped.execute(sender, label, args)
+            return True
+
+        def tabComplete(self, sender, alias, args):
+            return self.tab_completer(self.wrapped.tabComplete(sender, alias, args), sender, alias, args)
+
+
+    @staticmethod
+    def add_interception(key, intercepted):
+        try:
+            info("Adding interception for /" + key)
+            registration = CommandInterceptions.registrations[key]
+            tab_completer = registration[1]
+            if tab_completer is None:
+                tab_completer = lambda original_completions, sender, alias, args: original_completions
+            cmd_intercepter = CommandInterceptions.Intercepter(intercepted, registration[0], tab_completer)
+            CommandInterceptions.interceptions[intercepted] = cmd_intercepter
+            for entry in CommandInterceptions.cmd_map.entrySet():
+                if entry.getValue() is intercepted:
+                    entry.setValue(cmd_intercepter)
+        except:
+            error(trace())
+
+    @staticmethod
+    def init_interceptions():
+
+        # The map object in the command map used by spigot is previously already a hashmap, we replace its put() here
+        class CustomHashMap(HashMap):
+
+            def __init__(self, replaced):
+                HashMap.__init__(self)
+                for entry in replaced.entrySet():
+                    self.put(entry.getKey(), entry.getValue())
+
+            def java_put(self, key, value):
+                return HashMap.put(self, key, value)
+
+            def put(self, key, value):
+                try:
+                    for intercepted in CommandInterceptions.interceptions:
+                        if value is intercepted:
+                            return self.java_put(key, CommandInterceptions.interceptions[intercepted])
+                    ret = self.java_put(key, value)
+                    if key in CommandInterceptions.registrations:
+                        CommandInterceptions.add_interception(key, value)
+                    return ret
+                except:
+                    error(trace())
+
+        try:
+            map_field = server.getPluginManager().getClass().getDeclaredField("commandMap")
+            map_field.setAccessible(True)
+            command_map = map_field.get(server.getPluginManager())
+
+            commands_field = command_map.getClass().getDeclaredField("knownCommands")
+            commands_field.setAccessible(True)
+            CommandInterceptions.cmd_map = CustomHashMap(commands_field.get(command_map))
+            commands_field.set(command_map, CommandInterceptions.cmd_map)
+        except:
+            error("[Interceptions] Failed to wrap the command map:")
+            error(trace())
+CommandInterceptions.init_interceptions()
+
+
+def worldedit_calc_intercepter(sender, args):
+    info("WorldEdit Calc Intercepter WOOHOO")
+    if not sender.hasPermission("worldedit.calc"):
+        noperm(sender)
+        return False
+    return True
+
+CommandInterceptions.register("worldedit", "/calc", worldedit_calc_intercepter)
 
 
 @hook.event("player.PlayerJoinEvent", "monitor")
