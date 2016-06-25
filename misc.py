@@ -130,7 +130,6 @@ CommandInterceptions.init_interceptions()
 
 
 def worldedit_calc_intercepter(sender, args):
-    info("WorldEdit Calc Intercepter WOOHOO")
     if not sender.hasPermission("worldedit.calc"):
         noperm(sender)
         return False
