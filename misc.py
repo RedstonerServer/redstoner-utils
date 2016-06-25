@@ -55,7 +55,10 @@ class CommandInterceptions:
                 # But without this snippet, the server shuts itself down because 
                 # commands can't be aliases for themselves (shrug) :)
                 aliases = wrapped.getAliases()
-                aliases.remove(wrapped.getLabel())
+                try:
+                    aliases.remove(wrapped.getLabel())
+                except:
+                    pass
                 self.setAliases(aliases)
                 self.wrapped = wrapped
                 self.intercepter = intercepter
@@ -74,19 +77,15 @@ class CommandInterceptions:
 
     @staticmethod
     def add_interception(key, intercepted):
-        try:
-            info("Adding interception for /" + key)
-            registration = CommandInterceptions.registrations[key]
-            tab_completer = registration[1]
-            if tab_completer is None:
-                tab_completer = lambda original_completions, sender, alias, args: original_completions
-            cmd_intercepter = CommandInterceptions.Intercepter(intercepted, registration[0], tab_completer)
-            CommandInterceptions.interceptions[intercepted] = cmd_intercepter
-            for entry in CommandInterceptions.cmd_map.entrySet():
-                if entry.getValue() is intercepted:
-                    entry.setValue(cmd_intercepter)
-        except:
-            error(trace())
+        registration = CommandInterceptions.registrations[key]
+        tab_completer = registration[1]
+        if tab_completer is None:
+            tab_completer = lambda original_completions, sender, alias, args: original_completions
+        cmd_intercepter = CommandInterceptions.Intercepter(intercepted, registration[0], tab_completer)
+        CommandInterceptions.interceptions[intercepted] = cmd_intercepter
+        for entry in CommandInterceptions.cmd_map.entrySet():
+            if entry.getValue() is intercepted:
+                entry.setValue(cmd_intercepter)
 
     @staticmethod
     def init_interceptions():
@@ -103,16 +102,13 @@ class CommandInterceptions:
                 return HashMap.put(self, key, value)
 
             def put(self, key, value):
-                try:
-                    for intercepted in CommandInterceptions.interceptions:
-                        if value is intercepted:
-                            return self.java_put(key, CommandInterceptions.interceptions[intercepted])
-                    ret = self.java_put(key, value)
-                    if key in CommandInterceptions.registrations:
-                        CommandInterceptions.add_interception(key, value)
-                    return ret
-                except:
-                    error(trace())
+                for intercepted in CommandInterceptions.interceptions:
+                    if value is intercepted:
+                        return self.java_put(key, CommandInterceptions.interceptions[intercepted])
+                ret = self.java_put(key, value)
+                if key in CommandInterceptions.registrations:
+                    CommandInterceptions.add_interception(key, value)
+                return ret
 
         try:
             map_field = server.getPluginManager().getClass().getDeclaredField("commandMap")
