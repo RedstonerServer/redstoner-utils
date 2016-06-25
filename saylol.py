@@ -1,6 +1,7 @@
 from time import time
 from helpers import *
 from random import randrange
+import math
 
 lols     = open_json_file("lol", [])
 timeout  = 15
@@ -83,7 +84,7 @@ def on_lol_command(sender, command, label, args):
         if offset > len(lols):
             msg(sender, "&cNot a valid page (too high).")
             return True
-        msg(sender, "    &9&nLol list page %s" % str(arg1 + 1)) #"\t" symbol displays weirdly, hence the 4 spaces
+        msg(sender, "    &9&nLol list page %s/%s" % (arg1 + 1, int(math.ceil(len(lols) / float(list_limit))))) #"\t" symbol displays weirdly, hence the 4 spaces
         for i in range(offset, min(offset + list_limit, len(lols))):
             msg(sender, "&a%s: &e%s" % (str(i).rjust(3), lols[i]))
         msg(sender, "")        
