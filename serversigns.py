@@ -392,7 +392,25 @@ def can_build2(player, block):
     return not event.isCancelled()
 
 
-def check_all_signs():
+def check_all_signs_and_intercept_command():
+
+    try:
+        CommandInterceptions = shared["modules"]["misc"].CommandInterceptions
+        rsutils_cmd = CommandInterceptions.cmd_map.get("redstonerutils:serversigns")
+        label = rsutils_cmd.getLabel()
+
+        def interception(sender, args):
+            rsutils_cmd.execute(sender, label, args)
+            return False
+
+        def tab_completion(original, sender, alias, args):
+            return rsutils_cmd.tabComplete(sender, alias, args)
+
+        shared["modules"]["misc"].CommandInterceptions.register("serversigns", "serversigns", interception, tab_completion)
+    except:
+        error("[Serversigns] failed to force commands")
+        error(trace())
+
     """
     Check if all registered signs have an associated sign block in the world. 
     WorldEdit commands could remove them without notification.
@@ -403,20 +421,3 @@ def check_all_signs():
     for loc in signs:
         if server.getWorld(loc[0]).getBlockAt(loc[1], loc[2], loc[3]).getType() not in (Material.WALL_SIGN, Material.SIGN_POST):
             del signs[loc]
-
-try:
-    CommandInterceptions = shared["modules"]["misc"].CommandInterceptions
-    rsutils_cmd = CommandInterceptions.cmd_map.get("redstonerutils:serversigns")
-    label = rsutils_cmd.getLabel()
-
-    def interception(sender, args):
-        rsutils_cmd.execute(sender, label, args)
-        return False
-
-    def tab_completetion(original, sender, alias, args):
-        return rsutils_cmd.tabComplete(sender, alias, args)
-
-    shared["modules"]["misc"].CommandInterceptions.register("serversigns", "serversigns", interception, tab_completion)
-except:
-    error("[Serversigns] failed to force commands")
-    error(trace())

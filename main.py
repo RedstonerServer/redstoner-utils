@@ -22,7 +22,7 @@ def on_enable():
     if "blockplacemods" in shared["modules"]:
         shared["modules"]["blockplacemods"].schedule_torch_breaker()
     if "serversigns" in shared["modules"]:
-        shared["modules"]["serversigns"].check_all_signs()
+        shared["modules"]["serversigns"].check_all_signs_and_intercept_command()
     info("RedstonerUtils enabled!")
 
 
