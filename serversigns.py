@@ -395,16 +395,16 @@ def can_build2(player, block):
 def check_all_signs_and_intercept_command():
 
     try:
-        CommandInterceptions = shared["modules"]["misc"].CommandInterceptions
-        rsutils_cmd = CommandInterceptions.cmd_map.get("redstonerutils:serversigns")
-        label = rsutils_cmd.getLabel()
+        #CommandInterceptions = shared["modules"]["misc"].CommandInterceptions
+        #rsutils_cmd = CommandInterceptions.cmd_map.get("redstonerutils:serversigns")
+        #label = rsutils_cmd.getLabel()
 
         def interception(sender, args):
-            rsutils_cmd.execute(sender, label, args)
+            svs_command(sender, None, None, args)
             return False
 
         def tab_completion(original, sender, alias, args):
-            return rsutils_cmd.tabComplete(sender, alias, args)
+            return None
 
         shared["modules"]["misc"].CommandInterceptions.register("serversigns", "serversigns", interception, tab_completion)
     except:
