@@ -102,8 +102,9 @@ def save_groups():
 @hook.event("player.AsyncPlayerChatEvent", "normal")
 def on_chat(event):
     sender = event.getPlayer()
+    user = get_py_player(sender)
     msge = event.getMessage()
-    if not event.isCancelled():
+    if (not user.logging_in) and (not event.isCancelled()):
         sender_id = uid(sender)
         key = get_key(sender_id)
         keylen = len(key)
