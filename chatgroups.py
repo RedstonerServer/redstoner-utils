@@ -2,7 +2,6 @@
 from helpers import *
 from basecommands import simplecommand
 from java.util.UUID import fromString as juuid
-from traceback import format_exc as trace
 
 groups         = open_json_file("chatgroups", {})
 cg_defaultkey  = ":"
@@ -32,7 +31,7 @@ def on_chatgroup_command(sender, command, label, args):
         if sender_id in groups.keys():
             group = groups[sender_id]
             msg(sender, "&aCurrent chatgroup: %s" % group)
-            users = [user.getDisplayName() for user in [server.getPlayer(juuid(uuid)) for uuid, ugroup in groups.iteritems() if ugroup == group] if user]
+            users = [user.getName() for user in [server.getOfflinePlayer(juuid(uuid)) for uuid, ugroup in groups.iteritems() if ugroup == group] if user]
             msg(sender, "&aUsers in this group:")
             msg(sender,  "&a%s" % ", ".join(users))
         else:
