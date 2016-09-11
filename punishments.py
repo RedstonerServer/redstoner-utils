@@ -56,6 +56,7 @@ class Slave(object):
         self.blocks -= 1
         if self.blocks <= 0:
             server.getPlayer(juuid(self.get_uuid())).teleport(server.getWorld(spawn_world).getSpawnLocation())
+            server.getPlayer(juuid(self.get_uuid())).teleport(server.getWorld(spawn_world).getSpawnLocation())
             slaves.remove(self)
             save_slaves()
 
